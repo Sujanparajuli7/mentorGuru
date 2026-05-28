@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MentorGuru | Admin Dashboard</title>
+    <meta name="description" content="MentorGuru admin control panel for managing courses, students, and analytics.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 text-gray-900 flex min-h-screen">
+
+    <!-- Auth Guard -->
+    <script>
+        if (sessionStorage.getItem('mentorGuruAdmin') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <!-- =================== SIDEBAR =================== -->
+    <aside class="w-64 bg-white border-r border-gray-200 flex flex-col z-20 flex-shrink-0 shadow-sm">
+        <!-- Logo -->
+        <div class="h-16 border-b border-gray-100 flex items-center px-6 gap-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-red-500 text-white flex items-center justify-center shadow-md shadow-red-200">
+                <i class="fa-solid fa-graduation-cap text-sm"></i>
+            </div>
+            <span class="text-lg font-bold text-gray-900">Mentor<span class="text-red-600">Guru</span></span>
+        </div>
+
+        <!-- Nav Links -->
+        <nav class="flex-grow py-5 px-3 space-y-0.5 overflow-y-auto">
+            <button onclick="switchAdminView('dashboard')" id="nav-dashboard" class="admin-sidebar-link active w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-chart-line w-4"></i> Dashboard
+            </button>
+            <button onclick="switchAdminView('courses')" id="nav-courses" class="admin-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-book-open w-4"></i> Courses
+            </button>
+            <button onclick="switchAdminView('students')" id="nav-students" class="admin-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-users w-4"></i> Students Log
+            </button>
+            <button onclick="switchAdminView('mentors')" id="nav-mentors" class="admin-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-chalkboard-user w-4"></i> Mentors Desk
+            </button>
+            <button onclick="switchAdminView('payments')" id="nav-payments" class="admin-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-wallet w-4"></i> Payments
+            </button>
+            <button onclick="switchAdminView('analytics')" id="nav-analytics" class="admin-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-square-poll-vertical w-4"></i> Analytics
+            </button>
+            <button onclick="switchAdminView('settings')" id="nav-settings" class="admin-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-sliders w-4"></i> Settings
+            </button>
+        </nav>
+
+        <!-- Logout -->
+        <div class="p-4 border-t border-gray-100">
+            <button onclick="logoutAdmin()" class="w-full flex items-center justify-center gap-2 py-2.5 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 rounded-xl text-xs font-bold text-red-600 uppercase tracking-wider transition">
+                <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- =================== MAIN CONTENT =================== -->
+    <main class="flex-grow h-screen overflow-y-auto flex flex-col bg-gray-50">
+
+        <!-- Top Header Bar -->
+        <header class="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center sticky top-0 z-10 shadow-sm">
+            <div>
+                <h1 class="text-lg font-bold text-gray-900" id="panelViewHeader">Dashboard Overview</h1>
+                <p class="text-xs text-gray-400 mt-0.5">MentorGuru Operational Hub</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-xs font-semibold text-red-600">
+                    <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Live
+                </div>
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs font-semibold text-gray-800">System Administrator</p>
+                    <p class="text-[10px] text-gray-400">suzzan@gmail.com</p>
+                </div>
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-red-500 to-red-600 text-white flex items-center justify-center text-sm font-bold shadow-sm">S</div>
+            </div>
+        </header>
+
+        <div class="p-8 flex flex-col gap-8 flex-grow">
+
+        <!-- ===== DASHBOARD VIEW ===== -->
+        <div id="view-dashboard" class="admin-view space-y-8">
+
+            <!-- Stats Cards -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <!-- 1 -->
+                <div class="stat-card border-t-4 border-t-red-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Total Enrolled</p>
+                            <h3 id="statTotalStudents" class="text-3xl font-extrabold text-gray-900">0</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-4"><i class="fa-solid fa-arrow-trend-up text-red-500 mr-1"></i> Active learning profiles</p>
+                </div>
+                <!-- 2 -->
+                <div class="stat-card border-t-4 border-t-gray-800">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Listed Cohorts</p>
+                            <h3 id="statTotalCourses" class="text-3xl font-extrabold text-gray-900">0</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-700 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-book"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-4"><i class="fa-solid fa-circle-check text-gray-600 mr-1"></i> IT &amp; Non-IT assets</p>
+                </div>
+                <!-- 3 -->
+                <div class="stat-card border-t-4 border-t-red-400">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Log Revenue</p>
+                            <h3 id="statTotalRevenue" class="text-3xl font-extrabold text-gray-900">NPR 0</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-4"><i class="fa-solid fa-piggy-bank text-red-400 mr-1"></i> Received course tuition</p>
+                </div>
+                <!-- 4 -->
+                <div class="stat-card border-t-4 border-t-red-300">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Total Enrollments</p>
+                            <h3 id="statTotalEnrollments" class="text-3xl font-extrabold text-gray-900">0</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-4"><i class="fa-solid fa-bell text-red-400 mr-1"></i> Admissions ledger logs</p>
+                </div>
+            </div>
+
+            <!-- Chart & Activity -->
+            <div class="grid lg:grid-cols-3 gap-6">
+
+                <!-- Chart -->
+                <div class="glass-card rounded-2xl p-6 lg:col-span-2 space-y-5">
+                    <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                        <h4 class="font-bold text-gray-800 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-area text-red-500"></i> Enrollment Statistics
+                        </h4>
+                        <span class="text-xs text-gray-400">Weekly cohort growth</span>
+                    </div>
+                    <div class="relative w-full h-[220px] flex items-end">
+                        <svg class="w-full h-full" viewBox="0 0 500 200" preserveAspectRatio="none">
+                            <line x1="0" y1="50" x2="500" y2="50" stroke="#f3f4f6" stroke-width="1"/>
+                            <line x1="0" y1="100" x2="500" y2="100" stroke="#f3f4f6" stroke-width="1"/>
+                            <line x1="0" y1="150" x2="500" y2="150" stroke="#f3f4f6" stroke-width="1"/>
+                            <defs>
+                                <linearGradient id="chartGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#dc2626" stop-opacity="0.12"/>
+                                    <stop offset="100%" stop-color="#dc2626" stop-opacity="0.0"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M 0 200 L 0 170 Q 100 110 180 130 T 360 80 T 500 40 L 500 200 Z" fill="url(#chartGrad)"/>
+                            <path class="chart-line" d="M 0 170 Q 100 110 180 130 T 360 80 T 500 40" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+                            <circle cx="180" cy="130" r="4" fill="#dc2626" stroke="white" stroke-width="2"/>
+                            <circle cx="360" cy="80" r="4" fill="#dc2626" stroke="white" stroke-width="2"/>
+                            <circle cx="500" cy="40" r="4" fill="#991b1b" stroke="white" stroke-width="2"/>
+                        </svg>
+                        <div class="absolute bottom-[-20px] left-0 right-0 flex justify-between text-[10px] text-gray-400 font-medium px-2">
+                            <span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity -->
+                <div class="glass-card rounded-2xl p-6 space-y-5">
+                    <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                        <h4 class="font-bold text-gray-800 flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-red-500"></i> Recent Activity
+                        </h4>
+                        <button onclick="clearSystemActivity()" class="text-xs text-gray-400 hover:text-red-500 transition">
+                            <i class="fa-solid fa-broom"></i> Clear
+                        </button>
+                    </div>
+                    <div class="space-y-3 max-h-[200px] overflow-y-auto pr-1" id="recentActivitiesList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== COURSES VIEW ===== -->
+        <div id="view-courses" class="admin-view hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-red-500"></i> Course Blueprint Grid
+                </h3>
+                <button onclick="openCourseModal()" class="btn-red py-2.5 px-6 rounded-xl text-sm">
+                    <i class="fa-solid fa-plus mr-1.5"></i> Add New Course
+                </button>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="adminCoursesGrid"></div>
+        </div>
+
+        <!-- ===== STUDENTS VIEW ===== -->
+        <div id="view-students" class="admin-view hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="fa-solid fa-users-viewfinder text-red-500"></i> Enrolled Students
+                </h3>
+                <div class="relative w-full sm:w-72">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fa-solid fa-magnifying-glass text-sm"></i></span>
+                    <input type="text" id="studentSearchInput" class="w-full pl-9 pr-4 py-2.5 rounded-xl glass-input text-xs" placeholder="Search by name, email or course...">
+                </div>
+            </div>
+            <div class="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-200">
+                            <th class="px-5 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Date</th>
+                            <th class="px-5 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Student Name</th>
+                            <th class="px-5 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Email</th>
+                            <th class="px-5 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Mobile</th>
+                            <th class="px-5 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Course</th>
+                            <th class="px-5 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Fee Status</th>
+                            <th class="px-5 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider">Status</th>
+                            <th class="px-5 py-4 font-semibold text-gray-500 text-xs uppercase tracking-wider text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminStudentsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== MENTORS VIEW ===== -->
+        <div id="view-mentors" class="admin-view hidden">
+            <div class="bg-white rounded-2xl border border-gray-200 p-14 text-center shadow-sm space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-red-50 text-red-400 flex items-center justify-center text-3xl mx-auto">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">Mentors Panel</h3>
+                <p class="text-gray-500 text-sm max-w-md mx-auto">This panel maps verified teachers to target cohorts. Access level: Read-Only.</p>
+            </div>
+        </div>
+
+        <!-- ===== PAYMENTS VIEW ===== -->
+        <div id="view-payments" class="admin-view hidden">
+            <div class="bg-white rounded-2xl border border-gray-200 p-14 text-center shadow-sm space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-red-50 text-red-400 flex items-center justify-center text-3xl mx-auto">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">Tuition Payments Logger</h3>
+                <p class="text-gray-500 text-sm max-w-md mx-auto">Active billing invoices ledger. Auto-calculates payment flags and updates revenue statistics in real-time.</p>
+            </div>
+        </div>
+
+        <!-- ===== ANALYTICS VIEW ===== -->
+        <div id="view-analytics" class="admin-view hidden">
+            <div class="bg-white rounded-2xl border border-gray-200 p-14 text-center shadow-sm space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-red-50 text-red-400 flex items-center justify-center text-3xl mx-auto">
+                    <i class="fa-solid fa-square-poll-vertical"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">Analytics Center</h3>
+                <p class="text-gray-500 text-sm max-w-md mx-auto">Track conversion logs, web sessions, course page hits, and student growth curve metrics.</p>
+            </div>
+        </div>
+
+        <!-- ===== SETTINGS VIEW ===== -->
+        <div id="view-settings" class="admin-view hidden">
+            <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm space-y-6">
+                <h3 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-red-500"></i> System Settings
+                </h3>
+                <div class="grid sm:grid-cols-2 gap-6 text-sm">
+                    <div class="space-y-2">
+                        <label class="block font-semibold text-gray-700">Site Maintenance Mode</label>
+                        <select class="w-full p-3 rounded-xl glass-input text-sm">
+                            <option>Deactivated (Live Website)</option>
+                            <option>Activated (Under Maintenance)</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block font-semibold text-gray-700">Database Sync Speed</label>
+                        <select class="w-full p-3 rounded-xl glass-input text-sm">
+                            <option>Real-Time LocalStorage Sync (Active)</option>
+                            <option>Daily Backup Logs</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="border-t border-gray-100 pt-6 space-y-4">
+                    <h4 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-robot text-red-500"></i> Google Gemini AI Chatbot Settings
+                    </h4>
+                    <div class="grid sm:grid-cols-2 gap-6 text-sm">
+                        <div class="space-y-2">
+                            <label class="block font-semibold text-gray-700">Gemini 1.5 Flash API Key</label>
+                            <input type="password" id="adminGeminiApiKeyInput" class="w-full p-3 rounded-xl glass-input text-sm" placeholder="AIzaSy...">
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-4">
+                    <button class="btn-red py-2.5 px-6 rounded-xl text-sm" onclick="saveAdminSettings()">
+                        <i class="fa-solid fa-floppy-disk mr-2"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        </div><!-- /p-8 wrapper -->
+    </main>
+
+    <!-- =================== COURSE MODAL =================== -->
+    <div id="courseModalOverlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 scale-[0.95] transition-transform duration-300" id="courseModalBox">
+
+            <div class="flex justify-between items-center pb-4 mb-5 border-b border-gray-100">
+                <h3 class="text-base font-bold text-gray-900" id="courseModalHeader">
+                    <i class="fa-solid fa-circle-plus text-red-500 mr-2"></i> Create New Course
+                </h3>
+                <button onclick="closeCourseModal()" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="courseForm" class="space-y-4" novalidate>
+                <input type="hidden" id="editCourseId">
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Course Title</label>
+                        <input type="text" id="courseTitle" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm" placeholder="e.g. Cybersecurity Essentials" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Category</label>
+                        <select id="courseCategory" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm">
+                            <option value="IT">IT Course</option>
+                            <option value="Non-IT">Non-IT Course</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Description</label>
+                    <textarea id="courseDesc" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm h-20 resize-none" placeholder="Provide core curriculum topics..." required></textarea>
+                </div>
+                <div class="grid sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Duration</label>
+                        <input type="text" id="courseDuration" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm" placeholder="e.g. 12 Weeks" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Price (NPR)</label>
+                        <input type="number" id="coursePrice" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm" placeholder="e.g. 599" min="0" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Mode</label>
+                        <select id="courseMode" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm">
+                            <option value="Online">Online</option>
+                            <option value="Physical">Physical</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Shift</label>
+                        <select id="courseSlots" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm">
+                            <option value="6 AM to 7 AM">6 AM to 7 AM</option>
+                            <option value="10 AM to 11 AM">10 AM to 11 AM</option>
+                            <option value="4 PM to 5 PM">4 PM to 5 PM</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Thumbnail</label>
+                        <input type="file" id="courseThumbnail" class="w-full px-4 py-2 rounded-xl glass-input text-xs" accept="image/*">
+                    </div>
+                </div>
+                <div class="pt-3 flex gap-3">
+                    <button type="button" onclick="closeCourseModal()" class="w-1/2 py-2.5 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold text-sm transition">Cancel</button>
+                    <button type="submit" class="btn-red w-1/2 py-2.5 rounded-xl text-sm" id="submitCourseBtn">Publish Blueprint</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =================== TOAST =================== -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-[100] px-5 py-3.5 rounded-xl bg-gray-900 text-white text-sm shadow-xl flex items-center gap-3 translate-y-24 opacity-0 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-red-400 text-base"></i>
+        <span id="toastMessage">Saved successfully!</span>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
