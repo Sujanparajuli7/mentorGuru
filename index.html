@@ -8,38 +8,133 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --red-primary: #dc2626;
+            --red-dark: #b91c1c;
+            --red-light: rgba(220, 38, 38, 0.06);
+            --red-mid: #ef4444;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --bg-white: #ffffff;
+            --bg-soft: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        
+        .heading-font {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Glassmorphism updates */
+        .glass-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #0f172a;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(239, 68, 68, 0.3) !important;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.08) !important;
+            transform: translateY(-4px) !important;
+        }
+
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, #fef2f2 0%, #ffffff 100%);
+        }
+
+        .glass-input {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #0f172a !important;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .glass-input:focus {
+            background: #ffffff !important;
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+        
+        /* Modal background updates */
+        #enrollModalBox, #learnMoreModalBox, #esewaModalBox {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #0f172a;
+        }
+        
+        /* Modal specific inputs */
+        .enroll-input {
+            background-color: #ffffff !important;
+            border: 1.5px solid #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+
+        .enroll-input:focus {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        /* Glowing blobs animation */
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+        .animate-blob-1 {
+            animation: float-slow 8s ease-in-out infinite;
+        }
+        .animate-blob-2 {
+            animation: float-slow 10s ease-in-out infinite 2s;
+        }
+    </style>
 </head>
-<body class="bg-white text-gray-900 flex flex-col min-h-screen relative overflow-x-hidden">
+<body class="bg-[#f8fafc] text-slate-800 flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <!-- Glowing Background blobs -->
+    <div class="absolute w-[500px] h-[500px] rounded-full bg-red-600/[0.02] blur-[120px] -top-40 -left-20 pointer-events-none animate-blob-1 z-0"></div>
+    <div class="absolute w-[600px] h-[600px] rounded-full bg-indigo-600/[0.02] blur-[140px] top-1/3 -right-20 pointer-events-none animate-blob-2 z-0"></div>
 
     <!-- ===================== TOP RED STRIP ===================== -->
-    <div class="w-full h-1 bg-gradient-to-r from-red-600 to-red-400"></div>
+    <div class="w-full h-1 bg-gradient-to-r from-red-600 to-red-400 z-50"></div>
 
     <!-- ===================== NAVBAR ===================== -->
-    <nav class="sticky top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
+    <nav class="sticky top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
 
                 <!-- Logo -->
                 <a href="#" class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-red-500 text-white flex items-center justify-center text-sm shadow-md shadow-red-200">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-red-500 text-white flex items-center justify-center text-sm shadow-md shadow-red-500/20">
                         <i class="fa-solid fa-graduation-cap"></i>
                     </div>
-                    <span class="text-xl font-extrabold tracking-tight text-gray-900">Mentor<span class="text-red-600">Guru</span></span>
+                    <span class="text-xl font-extrabold tracking-tight text-slate-900 heading-font">Mentor<span class="text-red-600">Guru</span></span>
                 </a>
 
                 <!-- Desktop Nav -->
                 <div class="hidden md:flex items-center gap-7">
-                    <a href="#" class="text-sm font-medium text-gray-600 hover:text-red-600 transition">Home</a>
-                    <a href="#courses" class="text-sm font-medium text-gray-600 hover:text-red-600 transition">Courses</a>
-                    <a href="#mentors" class="text-sm font-medium text-gray-600 hover:text-red-600 transition">Mentors</a>
-                    <a href="#about" class="text-sm font-medium text-gray-600 hover:text-red-600 transition">About</a>
-                    <a href="#contact" class="text-sm font-medium text-gray-600 hover:text-red-600 transition">Contact</a>
-                    <a href="#courses" class="btn-red py-2.5 px-5 text-sm rounded-xl">Explore Courses</a>
+                    <a href="#" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Home</a>
+                    <a href="#courses" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Courses</a>
+                    <a href="login.html?tab=signup&role=Student" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Join as Student</a>
+                    <a href="login.html?tab=signup&role=Mentor" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Become a Mentor</a>
+                    <a href="login.html" id="portalActionButton" class="btn-red py-2.5 px-5 text-sm rounded-xl">Access Portal</a>
                 </div>
 
                 <!-- Mobile Menu Btn -->
                 <div class="md:hidden">
-                    <button id="mobileMenuBtn" class="text-gray-500 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition">
+                    <button id="mobileMenuBtn" class="text-slate-600 hover:text-red-600 p-2 rounded-lg hover:bg-slate-100 transition">
                         <i class="fa-solid fa-bars text-xl"></i>
                     </button>
                 </div>
@@ -47,13 +142,12 @@
         </div>
 
         <!-- Mobile Drawer -->
-        <div id="mobileDrawer" class="hidden md:hidden absolute w-full left-0 bg-white border-b border-gray-100 shadow-lg px-4 py-5 space-y-3">
-            <a href="#" class="block text-base font-medium text-gray-700 hover:text-red-600 transition" onclick="toggleMobileMenu()">Home</a>
-            <a href="#courses" class="block text-base font-medium text-gray-700 hover:text-red-600 transition" onclick="toggleMobileMenu()">Courses</a>
-            <a href="#mentors" class="block text-base font-medium text-gray-700 hover:text-red-600 transition" onclick="toggleMobileMenu()">Mentors</a>
-            <a href="#about" class="block text-base font-medium text-gray-700 hover:text-red-600 transition" onclick="toggleMobileMenu()">About</a>
-            <a href="#contact" class="block text-base font-medium text-gray-700 hover:text-red-600 transition" onclick="toggleMobileMenu()">Contact</a>
-            <a href="#courses" class="btn-red block text-center py-3 text-sm rounded-xl" onclick="toggleMobileMenu()">Explore Courses</a>
+        <div id="mobileDrawer" class="hidden md:hidden absolute w-full left-0 bg-white/95 border-b border-slate-200 shadow-lg px-4 py-5 space-y-3 z-50 backdrop-blur-md">
+            <a href="#" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Home</a>
+            <a href="#courses" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Courses</a>
+            <a href="login.html?tab=signup&role=Student" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Join as Student</a>
+            <a href="login.html?tab=signup&role=Mentor" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Become a Mentor</a>
+            <a href="login.html" id="mobilePortalActionButton" class="btn-red block text-center py-3 text-sm rounded-xl" onclick="toggleMobileMenu()">Access Portal</a>
         </div>
     </nav>
 
@@ -64,24 +158,24 @@
                 <div class="section-label">
                     <i class="fa-solid fa-sparkles mr-1"></i> High-Performance Learning Ecosystem
                 </div>
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-tight">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight">
                     Learn From <span class="text-red-600">Experts</span>,<br>
                     Build Your Future.
                 </h1>
-                <p class="text-gray-500 text-lg leading-relaxed max-w-xl mx-auto md:mx-0">
+                <p class="text-slate-600 text-lg leading-relaxed max-w-xl mx-auto md:mx-0">
                     Join live training cohorts supervised by global architects. Build real projects, unlock credentials, and connect directly to placement opportunities.
                 </p>
                 <div class="flex flex-wrap justify-center md:justify-start gap-4">
                     <a href="#courses" class="btn-red py-3.5 px-8 rounded-xl text-sm">
                         Explore Courses
                     </a>
-                    <button onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'});" class="py-3.5 px-8 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-sm transition shadow-sm">
+                    <button onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'});" class="py-3.5 px-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm transition shadow-sm">
                         Learn More
                     </button>
                 </div>
             </div>
             <div class="relative flex justify-center items-center">
-                <div class="w-full max-w-[420px] h-[340px] bg-white rounded-2xl border border-gray-200 shadow-lg p-6 flex items-center justify-center relative overflow-hidden animate-float">
+                <div class="w-full max-w-[420px] h-[340px] bg-white rounded-2xl border border-slate-200 shadow-xl p-6 flex items-center justify-center relative overflow-hidden animate-float">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" class="w-full h-full relative z-10">
                         <defs>
                             <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -89,8 +183,8 @@
                                 <stop offset="100%" stop-color="#b91c1c"/>
                             </linearGradient>
                             <linearGradient id="grayGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#e5e7eb"/>
-                                <stop offset="100%" stop-color="#9ca3af"/>
+                                <stop offset="0%" stop-color="#334155"/>
+                                <stop offset="100%" stop-color="#1e293b"/>
                             </linearGradient>
                         </defs>
                         <path d="M250 80 L420 170 L250 260 L80 170 Z" fill="url(#redGrad)" filter="drop-shadow(0 6px 12px rgba(185,28,28,0.2))"/>
@@ -108,62 +202,62 @@
     </header>
 
     <!-- ===================== STATISTICS ===================== -->
-    <section class="border-y border-gray-100 bg-gray-50">
+    <section class="border-y border-slate-200 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-2 md:grid-cols-3 gap-8 text-center">
             <div class="space-y-1">
                 <p class="text-3xl sm:text-4xl font-extrabold text-red-600">12+ Live</p>
-                <p class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-gray-400">Professional Courses</p>
+                <p class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-500">Professional Courses</p>
             </div>
             <div class="space-y-1">
                 <p class="text-3xl sm:text-4xl font-extrabold text-red-600">4,800+</p>
-                <p class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-gray-400">Graduated Learners</p>
+                <p class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-500">Graduated Learners</p>
             </div>
             <div class="space-y-1 col-span-2 md:col-span-1">
                 <p class="text-3xl sm:text-4xl font-extrabold text-red-600">94% Rate</p>
-                <p class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-gray-400">Placement Support Link</p>
+                <p class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-500">Placement Support Link</p>
             </div>
         </div>
     </section>
 
     <!-- ===================== WHY CHOOSE US ===================== -->
-    <section id="about" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-16">
+    <section id="about" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-16 relative z-10">
         <div class="text-center max-w-3xl mx-auto space-y-3">
-            <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Why Learn With <span class="text-red-600">MentorGuru</span></h2>
-            <p class="text-gray-500">A training ecosystem engineered around high-touch live classes, professional certifications, and active corporate hiring pipelines.</p>
+            <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">Why Learn With <span class="text-red-600">MentorGuru</span></h2>
+            <p class="text-slate-600">A training ecosystem engineered around high-touch live classes, professional certifications, and active corporate hiring pipelines.</p>
         </div>
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="glass-card rounded-2xl p-6 space-y-4">
                 <div class="w-12 h-12 rounded-xl bg-red-50 border border-red-100 text-red-600 flex items-center justify-center text-xl"><i class="fa-solid fa-chalkboard-user"></i></div>
-                <h3 class="text-lg font-bold text-gray-900">Live Mentorship</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Real-time interactive code reviews, live troubleshooting labs, and project standups.</p>
+                <h3 class="text-lg font-bold text-slate-900">Live Mentorship</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Real-time interactive code reviews, live troubleshooting labs, and project standups.</p>
             </div>
             <div class="glass-card rounded-2xl p-6 space-y-4">
-                <div class="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200 text-gray-700 flex items-center justify-center text-xl"><i class="fa-solid fa-graduation-cap"></i></div>
-                <h3 class="text-lg font-bold text-gray-900">Global Credentials</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Verify your credentials globally with professional curriculum benchmarks.</p>
+                <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 flex items-center justify-center text-xl"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h3 class="text-lg font-bold text-slate-900">Global Credentials</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Verify your credentials globally with professional curriculum benchmarks.</p>
             </div>
             <div class="glass-card rounded-2xl p-6 space-y-4">
                 <div class="w-12 h-12 rounded-xl bg-red-50 border border-red-100 text-red-600 flex items-center justify-center text-xl"><i class="fa-solid fa-calendar-check"></i></div>
-                <h3 class="text-lg font-bold text-gray-900">Flexible Shifts</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Manage your career development around flexible morning and evening routines.</p>
+                <h3 class="text-lg font-bold text-slate-900">Flexible Shifts</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Manage your career development around flexible morning and evening routines.</p>
             </div>
             <div class="glass-card rounded-2xl p-6 space-y-4">
-                <div class="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200 text-gray-700 flex items-center justify-center text-xl"><i class="fa-solid fa-briefcase"></i></div>
-                <h3 class="text-lg font-bold text-gray-900">Placement Linkage</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Direct linkage pathways routing your verified profile logs straight to target recruiters.</p>
+                <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 flex items-center justify-center text-xl"><i class="fa-solid fa-briefcase"></i></div>
+                <h3 class="text-lg font-bold text-slate-900">Placement Linkage</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Direct linkage pathways routing your verified profile logs straight to target recruiters.</p>
             </div>
         </div>
     </section>
 
     <!-- ===================== COURSES ===================== -->
-    <section id="courses" class="bg-gray-50 border-y border-gray-100">
+    <section id="courses" class="bg-slate-50 border-y border-slate-200 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-12">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div class="space-y-3">
-                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Our Popular <span class="text-red-600">Live Programs</span></h2>
-                    <p class="text-gray-500 max-w-xl">Search and enroll in active cohorts spanning both core technology branches and corporate management channels.</p>
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">Our Popular <span class="text-red-600">Live Programs</span></h2>
+                    <p class="text-slate-600 max-w-xl">Search and enroll in active cohorts spanning both core technology branches and corporate management channels.</p>
                 </div>
-                <div class="inline-flex p-1 rounded-xl bg-white border border-gray-200 self-start md:self-auto shadow-sm">
+                <div class="inline-flex p-1 rounded-xl bg-white border border-slate-200 self-start md:self-auto shadow-sm">
                     <button onclick="switchCategory('all')" id="tab-all" class="tab-btn active px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg border border-transparent transition">All</button>
                     <button onclick="switchCategory('IT')" id="tab-IT" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg border border-transparent transition">IT Tracks</button>
                     <button onclick="switchCategory('Non-IT')" id="tab-Non-IT" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg border border-transparent transition">Non-IT Tracks</button>
@@ -174,91 +268,91 @@
     </section>
 
     <!-- ===================== MENTORS ===================== -->
-    <section id="mentors" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-16">
+    <section id="mentors" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-16 relative z-10">
         <div class="text-center max-w-3xl mx-auto space-y-3">
-            <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Supervised by <span class="text-red-600">Global Architects</span></h2>
-            <p class="text-gray-500">Learn from seasoned technology developers, directors, and marketing managers holding years of field exposure.</p>
+            <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 animate-fade-in">Supervised by <span class="text-red-600">Global Architects</span></h2>
+            <p class="text-slate-600">Learn from seasoned technology developers, directors, and marketing managers holding years of field exposure.</p>
         </div>
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="glass-card rounded-2xl p-6 text-center space-y-4">
                 <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-red-100" alt="Mentor">
                 <div>
-                    <h4 class="text-lg font-bold text-gray-900">Anupam K.C.</h4>
+                    <h4 class="text-lg font-bold text-slate-900">Anupam K.C.</h4>
                     <p class="text-red-600 text-xs font-semibold mt-1">Lead Cloud Architect &amp; DevOps Lead</p>
                 </div>
-                <p class="text-gray-500 text-xs">Ex-Senior DevOps Engineer at Silicon Valley firms.</p>
+                <p class="text-slate-500 text-xs">Ex-Senior DevOps Engineer at Silicon Valley firms.</p>
             </div>
             <div class="glass-card rounded-2xl p-6 text-center space-y-4">
-                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-gray-200" alt="Mentor">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-slate-200" alt="Mentor">
                 <div>
-                    <h4 class="text-lg font-bold text-gray-900">Shreya Baskota</h4>
-                    <p class="text-gray-600 text-xs font-semibold mt-1">Senior Data Scientist</p>
+                    <h4 class="text-lg font-bold text-slate-900">Shreya Baskota</h4>
+                    <p class="text-slate-500 text-xs font-semibold mt-1">Senior Data Scientist</p>
                 </div>
-                <p class="text-gray-500 text-xs">Analytics Lead specializing in AI Models and Python.</p>
+                <p class="text-slate-500 text-xs">Analytics Lead specializing in AI Models and Python.</p>
             </div>
             <div class="glass-card rounded-2xl p-6 text-center space-y-4">
                 <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-red-100" alt="Mentor">
                 <div>
-                    <h4 class="text-lg font-bold text-gray-900">Sujan Shrestha</h4>
+                    <h4 class="text-lg font-bold text-slate-900">Sujan Shrestha</h4>
                     <p class="text-red-600 text-xs font-semibold mt-1">SEO Director &amp; Digital Marketer</p>
                 </div>
-                <p class="text-gray-500 text-xs">Google Certified Web Strategist for corporate scaling.</p>
+                <p class="text-slate-500 text-xs">Google Certified Web Strategist for corporate scaling.</p>
             </div>
             <div class="glass-card rounded-2xl p-6 text-center space-y-4">
-                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-gray-200" alt="Mentor">
+                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-slate-200" alt="Mentor">
                 <div>
-                    <h4 class="text-lg font-bold text-gray-900">Pramila Devkota</h4>
-                    <p class="text-gray-600 text-xs font-semibold mt-1">UI/UX Consultant &amp; Product Lead</p>
+                    <h4 class="text-lg font-bold text-slate-900">Pramila Devkota</h4>
+                    <p class="text-slate-550 text-slate-500 text-xs">Product Architect with extensive experience in system designs.</p>
                 </div>
-                <p class="text-gray-500 text-xs">Product Architect with extensive experience in system designs.</p>
+                <p class="text-slate-500 text-xs">Product Architect with extensive experience in system designs.</p>
             </div>
         </div>
     </section>
 
     <!-- ===================== TESTIMONIALS ===================== -->
-    <section class="bg-gray-50 border-y border-gray-100">
+    <section class="bg-slate-50 border-y border-slate-200 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-16">
             <div class="text-center max-w-3xl mx-auto space-y-3">
-                <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Learners' <span class="text-red-600">Success Stories</span></h2>
-                <p class="text-gray-500">Read verified career reviews logged by students who graduated from our live cohorts.</p>
+                <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 font-outfit">Learners' <span class="text-red-600">Success Stories</span></h2>
+                <p class="text-slate-650 text-slate-600">Read verified career reviews logged by students who graduated from our live cohorts.</p>
             </div>
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
                     <div class="space-y-4">
                         <div class="flex text-red-500 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                        <p class="text-gray-600 text-sm leading-relaxed">"The interactive doubt clearing sessions changed how I write code. The Flutter curriculum was completely aligned with real-world problems. Secured a full-time role immediately!"</p>
+                        <p class="text-slate-700 text-sm leading-relaxed">"The interactive doubt clearing sessions changed how I write code. The Flutter curriculum was completely aligned with real-world problems. Secured a full-time role immediately!"</p>
                     </div>
-                    <div class="flex items-center gap-4 mt-6 pt-5 border-t border-gray-100">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-gray-200" alt="Student">
+                    <div class="flex items-center gap-4 mt-6 pt-5 border-t border-slate-200">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-slate-200" alt="Student">
                         <div>
-                            <h4 class="text-sm font-bold text-gray-900">Aparna Karki</h4>
-                            <p class="text-xs text-gray-400">Flutter Developer, Logpoint</p>
+                            <h4 class="text-sm font-bold text-slate-900">Aparna Karki</h4>
+                            <p class="text-xs text-slate-500">Flutter Developer, Logpoint</p>
                         </div>
                     </div>
                 </div>
                 <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
                     <div class="space-y-4">
                         <div class="flex text-red-500 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
-                        <p class="text-gray-600 text-sm leading-relaxed">"Advanced SEO course details are highly customized. The strategies I learned during the live lab allowed me to organically double web sessions for my current agency client."</p>
+                        <p class="text-slate-700 text-sm leading-relaxed">"Advanced SEO course details are highly customized. The strategies I learned during the live lab allowed me to organically double web sessions for my current agency client."</p>
                     </div>
-                    <div class="flex items-center gap-4 mt-6 pt-5 border-t border-gray-100">
-                        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-gray-200" alt="Student">
+                    <div class="flex items-center gap-4 mt-6 pt-5 border-t border-slate-200">
+                        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-slate-200" alt="Student">
                         <div>
-                            <h4 class="text-sm font-bold text-gray-900">Niranjan Adhikari</h4>
-                            <p class="text-xs text-gray-400">Marketing Lead, SEO Desk</p>
+                            <h4 class="text-sm font-bold text-slate-900">Niranjan Adhikari</h4>
+                            <p class="text-xs text-slate-500">Marketing Lead, SEO Desk</p>
                         </div>
                     </div>
                 </div>
                 <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
                     <div class="space-y-4">
                         <div class="flex text-red-500 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                        <p class="text-gray-600 text-sm leading-relaxed">"MentorGuru's UI/UX program is exceptionally designed. Going through layout wireframes, interactive user testing, and building case studies was an elite process."</p>
+                        <p class="text-slate-700 text-sm leading-relaxed">"MentorGuru's UI/UX program is exceptionally designed. Going through layout wireframes, interactive user testing, and building case studies was an elite process."</p>
                     </div>
-                    <div class="flex items-center gap-4 mt-6 pt-5 border-t border-gray-100">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-gray-200" alt="Student">
+                    <div class="flex items-center gap-4 mt-6 pt-5 border-t border-slate-200">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-slate-200" alt="Student">
                         <div>
-                            <h4 class="text-sm font-bold text-gray-900">Pooja Sharma</h4>
-                            <p class="text-xs text-gray-400">UI/UX Designer, Leapfrog</p>
+                            <h4 class="text-sm font-bold text-slate-900">Pooja Sharma</h4>
+                            <p class="text-xs text-slate-500">UI/UX Designer, Leapfrog</p>
                         </div>
                     </div>
                 </div>
@@ -267,33 +361,33 @@
     </section>
 
     <!-- ===================== PARTNER MARQUEE ===================== -->
-    <section class="py-14 bg-white overflow-hidden">
+    <section class="py-14 bg-white border-b border-slate-200 overflow-hidden relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 text-center">
-            <p class="text-xs font-bold uppercase tracking-wider text-red-600">Accelerated Students Hiring Partners</p>
+            <p class="text-xs font-bold uppercase tracking-wider text-red-655 text-red-600">Accelerated Students Hiring Partners</p>
         </div>
-        <div class="marquee-wrapper">
-            <div class="marquee-content gap-16 text-gray-300 text-2xl font-bold tracking-tight uppercase">
-                <span><i class="fa-brands fa-google text-red-300 mr-2"></i> Google</span>
-                <span><i class="fa-brands fa-microsoft text-red-300 mr-2"></i> Microsoft</span>
-                <span><i class="fa-brands fa-amazon text-red-300 mr-2"></i> Amazon Web Services</span>
-                <span><i class="fa-brands fa-meta text-red-300 mr-2"></i> Meta</span>
-                <span><i class="fa-brands fa-github text-red-300 mr-2"></i> GitHub Enterprise</span>
-                <span><i class="fa-brands fa-figma text-red-300 mr-2"></i> Figma System</span>
+        <div class="marquee-wrapper animate-fade-in">
+            <div class="marquee-content gap-16 text-slate-400/80 text-2xl font-bold tracking-tight uppercase">
+                <span><i class="fa-brands fa-google text-red-500/20 mr-2"></i> Google</span>
+                <span><i class="fa-brands fa-microsoft text-red-500/20 mr-2"></i> Microsoft</span>
+                <span><i class="fa-brands fa-amazon text-red-500/20 mr-2"></i> Amazon Web Services</span>
+                <span><i class="fa-brands fa-meta text-red-500/20 mr-2"></i> Meta</span>
+                <span><i class="fa-brands fa-github text-red-500/20 mr-2"></i> GitHub Enterprise</span>
+                <span><i class="fa-brands fa-figma text-red-500/20 mr-2"></i> Figma System</span>
                 <!-- Duplicate for infinite effect -->
-                <span><i class="fa-brands fa-google text-red-300 mr-2"></i> Google</span>
-                <span><i class="fa-brands fa-microsoft text-red-300 mr-2"></i> Microsoft</span>
-                <span><i class="fa-brands fa-amazon text-red-300 mr-2"></i> Amazon Web Services</span>
-                <span><i class="fa-brands fa-meta text-red-300 mr-2"></i> Meta</span>
-                <span><i class="fa-brands fa-github text-red-300 mr-2"></i> GitHub Enterprise</span>
-                <span><i class="fa-brands fa-figma text-red-300 mr-2"></i> Figma System</span>
+                <span><i class="fa-brands fa-google text-red-500/20 mr-2"></i> Google</span>
+                <span><i class="fa-brands fa-microsoft text-red-500/20 mr-2"></i> Microsoft</span>
+                <span><i class="fa-brands fa-amazon text-red-500/20 mr-2"></i> Amazon Web Services</span>
+                <span><i class="fa-brands fa-meta text-red-500/20 mr-2"></i> Meta</span>
+                <span><i class="fa-brands fa-github text-red-500/20 mr-2"></i> GitHub Enterprise</span>
+                <span><i class="fa-brands fa-figma text-red-500/20 mr-2"></i> Figma System</span>
             </div>
         </div>
     </section>
 
     <!-- ===================== CONTACT ===================== -->
     <section id="contact" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div class="bg-white rounded-3xl overflow-hidden grid lg:grid-cols-5 border border-gray-200 shadow-lg">
-            <div class="lg:col-span-2 bg-gradient-to-br from-red-600 to-red-700 p-8 sm:p-12 flex flex-col justify-between text-white">
+        <div class="bg-white rounded-3xl overflow-hidden grid lg:grid-cols-5 border border-slate-200 shadow-2xl relative z-10">
+            <div class="lg:col-span-2 bg-gradient-to-br from-red-600 to-rose-600 p-8 sm:p-12 flex flex-col justify-between text-white">
                 <div class="space-y-5">
                     <h3 class="text-2xl font-bold">Connect Desk</h3>
                     <p class="text-red-100 text-sm leading-relaxed">Reach out to our counseling officers to map your schedules, fee structures, and placement opportunities.</p>
@@ -318,20 +412,20 @@
                 <form id="contactForm" class="space-y-5">
                     <div class="grid sm:grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">First Name</label>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">First Name</label>
                             <input type="text" id="contactFirst" class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="John" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Last Name</label>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Last Name</label>
                             <input type="text" id="contactLast" class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="Doe" required>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Email Address</label>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Email Address</label>
                         <input type="email" id="contactEmail" class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="john@example.com" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">How can we help?</label>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">How can we help?</label>
                         <textarea id="contactMessage" class="w-full px-4 py-3 rounded-xl glass-input text-sm h-32 resize-none" placeholder="Tell us about the career track you are exploring..." required></textarea>
                     </div>
                     <button type="submit" class="btn-red py-3 px-8 rounded-xl text-sm">
@@ -343,44 +437,44 @@
     </section>
 
     <!-- ===================== FOOTER ===================== -->
-    <footer class="mt-auto border-t border-gray-200 bg-gray-50 pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-4 gap-12 pb-12 border-b border-gray-200">
+    <footer class="mt-auto border-t border-slate-200 bg-white pt-16 pb-8 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-4 gap-12 pb-12 border-b border-slate-200">
             <div class="space-y-4">
                 <a href="#" class="flex items-center gap-2.5">
                     <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-red-500 text-white flex items-center justify-center text-sm shadow-sm">
                         <i class="fa-solid fa-graduation-cap"></i>
                     </div>
-                    <span class="text-xl font-extrabold text-gray-900">Mentor<span class="text-red-600">Guru</span></span>
+                    <span class="text-xl font-extrabold text-slate-900 heading-font">Mentor<span class="text-red-600">Guru</span></span>
                 </a>
-                <p class="text-gray-500 text-sm leading-relaxed">
+                <p class="text-slate-600 text-sm leading-relaxed">
                     An educational ecosystem optimized to bridge talent gaps by deploying live interactive industry masterclasses.
                 </p>
                 <div class="flex gap-3">
-                    <a href="#" class="w-9 h-9 rounded-lg bg-white border border-gray-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-gray-400 transition shadow-sm"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" class="w-9 h-9 rounded-lg bg-white border border-gray-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-gray-400 transition shadow-sm"><i class="fa-brands fa-linkedin-in"></i></a>
-                    <a href="#" class="w-9 h-9 rounded-lg bg-white border border-gray-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-gray-400 transition shadow-sm"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-slate-500 transition shadow-sm"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-slate-500 transition shadow-sm"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-slate-500 transition shadow-sm"><i class="fa-brands fa-youtube"></i></a>
                 </div>
             </div>
             <div class="space-y-4">
-                <h4 class="text-sm font-semibold uppercase tracking-wider text-gray-900">Admissions Desk</h4>
-                <ul class="space-y-2.5 text-sm text-gray-500">
+                <h4 class="text-sm font-semibold uppercase tracking-wider text-slate-800">Admissions Desk</h4>
+                <ul class="space-y-2.5 text-sm text-slate-600">
                     <li><a href="#courses" class="hover:text-red-600 transition">Explore Cohorts</a></li>
                     <li><a href="#about" class="hover:text-red-600 transition">System Benefits</a></li>
                     <li><a href="#contact" class="hover:text-red-600 transition">Contact Counselors</a></li>
                 </ul>
             </div>
             <div class="space-y-4">
-                <h4 class="text-sm font-semibold uppercase tracking-wider text-gray-900">Admin Portal</h4>
-                <ul class="space-y-2.5 text-sm text-gray-500">
-                    <li><a href="login.html" target="_blank" class="text-red-600 hover:text-red-700 font-semibold transition"><i class="fa-solid fa-user-shield mr-1"></i> Console Control Panel</a></li>
+                <h4 class="text-sm font-semibold uppercase tracking-wider text-slate-800">Admin Portal</h4>
+                <ul class="space-y-2.5 text-sm text-slate-600">
+                    <li><a href="admin_login.html" target="_blank" class="text-red-650 hover:text-red-500 font-semibold transition"><i class="fa-solid fa-user-shield mr-1"></i> Console Control Panel</a></li>
                 </ul>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
             <span>&copy; 2026 MentorGuru Educational Ecosystem. All rights reserved.</span>
             <div class="flex gap-6">
-                <a href="#" class="hover:text-red-600 transition">Terms of Service</a>
-                <a href="#" class="hover:text-red-600 transition">Privacy Policy</a>
+                <a href="#" class="hover:text-red-500 transition">Terms of Service</a>
+                <a href="#" class="hover:text-red-500 transition">Privacy Policy</a>
             </div>
         </div>
     </footer>
@@ -501,6 +595,14 @@
                     <div>
                         <span class="block text-gray-400 font-semibold uppercase tracking-wider mb-1">Mode</span>
                         <span class="text-gray-800 font-medium" id="infoCourseMode">-</span>
+                    </div>
+                </div>
+                
+                <!-- Syllabus Curriculum Modules List -->
+                <div class="border-t border-gray-150 pt-4 space-y-2">
+                    <span class="block text-gray-400 text-xs font-bold uppercase tracking-wider">Syllabus Curriculum</span>
+                    <div id="infoCourseModules" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                        <!-- Loaded dynamically -->
                     </div>
                 </div>
             </div>
