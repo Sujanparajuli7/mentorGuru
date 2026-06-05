@@ -3,2154 +3,1078 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MentorGuru | Superuser Command Center</title>
-    <meta name="description" content="MentorGuru administrative console for verifying and managing students and mentors.">
-
-    <!-- Tailwind CSS & FontAwesome -->
+    <title>MentorGuru | Admin Dashboard</title>
+    <meta name="description" content="MentorGuru Admin Control Center - Manage students, mentors, accounts, credentials, and system access.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
         .heading-font { font-family: 'Outfit', sans-serif; }
-
-        /* ===== DASHBOARD STYLES ===== */
-        .glass-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .sidebar-link {
+            color: #6b7280;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
         }
-        .glass-card:hover {
-            border-color: #fca5a5;
-            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.05);
-            transform: translateY(-2px);
+        .sidebar-link:hover {
+            background: #fee2e2;
+            color: #dc2626;
         }
-        .sidebar-link { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
         .sidebar-link.active {
             background: #fee2e2;
-            border-left: 4px solid #dc2626;
+            border-left: 3px solid #dc2626;
             color: #dc2626;
             font-weight: 600;
         }
-        .btn-red {
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
-            color: #fff;
+        .glass-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             transition: all 0.3s;
         }
-        .btn-red:hover { background: linear-gradient(135deg, #ef4444, #dc2626); }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f8fafc; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        /* ===== LOGIN OVERLAY STYLES ===== */
-        .login-glass {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+        .glass-card:hover {
+            border-color: #fca5a5;
+            box-shadow: 0 8px 24px rgba(220,38,38,0.12);
         }
-        .login-input {
-            background: #ffffff;
-            border: 1.5px solid #e2e8f0;
-            color: #0f172a;
+        .btn-primary {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
             transition: all 0.3s;
         }
-        .login-input:focus {
-            background: #ffffff;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.2);
+        }
+        .badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-active { background: #d1fae5; color: #059669; }
+        .badge-pending { background: #fef3c7; color: #d97706; }
+        .badge-suspended { background: #fee2e2; color: #dc2626; }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+        }
+        .form-input:focus {
+            outline: none;
             border-color: #dc2626;
             box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        .alert-success {
+            background: #d1fae5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+        }
+        .alert-error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        .alert-warning {
+            background: #fef3c7;
+            color: #d97706;
+            border: 1px solid #fde68a;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #f9fafb;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        tr:hover {
+            background: #f9fafb;
+        }
+        .action-btn {
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        .btn-edit {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .btn-edit:hover {
+            background: #bfdbfe;
+        }
+        .btn-reset {
+            background: #fed7aa;
+            color: #92400e;
+        }
+        .btn-reset:hover {
+            background: #fdba74;
+        }
+        .btn-deactivate {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .btn-deactivate:hover {
+            background: #fecaca;
+        }
+        .btn-activate {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .btn-activate:hover {
+            background: #a7f3d0;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide {
+            animation: slideDown 0.3s ease-out;
+        }
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            border-bottom-color: #dc2626;
+            color: #dc2626;
+        }
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 0.75rem;
+            transition: all 0.3s;
+        }
+        .search-box input:focus {
             outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
         }
-        .login-input::placeholder { color: #94a3b8; }
-        @keyframes float-slow {
-            0%,100% { transform: translateY(0) scale(1); }
-            50%      { transform: translateY(-18px) scale(1.04); }
+        .search-box i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
         }
-        .blob1 { animation: float-slow 7s ease-in-out infinite; }
-        .blob2 { animation: float-slow 9s ease-in-out infinite 1s; }
-        @keyframes shake {
-            0%,100% { transform: translateX(0); }
-            20%,60%  { transform: translateX(-6px); }
-            40%,80%  { transform: translateX(6px); }
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
         }
-        .animate-shake { animation: shake 0.4s ease-in-out; }
-        @keyframes fadeIn { from { opacity:0; transform:scale(0.97); } to { opacity:1; transform:scale(1); } }
-        .anim-fadein { animation: fadeIn 0.35s ease forwards; }
-
-        /* ===== MODE BADGE ===== */
-        .badge-online   { background: rgba(14, 116, 144, 0.08); color: #0e7490; border: 1px solid rgba(14, 116, 144, 0.15); }
-        .badge-physical { background: rgba(21, 128, 61, 0.08); color: #15803d; border: 1px solid rgba(21, 128, 61, 0.15); }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #dc2626;
+        }
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
     </style>
 </head>
-<body class="min-h-screen text-slate-800 bg-slate-50 overflow-hidden">
+<body class="bg-gray-50 flex min-h-screen">
 
-<!-- =====================================================================
-     LOGIN OVERLAY — shown when not authenticated
-====================================================================== -->
-<div id="loginOverlay" class="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-     style="background: radial-gradient(circle at 50% 50%, #fef2f2 0%, #f8fafc 100%);">
+    <!-- AUTH CHECK -->
+    <script>
+        if (localStorage.getItem('mentorGuruAdmin') !== 'true') {
+            window.location.replace('admin_login.html');
+        }
+    </script>
 
-    <!-- Glowing blobs -->
-    <div class="absolute w-[450px] h-[450px] rounded-full bg-red-600/[0.02] blur-[130px] -top-32 -left-20 pointer-events-none blob1"></div>
-    <div class="absolute w-[450px] h-[450px] rounded-full bg-rose-600/[0.01] blur-[120px] -bottom-40 -right-20 pointer-events-none blob2"></div>
-
-    <!-- Card -->
-    <div id="loginCard" class="w-full max-w-md login-glass rounded-3xl shadow-xl p-8 z-10 relative overflow-hidden transition-all duration-500 hover:border-red-500/10">
-        <!-- Cyberpunk top accent -->
-        <div class="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-red-600 to-rose-500"></div>
-
-        <!-- Logo -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-red-600 to-rose-500 text-white text-2xl mb-4 shadow-lg shadow-red-500/20">
-                <i class="fa-solid fa-shield-halved"></i>
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm">
+        <div class="h-16 border-b border-gray-100 flex items-center px-6 gap-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-red-500 text-white flex items-center justify-center shadow-md">
+                <i class="fa-solid fa-shield-halved text-sm"></i>
             </div>
-            <h1 class="text-xl font-bold tracking-tight text-slate-900 heading-font uppercase">SOC Command Node</h1>
-            <p class="text-xs text-red-600 mt-1 uppercase tracking-widest">MentorGuru Security Operations Center</p>
+            <span class="text-lg font-bold text-gray-900 heading-font">Mentor<span class="text-red-600">Guru</span></span>
         </div>
 
-        <!-- Error banner -->
-        <div id="loginAlertBanner" class="hidden mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-center gap-3">
-            <i class="fa-solid fa-triangle-exclamation text-red-600 text-base flex-shrink-0 animate-pulse"></i>
-            <p id="loginAlertMsg" class="font-medium"></p>
-        </div>
-
-        <!-- Form -->
-        <form id="adminLoginForm" class="space-y-5" onsubmit="handleAdminLogin(event)" novalidate>
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Administrative Token ID</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-red-500/60"><i class="fa-solid fa-id-badge"></i></span>
-                    <input type="text" id="loginUsername" class="w-full pl-10 pr-4 py-3 rounded-xl login-input text-sm" placeholder="Username" required>
-                </div>
-            </div>
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Operations Passphrase</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-red-500/60"><i class="fa-solid fa-key"></i></span>
-                    <input type="password" id="loginPassword" class="w-full pl-10 pr-11 py-3 rounded-xl login-input text-sm" placeholder="••••••••" required>
-                    <button type="button" onclick="toggleLoginPw()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-red-500/60 hover:text-red-650 transition">
-                        <i id="loginEyeIcon" class="fa-solid fa-eye"></i>
-                    </button>
-                </div>
-            </div>
-            <button type="submit" class="w-full bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all duration-300 text-xs uppercase tracking-wider mt-2 border border-red-500/10">
-                <i class="fa-solid fa-terminal mr-2"></i>Authenticate Credentials
+        <nav class="flex-grow py-6 px-3 space-y-1">
+            <button onclick="switchView('dashboard')" class="sidebar-link active w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition">
+                <i class="fa-solid fa-gauge-high w-4"></i> Dashboard
             </button>
-        </form>
-
-        <div class="mt-8 pt-6 border-t border-slate-200 text-center">
-            <a href="index.html" class="text-xs text-slate-500 hover:text-red-600 transition inline-flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left text-[10px]"></i> Return to Public Gate
-            </a>
-        </div>
-    </div>
-</div>
-
-<!-- =====================================================================
-     DASHBOARD — shown after authentication
-====================================================================== -->
-<div id="dashboard" class="min-h-screen flex text-slate-800 bg-slate-50 overflow-hidden hidden">
-
-    <!-- =================== SIDEBAR =================== -->
-    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col z-20 flex-shrink-0">
-        <div class="h-20 border-b border-slate-100 flex items-center px-6 gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/20">
-                <i class="fa-solid fa-graduation-cap text-lg"></i>
-            </div>
-            <span class="text-lg font-bold tracking-tight heading-font text-slate-900">Mentor<span class="text-red-500">Guru</span></span>
-        </div>
-        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
-            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Access Scope</p>
-            <div class="flex items-center gap-2 mt-1">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-xs font-bold text-slate-700">Root Administrator</span>
-            </div>
-        </div>
-        <nav class="flex-grow py-6 px-4 space-y-1.5 overflow-y-auto">
-            <button onclick="switchView('dashboard')" id="nav-dashboard" class="sidebar-link active w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50">
-                <i class="fa-solid fa-chart-pie w-4"></i> Dashboard Overview
+            <button onclick="switchView('students')" class="sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition">
+                <i class="fa-solid fa-graduation-cap w-4"></i> Students
             </button>
-            <div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Review Ledger</div>
-            <button onclick="switchView('students')" id="nav-students" class="sidebar-link w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50">
-                <i class="fa-solid fa-user-graduate w-4"></i> Students Log
+            <button onclick="switchView('mentors')" class="sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition">
+                <i class="fa-solid fa-chalkboard-user w-4"></i> Mentors
             </button>
-            <button onclick="switchView('mentors')" id="nav-mentors" class="sidebar-link w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50">
-                <i class="fa-solid fa-chalkboard-user w-4"></i> Mentors Desk
+            <button onclick="switchView('activity')" class="sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition">
+                <i class="fa-solid fa-history w-4"></i> Activity Logs
             </button>
-            <button onclick="switchView('courses')" id="nav-courses" class="sidebar-link w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50">
-                <i class="fa-solid fa-book-open w-4"></i> Course Manager
-            </button>
-            <button onclick="switchView('enrollments')" id="nav-enrollments" class="sidebar-link w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50">
-                <i class="fa-solid fa-clipboard-list w-4"></i> Enrollments
-                <span id="enrollBadgeCount" style="display:none" class="ml-auto inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[9px] font-bold"></span>
-            </button>
-            <button onclick="switchView('requests')" id="nav-requests" class="sidebar-link w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50">
-                <i class="fa-solid fa-code-pull-request w-4"></i> Course Requests
-                <span id="requestsBadgeCount" style="display:none" class="ml-auto inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[9px] font-bold"></span>
-            </button>
-            <button onclick="switchView('chat')" id="nav-chat" class="sidebar-link w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50">
-                <i class="fa-solid fa-messages w-4"></i> Messages
-            </button>
-            <button onclick="switchView('payments')" id="nav-payments" class="sidebar-link w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-50">
-                <i class="fa-solid fa-wallet w-4"></i> Payment Ledger
+            <button onclick="switchView('settings')" class="sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition">
+                <i class="fa-solid fa-gear w-4"></i> Settings
             </button>
         </nav>
-        <div class="p-4 border-t border-slate-100">
-            <button onclick="logoutAdmin()" class="w-full flex items-center justify-center gap-2 py-3 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 rounded-xl text-xs font-bold text-red-650 uppercase tracking-wider transition-all duration-300">
+
+        <div class="p-4 border-t border-gray-100 space-y-3">
+            <button onclick="logoutAdmin()" class="w-full flex items-center justify-center gap-2 py-2.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg text-xs font-bold text-red-600 transition">
                 <i class="fa-solid fa-right-from-bracket"></i> Sign Out
             </button>
         </div>
     </aside>
 
-    <!-- =================== MAIN CONTENT =================== -->
-    <main class="flex-grow h-screen overflow-y-auto flex flex-col bg-slate-50">
-
-        <!-- Header Bar -->
-        <header class="h-20 bg-white/95 backdrop-blur-md border-b border-slate-200 px-8 flex justify-between items-center sticky top-0 z-10">
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow h-screen overflow-y-auto">
+        <!-- TOP HEADER -->
+        <header class="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center sticky top-0 z-10 shadow-sm">
             <div>
-                <h1 class="text-xl font-bold tracking-tight text-slate-900 heading-font" id="viewHeaderTitle">Dashboard Overview</h1>
-                <p class="text-xs text-slate-400 mt-0.5">Real-time gatekeeper monitoring hub</p>
+                <h1 class="text-2xl font-bold text-gray-900" id="viewTitle">Dashboard</h1>
+                <p class="text-xs text-gray-400 mt-1">MentorGuru Admin Control Center</p>
             </div>
-            <div class="flex items-center gap-6">
-                <div class="hidden md:flex flex-col text-right">
-                    <span id="currentTime" class="text-xs font-semibold text-slate-600"></span>
-                    <span class="text-[10px] text-slate-400">System Time</span>
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-sm font-semibold text-gray-800">Admin User</p>
+                    <p class="text-xs text-gray-400">Super Administrator</p>
                 </div>
-                <div class="hidden md:block h-8 w-[1px] bg-slate-200"></div>
-                <div class="flex items-center gap-3">
-                    <div class="text-right">
-                        <p class="text-xs font-bold text-slate-800">Suzzan Admin</p>
-                        <p class="text-[10px] text-slate-400">Suzzan9</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 text-white flex items-center justify-center font-bold text-sm shadow-md">SA</div>
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-600 to-red-500 text-white flex items-center justify-center text-sm font-bold shadow-sm">
+                    <i class="fa-solid fa-user-shield"></i>
                 </div>
             </div>
         </header>
 
-        <!-- Views Container -->
-        <div class="p-8 flex-grow overflow-y-auto">
+        <div class="p-8">
+            <!-- ALERTS -->
+            <div id="alertContainer"></div>
 
-            <!-- ===== DASHBOARD VIEW ===== -->
-            <div id="view-dashboard" class="view-panel space-y-8">
-                <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-red-50 via-indigo-50/20 to-slate-50 border border-red-100 p-8 shadow-sm">
-                    <div class="max-w-xl space-y-2">
-                        <span class="px-2.5 py-1 text-[10px] font-bold bg-red-100 border border-red-200 text-red-600 uppercase tracking-widest rounded-full">System Gatekeeper Active</span>
-                        <h2 class="text-2xl font-bold text-slate-900 heading-font pt-2">Welcome Back, Administrator!</h2>
-                        <p class="text-sm text-slate-650 leading-relaxed">Monitor the registration queues, manage account verification gates, and control gateway access permissions in real-time.</p>
+            <!-- DASHBOARD VIEW -->
+            <div id="view-dashboard" class="view-section space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalStudents">0</div>
+                        <div class="stat-label">Total Students</div>
                     </div>
-                    <div class="absolute right-10 bottom-4 opacity-[0.03] hidden lg:block">
-                        <i class="fa-solid fa-shield-halved text-[150px] text-red-500"></i>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalMentors">0</div>
+                        <div class="stat-label">Total Mentors</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeAccounts">0</div>
+                        <div class="stat-label">Active Accounts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="pendingApprovals">0</div>
+                        <div class="stat-label">Pending Approvals</div>
                     </div>
                 </div>
 
-                <!-- KPI Cards -->
-                <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-5">
-                    <div class="glass-card rounded-2xl p-5 hover:border-slate-300 transition-all flex flex-col justify-between bg-white border border-slate-200 shadow-sm">
-                        <div class="flex justify-between items-start">
-                            <div class="space-y-1">
-                                <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Total Students</p>
-                                <h3 id="statTotalStudents" class="text-3xl font-bold heading-font text-slate-900">0</h3>
-                            </div>
-                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center text-lg"><i class="fa-solid fa-user-graduate"></i></div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Activity</h3>
+                        <div id="recentActivityList" class="space-y-3 max-h-64 overflow-y-auto">
+                            <p class="text-sm text-gray-500">No recent activity</p>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-xs text-slate-400"><i class="fa-solid fa-arrow-trend-up text-emerald-500"></i> Enrolled profiles</div>
                     </div>
-                    <div class="glass-card rounded-2xl p-5 hover:border-slate-300 transition-all flex flex-col justify-between bg-white border border-slate-200 shadow-sm">
-                        <div class="flex justify-between items-start">
-                            <div class="space-y-1">
-                                <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Total Mentors</p>
-                                <h3 id="statTotalMentors" class="text-3xl font-bold heading-font text-slate-900">0</h3>
-                            </div>
-                            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center text-lg"><i class="fa-solid fa-chalkboard-user"></i></div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-xs text-slate-400"><i class="fa-solid fa-shield text-indigo-400"></i> Teaching tracks</div>
-                    </div>
-                    <div class="glass-card rounded-2xl p-5 hover:border-slate-300 transition-all flex flex-col justify-between bg-white border border-slate-200 shadow-sm">
-                        <div class="flex justify-between items-start">
-                            <div class="space-y-1">
-                                <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Total Courses</p>
-                                <h3 id="statTotalCourses" class="text-3xl font-bold heading-font text-slate-900">0</h3>
-                            </div>
-                            <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-100 flex items-center justify-center text-lg"><i class="fa-solid fa-book-open"></i></div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-xs text-slate-400"><i class="fa-solid fa-graduation-cap text-red-500"></i> Course catalog</div>
-                    </div>
-                    <div class="glass-card rounded-2xl p-5 hover:border-slate-300 transition-all flex flex-col justify-between bg-white border border-slate-200 shadow-sm">
-                        <div class="flex justify-between items-start">
-                            <div class="space-y-1">
-                                <p class="text-[11px] font-semibold uppercase tracking-wider text-emerald-600">Total Payments</p>
-                                <h3 id="statTotalPayments" class="text-3xl font-bold heading-font text-emerald-600">0</h3>
-                            </div>
-                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center text-lg"><i class="fa-solid fa-wallet"></i></div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-xs text-slate-400"><i class="fa-solid fa-circle-check text-emerald-500"></i> Verified payments</div>
-                    </div>
-                    <div class="glass-card rounded-2xl p-5 border-amber-250 bg-amber-50/40 hover:border-amber-300 transition-all flex flex-col justify-between shadow-sm">
-                        <div class="flex justify-between items-start">
-                            <div class="space-y-1">
-                                <p class="text-[11px] font-semibold uppercase tracking-wider text-amber-600">Pending Reviews</p>
-                                <h3 id="statPendingReviews" class="text-3xl font-bold heading-font text-amber-600 animate-pulse">0</h3>
-                            </div>
-                            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center text-lg"><i class="fa-solid fa-hourglass-half"></i></div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-xs text-slate-400"><i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Awaiting approval</div>
-                    </div>
-                </div>
-
-                <!-- Recent Registrations -->
-                <div class="grid lg:grid-cols-3 gap-6">
-                    <div class="glass-card rounded-2xl p-6 lg:col-span-2 space-y-4 bg-white border border-slate-200 shadow-sm">
-                        <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-                            <h4 class="font-bold text-slate-800 heading-font flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-red-500"></i> Recent Registrations Queue</h4>
-                            <span class="text-xs text-slate-400">Review status logs</span>
-                        </div>
-                        <div class="space-y-3 overflow-y-auto max-h-[300px] pr-2" id="recentRegistrationsList"></div>
-                    </div>
-                    <div class="glass-card rounded-2xl p-6 space-y-4 bg-white border border-slate-200 shadow-sm">
-                        <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-                            <h4 class="font-bold text-slate-800 heading-font flex items-center gap-2"><i class="fa-solid fa-shield-virus text-red-500"></i> Security Gate Guard</h4>
-                            <span class="text-xs text-slate-400 animate-pulse flex items-center gap-1"><span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span> Active</span>
-                        </div>
-                        <div class="space-y-4 text-xs">
-                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                                <div class="flex justify-between font-bold text-slate-700"><span>Superuser Access Only</span><span class="text-emerald-600">Secure</span></div>
-                                <p class="text-[11px] text-slate-500">Admin tokens are session-locked. Closing the browser terminates the token automatically.</p>
-                            </div>
-                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                                <div class="flex justify-between font-bold text-slate-700"><span>Database Integrity</span><span class="text-emerald-600">Indexed</span></div>
-                                <p class="text-[11px] text-slate-500">Profiles saved in <code class="text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded font-mono text-[10px]">mentorGuruStudents</code> &amp; <code class="text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded font-mono text-[10px]">mentorGuruMentors</code>.</p>
-                            </div>
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button onclick="openCreateStudentModal()" class="w-full btn-primary flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-user-plus"></i> Create Student
+                            </button>
+                            <button onclick="openCreateMentorModal()" class="w-full btn-primary flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-user-plus"></i> Create Mentor
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ===== STUDENTS LOG ===== -->
-            <div id="view-students" class="view-panel hidden space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <!-- STUDENTS VIEW -->
+            <div id="view-students" class="view-section hidden space-y-6">
+                <div class="flex justify-between items-center">
                     <div>
-                        <h3 class="text-lg font-bold text-slate-900 heading-font flex items-center gap-2"><i class="fa-solid fa-user-graduate text-red-500"></i> Students Ledger</h3>
-                        <p class="text-xs text-slate-555 text-slate-500">Create, manage and audit all student accounts and credentials.</p>
+                        <h2 class="text-xl font-bold text-gray-900">Student Accounts</h2>
+                        <p class="text-sm text-gray-500 mt-1">Manage all student accounts and credentials</p>
                     </div>
-                    <div class="flex items-center gap-3 flex-wrap">
-                        <div class="relative w-full sm:w-60">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
-                            <input type="text" id="studentSearch" onkeyup="filterStudentsTable()" class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="Search name, email, ID...">
-                        </div>
-                        <button onclick="openAccountModal('Student', null)" class="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-red-200 transition whitespace-nowrap border border-red-600/10">
-                            <i class="fa-solid fa-user-plus"></i> Create Student Account
-                        </button>
-                    </div>
-                </div>
-                <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-250 border-slate-200 text-slate-500">
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Reg. Date</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Name</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Email</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Phone</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Enrolled Course</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Login ID</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Password</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Status</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- ===== MENTORS DESK ===== -->
-            <div id="view-mentors" class="view-panel hidden space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h3 class="text-lg font-bold text-slate-900 heading-font flex items-center gap-2"><i class="fa-solid fa-chalkboard-user text-red-500"></i> Mentors Directory</h3>
-                        <p class="text-xs text-slate-500">Create, manage and audit all mentor accounts and credentials.</p>
-                    </div>
-                    <div class="flex items-center gap-3 flex-wrap">
-                        <div class="relative w-full sm:w-60">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
-                            <input type="text" id="mentorSearch" onkeyup="filterMentorsTable()" class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="Search name, email, track...">
-                        </div>
-                        <button onclick="openAccountModal('Mentor', null)" class="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-700 to-purple-600 hover:from-purple-600 hover:to-purple-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-purple-200 transition whitespace-nowrap border border-purple-600/10">
-                            <i class="fa-solid fa-user-tie"></i> Create Mentor Account
-                        </button>
-                    </div>
-                </div>
-                <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500">
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Reg. Date</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Name</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Email</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Track / Dept</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Login ID</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Password</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Status</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="mentorTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- ===== COURSE MANAGER ===== -->
-            <div id="view-courses" class="view-panel hidden space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h3 class="text-lg font-bold text-slate-900 heading-font flex items-center gap-2"><i class="fa-solid fa-book-open text-red-500"></i> Course Blueprints</h3>
-                        <p class="text-xs text-slate-500">Add, edit, or remove cohorts and configure syllabus modules.</p>
-                    </div>
-                    <button onclick="openCourseModal(null)" class="btn-red py-2.5 px-5 rounded-xl text-xs font-bold flex items-center gap-1.5 self-start sm:self-auto border border-red-600/10">
-                        <i class="fa-solid fa-plus text-[10px]"></i> Create New Course
+                    <button onclick="openCreateStudentModal()" class="btn-primary flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i> New Student
                     </button>
                 </div>
-                <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500">
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Image</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Course Name</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Category</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Mode</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Duration</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Fee</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Slots</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider text-center">Syllabus</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="courseTableBody"></tbody>
-                    </table>
+
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="studentSearch" placeholder="Search by name, email, or ID..." onkeyup="filterStudents()">
+                </div>
+
+                <div class="glass-card p-6">
+                    <div class="table-responsive">
+                        <table id="studentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center py-8 text-gray-500">No students found. Create one to get started.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- ===== ENROLLMENTS VIEW ===== -->
-            <div id="view-enrollments" class="view-panel hidden space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <!-- MENTORS VIEW -->
+            <div id="view-mentors" class="view-section hidden space-y-6">
+                <div class="flex justify-between items-center">
                     <div>
-                        <h3 class="text-lg font-bold text-slate-900 heading-font flex items-center gap-2"><i class="fa-solid fa-clipboard-list text-red-500"></i> Student Enrollments</h3>
-                        <p class="text-xs text-slate-500">All course enrollment requests from students. Generate a Student ID to activate portal access.</p>
+                        <h2 class="text-xl font-bold text-gray-900">Mentor Accounts</h2>
+                        <p class="text-sm text-gray-500 mt-1">Manage all mentor accounts and credentials</p>
                     </div>
-                    <div class="relative w-full sm:w-72">
-                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
-                        <input type="text" id="enrollmentSearch" onkeyup="filterEnrollmentsTable()" class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="Search name, email or course...">
-                    </div>
+                    <button onclick="openCreateMentorModal()" class="btn-primary flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i> New Mentor
+                    </button>
                 </div>
-                <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500">
-                                <th class="px-4 py-4 font-semibold uppercase tracking-wider">Date</th>
-                                <th class="px-4 py-4 font-semibold uppercase tracking-wider">Student Name</th>
-                                <th class="px-4 py-4 font-semibold uppercase tracking-wider">Email</th>
-                                <th class="px-4 py-4 font-semibold uppercase tracking-wider">Phone</th>
-                                <th class="px-4 py-4 font-semibold uppercase tracking-wider">Enrolled Course</th>
-                                <th class="px-4 py-4 font-semibold uppercase tracking-wider text-center">Payment</th>
-                                <th class="px-4 py-4 font-semibold uppercase tracking-wider text-center">Student ID</th>
-                                <th class="px-4 py-4 font-semibold uppercase tracking-wider text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="enrollmentTableBody"></tbody>
-                    </table>
+
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="mentorSearch" placeholder="Search by name, email, or ID..." onkeyup="filterMentors()">
+                </div>
+
+                <div class="glass-card p-6">
+                    <div class="table-responsive">
+                        <table id="mentorsTable">
+                            <thead>
+                                <tr>
+                                    <th>Mentor ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Specialty</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mentorsTableBody">
+                                <tr>
+                                    <td colspan="7" class="text-center py-8 text-gray-500">No mentors found. Create one to get started.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- ===== PAYMENT LEDGER ===== -->
-            <div id="view-payments" class="view-panel hidden space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h3 class="text-lg font-bold text-slate-900 heading-font flex items-center gap-2"><i class="fa-solid fa-wallet text-red-500"></i> Students Payment Ledger</h3>
-                        <p class="text-xs text-slate-555 text-slate-500">Verify and approve enrollment fee transactions (NPR 500) via eSewa.</p>
-                    </div>
-                    <div class="relative w-full sm:w-72">
-                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
-                        <input type="text" id="paymentSearch" onkeyup="filterPaymentsTable()" class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="Search name, email or txn ref...">
-                    </div>
+            <!-- ACTIVITY LOG VIEW -->
+            <div id="view-activity" class="view-section hidden space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">Login Activity Logs</h2>
+                    <p class="text-sm text-gray-500 mt-1">Track all login attempts and system access</p>
                 </div>
-                <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500">
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Date</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Student</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Email</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Course</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Amount</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider text-center">Txn Ref</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider text-center">Payment</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="paymentTableBody"></tbody>
-                    </table>
+
+                <div class="glass-card p-6">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>User ID</th>
+                                    <th>User Type</th>
+                                    <th>Action</th>
+                                    <th>IP Address</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityLogsBody">
+                                <tr>
+                                    <td colspan="6" class="text-center py-8 text-gray-500">No activity logs yet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- ===== COURSE REQUESTS ===== -->
-            <div id="view-requests" class="view-panel hidden space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h3 class="text-lg font-bold text-slate-900 heading-font flex items-center gap-2"><i class="fa-solid fa-code-pull-request text-red-500"></i> Course Requests</h3>
-                        <p class="text-xs text-slate-555 text-slate-500">Manage additional course requests from enrolled students.</p>
-                    </div>
+            <!-- SETTINGS VIEW -->
+            <div id="view-settings" class="view-section hidden space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">System Settings</h2>
+                    <p class="text-sm text-gray-500 mt-1">Configure security and access control settings</p>
                 </div>
-                <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500">
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Date</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Student ID</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider">Requested Course</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider text-center">Status</th>
-                                <th class="px-5 py-4 font-semibold uppercase tracking-wider text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="requestsTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
 
-            <!-- ===== MESSAGES / CHAT VIEW ===== -->
-            <div id="view-chat" class="view-panel hidden flex-grow h-[calc(100vh-130px)] -mx-2">
-                <div class="flex h-full bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                    <!-- Sidebar Contacts -->
-                    <div class="w-80 border-r border-slate-200 flex flex-col bg-slate-50 flex-shrink-0 h-full">
-                        <div class="p-4 border-b border-slate-200 bg-white">
-                            <h4 class="font-bold text-slate-800 text-sm mb-3">System Messages</h4>
-                            <div class="relative">
-                                <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                                <input type="text" placeholder="Search contacts..." class="w-full pl-8 pr-3 py-2 bg-slate-100 border-none rounded-lg text-xs focus:ring-1 focus:ring-red-500">
+                <div class="glass-card p-6 space-y-6">
+                    <div class="border-b pb-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Security Settings</h3>
+                        <div class="space-y-4">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" id="enforceStrongPassword" class="w-4 h-4" checked>
+                                <span class="text-sm text-gray-700">Enforce strong passwords (min 8 characters)</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" id="enableSessionTimeout" class="w-4 h-4" checked>
+                                <span class="text-sm text-gray-700">Enable session timeout (30 minutes)</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" id="trackLoginAttempts" class="w-4 h-4" checked>
+                                <span class="text-sm text-gray-700">Track login attempts and log activity</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="border-b pb-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Account Management</h3>
+                        <div class="space-y-4">
+                            <div class="form-group">
+                                <label class="form-label">Auto-deactivate inactive accounts after (days)</label>
+                                <input type="number" id="inactiveDays" value="90" class="form-input" min="30" max="365">
                             </div>
-                        </div>
-                        <div class="flex-grow overflow-y-auto p-2 space-y-1" id="achatContactsList">
-                            <!-- Contacts loaded by JS -->
-                        </div>
-                    </div>
-
-                    <!-- Chat Area -->
-                    <div class="flex-grow flex flex-col h-full bg-white relative">
-                        <!-- Chat Header -->
-                        <div class="h-16 border-b border-slate-200 px-6 flex items-center justify-between bg-white z-10 flex-shrink-0">
-                            <div class="flex items-center gap-3" id="aactiveChatHeader">
-                                <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400"><i class="fa-solid fa-user"></i></div>
-                                <div>
-                                    <h5 class="font-bold text-slate-900 text-sm">Select a conversation</h5>
-                                    <p class="text-[10px] text-slate-500">To view or reply</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Chat Messages Stream -->
-                        <div class="flex-grow overflow-y-auto p-6 space-y-4 bg-slate-50/50" id="achatMessageStream">
-                            <div class="flex h-full items-center justify-center text-slate-400 text-sm flex-col gap-3">
-                                <i class="fa-regular fa-comments text-4xl text-slate-300"></i>
-                                <p>No chat selected</p>
-                            </div>
-                        </div>
-
-                        <!-- Chat Input -->
-                        <div class="p-4 bg-white border-t border-slate-200 flex-shrink-0">
-                            <form id="achatMessageForm" onsubmit="sendAdminChatMessage(event)" class="flex items-end gap-2 relative">
-                                <div class="flex-grow relative">
-                                    <div id="achatFilePreview" class="hidden absolute bottom-full left-0 mb-2 p-2 bg-white border border-slate-200 rounded-lg shadow-lg flex items-center gap-3 w-64 max-w-full">
-                                        <div class="w-10 h-10 bg-red-50 text-red-500 rounded flex items-center justify-center text-lg"><i class="fa-solid fa-file"></i></div>
-                                        <div class="flex-grow overflow-hidden">
-                                            <p class="text-xs font-bold text-slate-800 truncate" id="achatFileName">file.pdf</p>
-                                            <p class="text-[10px] text-slate-500" id="achatFileSize">1.2 MB</p>
-                                        </div>
-                                        <button type="button" onclick="clearAdminChatAttachment()" class="text-slate-400 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button>
-                                    </div>
-                                    <textarea id="achatInputText" rows="1" class="w-full pl-4 pr-12 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-1 focus:ring-red-500 resize-none bg-slate-50 max-h-32" placeholder="Type a message..." disabled></textarea>
-                                    
-                                    <input type="file" id="achatAttachmentInput" class="hidden" onchange="handleAdminChatAttachment(event)">
-                                    <button type="button" onclick="document.getElementById('achatAttachmentInput').click()" class="absolute right-3 bottom-3 text-slate-400 hover:text-red-600 transition" disabled id="achatAttachBtn">
-                                        <i class="fa-solid fa-paperclip"></i>
-                                    </button>
-                                </div>
-                                <button type="submit" id="achatSendBtn" class="w-12 h-12 bg-red-600 hover:bg-red-700 text-white rounded-xl flex items-center justify-center shadow-md transition disabled:opacity-50" disabled>
-                                    <i class="fa-solid fa-paper-plane"></i>
-                                </button>
-                            </form>
+                            <button onclick="saveSettings()" class="btn-primary">Save Settings</button>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </main>
-</div>
 
-<!-- ===== COURSE EDIT MODAL ===== -->
-<div id="courseModalOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl p-6 sm:p-7 scale-[0.95] transition-all duration-300 overflow-y-auto max-h-[90vh]" id="courseModalBox">
-        <div class="flex justify-between items-center pb-4 mb-5 border-b border-slate-100">
-            <h3 class="text-base font-bold text-slate-900 heading-font flex items-center gap-2" id="courseModalTitle">
-                <i class="fa-solid fa-book-open text-red-500"></i> Course Blueprint
-            </h3>
-            <button onclick="closeCourseModal()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <form id="courseForm" class="space-y-4" onsubmit="handleSaveCourse(event)" novalidate>
-            <input type="hidden" id="editCourseIndex">
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Course Name</label>
-                    <input type="text" id="courseFieldName" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition" placeholder="e.g. Cybersecurity Essentials" required>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Category</label>
-                    <select id="courseFieldCategory" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition cursor-pointer">
-                        <option value="IT">IT Track</option>
-                        <option value="Non-IT">Non-IT Track</option>
-                    </select>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Shift Slots</label>
-                    <input type="text" id="courseFieldSlots" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition" placeholder="e.g. 10 AM - 11 AM" required>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Tuition Fee</label>
-                    <input type="text" id="courseFieldFee" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition" placeholder="e.g. NPR 15,000" required>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Duration</label>
-                    <input type="text" id="courseFieldDuration" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition" placeholder="e.g. 12 Weeks" required>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Learning Mode</label>
-                    <select id="courseFieldMode" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition cursor-pointer">
-                        <option value="Physical">Physical Class</option>
-                        <option value="Online">Online Class</option>
-                    </select>
-                </div>
-            </div>
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Course Description</label>
-                <textarea id="courseFieldDesc" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none transition h-20 resize-none" placeholder="Provide detailed training description..." required></textarea>
-            </div>
-            <!-- Image Upload -->
-            <div>
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Course Thumbnail Image</label>
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-12 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0" id="thumbnailPreviewContainer">
-                        <i class="fa-regular fa-image text-slate-400" id="placeholderImageField"></i>
-                        <img id="courseThumbnailImg" class="hidden w-full h-full object-cover">
-                    </div>
-                    <input type="file" id="courseFieldImageFile" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
-                    <button type="button" onclick="document.getElementById('courseFieldImageFile').click()" class="py-2 px-4 rounded-xl border border-slate-200 hover:border-slate-350 bg-slate-50 text-slate-600 hover:text-slate-800 text-xs font-semibold transition">
-                        <i class="fa-solid fa-cloud-arrow-up mr-1 text-red-500"></i> Upload Thumbnail
-                    </button>
-                    <input type="hidden" id="courseFieldImageBase64">
-                </div>
-            </div>
-            <!-- Modules Builder -->
-            <div class="border-t border-slate-100 pt-4 space-y-3">
-                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Syllabus Curriculum Modules</label>
-                <div class="flex gap-2">
-                    <input type="text" id="newModuleField" class="flex-grow px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-850 focus:border-red-500 focus:ring-1 focus:ring-red-500 focus:outline-none" placeholder="e.g. Module 1: Cyber Risk Assessment">
-                    <button type="button" onclick="addModuleToStringList()" class="py-2 px-3 bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl text-xs font-bold text-red-650 flex items-center gap-1 transition">
-                        <i class="fa-solid fa-plus"></i> Add
-                    </button>
-                </div>
-                <div class="bg-slate-50 rounded-xl p-3 border border-slate-200 max-h-36 overflow-y-auto space-y-2" id="modalModulesListContainer"></div>
-            </div>
-            <div class="pt-4 flex gap-3 border-t border-slate-100">
-                <button type="button" onclick="closeCourseModal()" class="w-1/2 py-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 font-semibold text-xs transition">Cancel</button>
-                <button type="submit" class="btn-red w-1/2 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-red-600/10">
-                    <i class="fa-solid fa-save text-[10px]"></i> Save &amp; Publish
+    <!-- CREATE STUDENT MODAL -->
+    <div id="createStudentModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 heading-font">Create Student Account</h2>
+                <button onclick="closeCreateStudentModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
             </div>
-        </form>
-    </div>
-</div>
 
-<!-- ===== SYLLABUS PREVIEW MODAL ===== -->
-<div id="syllabusPreviewModalOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="w-full max-w-md bg-white border border-slate-200 rounded-3xl shadow-2xl p-6 scale-[0.95] transition-all duration-300" id="syllabusPreviewModalBox">
-        <div class="flex justify-between items-center pb-4 mb-4 border-b border-slate-100">
-            <h3 class="text-base font-bold text-slate-900 heading-font flex items-center gap-2"><i class="fa-solid fa-book-open text-red-500"></i> Course Syllabus</h3>
-            <button onclick="closeSyllabusPreviewModal()" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="space-y-4">
-            <h4 class="text-sm font-extrabold text-red-500" id="previewSyllabusCourseTitle">-</h4>
-            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 max-h-60 overflow-y-auto space-y-2.5" id="previewSyllabusList"></div>
-        </div>
-        <div class="pt-5 flex justify-end">
-            <button onclick="closeSyllabusPreviewModal()" class="btn-red py-2 px-5 rounded-xl text-xs border border-red-650/10">Got it</button>
-        </div>
-    </div>
-</div>
+            <form id="createStudentForm" class="space-y-4" onsubmit="createStudent(event)">
+                <div id="studentFormAlert"></div>
 
-<!-- ===== TOAST ===== -->
-<div id="toastNotification" class="fixed bottom-6 right-6 z-50 px-5 py-4 rounded-2xl bg-white border border-emerald-100 text-slate-800 text-sm shadow-2xl flex items-center gap-3 translate-y-24 opacity-0 transition-all duration-500">
-    <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center" id="toastIcon">
-        <i class="fa-solid fa-circle-check text-base"></i>
-    </div>
-    <div>
-        <p class="font-bold text-slate-800" id="toastTitle">Success</p>
-        <p class="text-xs text-slate-500 mt-0.5" id="toastMessage">Done!</p>
-    </div>
-</div>
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="studentName" class="form-input" placeholder="John Doe" required>
+                </div>
 
-<!-- ===== ACCOUNT CREATE/EDIT MODAL ===== -->
-<div id="accountModalOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[110] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div id="accountModalBox" class="w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl p-6 sm:p-7 scale-[0.95] transition-all duration-300 overflow-y-auto max-h-[92vh]">
-        <div class="flex justify-between items-center pb-4 mb-5 border-b border-slate-100">
-            <h3 id="accountModalTitle" class="text-base font-bold text-slate-900 heading-font flex items-center gap-2">
-                <i class="fa-solid fa-user-plus text-red-500"></i> Create Account
-            </h3>
-            <button onclick="closeAccountModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
-        </div>
-        <form id="accountForm" onsubmit="handleSaveAccount(event)" class="space-y-4">
-            <input type="hidden" id="accountEditRole">
-            <input type="hidden" id="accountEditIndex">
-            <!-- Generated Credentials Banner -->
-            <div id="generatedCredsBanner" class="hidden p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 space-y-3">
-                <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-600 flex items-center gap-2"><i class="fa-solid fa-key"></i> Auto-Generated Login Credentials</p>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <p class="text-[9px] text-slate-400 uppercase tracking-wider mb-1">Login ID</p>
-                        <div class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200">
-                            <span id="displayLoginId" class="text-xs font-mono font-bold text-cyan-600 flex-1"></span>
-                            <button type="button" onclick="copyText('loginId')" id="copyLoginIdBtn" class="text-slate-400 hover:text-cyan-600 transition"><i class="fa-regular fa-copy text-xs"></i></button>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-[9px] text-slate-400 uppercase tracking-wider mb-1">Password</p>
-                        <div class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200">
-                            <span id="displayPassword" class="text-xs font-mono font-bold text-amber-600 flex-1"></span>
-                            <button type="button" onclick="copyText('password')" id="copyPasswordBtn" class="text-slate-400 hover:text-amber-600 transition"><i class="fa-regular fa-copy text-xs"></i></button>
-                        </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="studentEmail" class="form-input" placeholder="john@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="tel" id="studentPhone" class="form-input" placeholder="98XXXXXXXX" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Generated Student ID</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="studentId" class="form-input" readonly>
+                        <button type="button" onclick="generateStudentId()" class="btn-primary">Generate</button>
                     </div>
                 </div>
-                <button type="button" onclick="regenerateCredentials()" class="w-full py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-800 text-[10px] font-semibold transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-rotate"></i> Regenerate Credentials
-                </button>
-            </div>
-            <!-- Form Fields -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="sm:col-span-2">
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Full Name <span class="text-red-500">*</span></label>
-                    <input type="text" id="accountFieldName" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:border-red-500 text-slate-800 text-xs placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-red-500 transition" placeholder="e.g. Ramesh Shrestha" required>
+
+                <div class="form-group">
+                    <label class="form-label">Generated Password</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="studentPassword" class="form-input" readonly>
+                        <button type="button" onclick="generatePassword('studentPassword')" class="btn-primary">Generate</button>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Email Address <span class="text-red-500">*</span></label>
-                    <input type="email" id="accountFieldEmail" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:border-red-500 text-slate-800 text-xs placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-red-500 transition" placeholder="email@example.com" required>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Phone Number <span class="text-red-500">*</span></label>
-                    <input type="tel" id="accountFieldPhone" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:border-red-500 text-slate-800 text-xs placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-red-500 transition" placeholder="98XXXXXXXX" required>
-                </div>
-                <div id="courseFieldWrap">
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Enrolled Course</label>
-                    <select id="accountFieldCourse" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:border-red-500 text-slate-800 text-xs focus:outline-none focus:ring-1 focus:ring-red-500 transition">
-                        <option value="">-- Select Course --</option>
-                    </select>
-                </div>
-                <div id="trackFieldWrap" class="hidden">
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Specialization Track</label>
-                    <input type="text" id="accountFieldTrack" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:border-red-500 text-slate-800 text-xs placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-red-500 transition" placeholder="e.g. Cybersecurity, UI/UX">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Account Status</label>
-                    <select id="accountFieldStatus" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:border-red-500 text-slate-800 text-xs focus:outline-none focus:ring-1 focus:ring-red-500 transition">
+
+                <div class="form-group">
+                    <label class="form-label">Account Status</label>
+                    <select id="studentStatus" class="form-input">
                         <option value="Active">Active</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Suspended">Suspended</option>
+                        <option value="Pending">Pending Approval</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Custom Password <span class="text-slate-400">(optional)</span></label>
-                    <input type="text" id="accountFieldCustomPw" class="w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:border-red-500 text-slate-800 text-xs placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-red-500 transition" placeholder="Leave blank to keep generated">
-                </div>
-            </div>
-            <div class="flex gap-3 pt-2">
-                <button type="button" onclick="closeAccountModal()" class="flex-1 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-500 text-xs font-semibold transition">Cancel</button>
-                <button type="submit" id="accountSaveBtn" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white text-xs font-bold shadow-lg border border-red-600/10 transition"><i class="fa-solid fa-floppy-disk mr-1"></i> Save Account</button>
-            </div>
-        </form>
-    </div>
-</div>
 
-<!-- ===== CREDENTIALS DISPLAY/EDIT MODAL ===== -->
-<div id="credentialsModalOverlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[120] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div id="credentialsModalBox" class="w-full max-w-sm bg-white border border-emerald-250 rounded-3xl shadow-2xl p-7 scale-[0.95] transition-all duration-300">
-        <div class="text-center mb-5">
-            <div class="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center text-2xl mx-auto mb-3" id="credModalIcon">
-                <i class="fa-solid fa-circle-check"></i>
-            </div>
-            <h3 class="text-base font-bold text-slate-900 heading-font" id="credModalTitle">Account Created!</h3>
-            <p id="credModalSubtitle" class="text-xs text-slate-500 mt-1">Share these credentials securely.</p>
+                <button type="submit" class="w-full btn-primary">Create Account</button>
+            </form>
         </div>
-        <!-- Hidden state for edit mode -->
-        <input type="hidden" id="credModalRole">
-        <input type="hidden" id="credModalAccountIdx">
-        <div class="space-y-3 mb-5">
-            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                <p class="text-[9px] text-slate-400 uppercase tracking-widest mb-2">Login ID</p>
-                <!-- View mode -->
-                <div id="credLoginIdViewRow" class="flex items-center justify-between gap-3">
-                    <span id="credModalLoginId" class="font-mono font-bold text-cyan-600 text-sm"></span>
-                    <div class="flex items-center gap-1.5">
-                        <button onclick="copyCredField('credModalLoginId','copyIdBtn')" id="copyIdBtn" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-slate-800 text-[10px] font-semibold transition flex items-center gap-1"><i class="fa-regular fa-copy"></i> Copy</button>
-                        <button onclick="toggleCredEdit('loginId')" class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 text-[10px] font-semibold transition"><i class="fa-solid fa-pen-to-square"></i></button>
-                    </div>
-                </div>
-                <!-- Edit mode (hidden by default) -->
-                <div id="credLoginIdEditRow" class="hidden flex items-center gap-2">
-                    <input type="text" id="credLoginIdInput" class="flex-1 px-3 py-2 rounded-lg bg-white border border-blue-300 text-cyan-700 font-mono font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
-                    <button onclick="saveCredField('loginId')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-700 text-[10px] font-bold transition"><i class="fa-solid fa-check"></i></button>
-                    <button onclick="toggleCredEdit('loginId')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-500 text-[10px] font-bold transition"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-            </div>
-            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                <p class="text-[9px] text-slate-400 uppercase tracking-widest mb-2">Password</p>
-                <!-- View mode -->
-                <div id="credPasswordViewRow" class="flex items-center justify-between gap-3">
-                    <span id="credModalPassword" class="font-mono font-bold text-amber-600 text-sm"></span>
-                    <div class="flex items-center gap-1.5">
-                        <button onclick="copyCredField('credModalPassword','copyPwBtn')" id="copyPwBtn" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-slate-800 text-[10px] font-semibold transition flex items-center gap-1"><i class="fa-regular fa-copy"></i> Copy</button>
-                        <button onclick="toggleCredEdit('password')" class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 text-[10px] font-semibold transition"><i class="fa-solid fa-pen-to-square"></i></button>
-                    </div>
-                </div>
-                <!-- Edit mode (hidden by default) -->
-                <div id="credPasswordEditRow" class="hidden flex items-center gap-2">
-                    <input type="text" id="credPasswordInput" class="flex-1 px-3 py-2 rounded-lg bg-white border border-blue-300 text-amber-700 font-mono font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
-                    <button onclick="saveCredField('password')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-700 text-[10px] font-bold transition"><i class="fa-solid fa-check"></i></button>
-                    <button onclick="toggleCredEdit('password')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-500 text-[10px] font-bold transition"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-            </div>
-        </div>
-        <button onclick="closeCredentialsModal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-600 hover:to-emerald-500 text-white font-bold text-xs transition border border-emerald-600/10">
-            <i class="fa-solid fa-check mr-1"></i> Done
-        </button>
     </div>
-</div>
 
-<!-- =====================================================================
-     JAVASCRIPT  (plain script - works on file:// without CORS issues)
-====================================================================== -->
-<script>
-
-    // ===== DATA KEYS =====
-    const LS_STUDENTS    = 'mentorGuru_students';
-    const LS_MENTORS     = 'mentorGuru_mentors';
-    const LS_COURSES     = 'mentorGuru_courses';
-    const LS_ENROLLMENTS = 'mentorGuru_enrollments';
-
-    // Default seed courses (shown if none exist)
-    const DEFAULT_COURSES = [
-        { id:'cyber-001', name:'Cybersecurity Essentials', category:'IT', mode:'Physical', duration:'12 Weeks', slots:'10 AM - 11 AM', fee:'NPR 15,000', desc:'Learn the fundamentals of cybersecurity, network defense, threat analysis, and ethical hacking.', thumbnail:'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80', modules:['Module 1: Introduction to Network Security','Module 2: Cryptography Basics','Module 3: Penetration Testing','Module 4: Incident Response'] },
-        { id:'uiux-002', name:'UI/UX Design', category:'IT', mode:'Physical', duration:'8 Weeks', slots:'2 PM - 4 PM', fee:'NPR 12,000', desc:'Master user research, wireframing, high-fidelity UI design, prototyping, and user testing using Figma.', thumbnail:'https://images.unsplash.com/photo-1561070791-26c113006238?auto=format&fit=crop&w=800&q=80', modules:['Module 1: User Research & Personas','Module 2: Information Architecture & Wireframing','Module 3: Visual Design Principles','Module 4: Prototyping & Testing in Figma'] },
-        { id:'python-003', name:'Python Mastery', category:'IT', mode:'Online', duration:'10 Weeks', slots:'6 PM - 8 PM', fee:'NPR 10,000', desc:'Comprehensive Python coding training covering OOP, data structures, and automation scripts.', thumbnail:'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80', modules:['Module 1: Python Basics & Syntax','Module 2: Object-Oriented Programming','Module 3: Data Structures & Algorithms','Module 4: Automation & Scripting Projects'] },
-        { id:'dm-004', name:'Digital Marketing Excellence', category:'Non-IT', mode:'Online', duration:'6 Weeks', slots:'8 AM - 10 AM', fee:'NPR 8,000', desc:'Master SEO, copywriting, social media campaigns, and Google Analytics.', thumbnail:'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80', modules:['Module 1: SEO Fundamentals','Module 2: Social Media Marketing','Module 3: Copywriting & Content Strategy','Module 4: Web Analytics & Reporting'] }
-    ];
-
-    // ===== localStorage helpers =====
-    function lsGet(key, fallback) {
-        try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
-        catch(e) { return fallback; }
-    }
-    function lsSet(key, val) {
-        try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
-    }
-
-    let studentsCache    = [];
-    let mentorsCache     = [];
-    let coursesCache     = [];
-    let applicationsCache = [];
-
-    // ===== INIT: show login or dashboard =====
-    function initPage() {
-        if (localStorage.getItem('mentorGuruAdmin') === 'true') {
-            showDashboard();
-        } else {
-            showLogin();
-        }
-    }
-
-    function showLogin() {
-        document.getElementById('loginOverlay').classList.remove('hidden');
-        document.getElementById('dashboard').classList.add('hidden');
-    }
-
-    function showDashboard() {
-        document.getElementById('loginOverlay').classList.add('hidden');
-        document.getElementById('dashboard').classList.remove('hidden');
-        document.getElementById('dashboard').classList.add('anim-fadein');
-        updateClock();
-        loadSystemData();
-    }
-
-    // ===== LOGIN LOGIC =====
-    function toggleLoginPw() {
-        const input = document.getElementById('loginPassword');
-        const icon  = document.getElementById('loginEyeIcon');
-        if (input.type === 'password') { input.type = 'text';     icon.className = 'fa-solid fa-eye-slash'; }
-        else                           { input.type = 'password'; icon.className = 'fa-solid fa-eye'; }
-    }
-
-    function handleAdminLogin(e) {
-        e.preventDefault();
-        const banner = document.getElementById('loginAlertBanner');
-        const card   = document.getElementById('loginCard');
-        banner.classList.add('hidden');
-        card.classList.remove('animate-shake');
-
-        const user = document.getElementById('loginUsername').value.trim();
-        const pass = document.getElementById('loginPassword').value;
-
-        if (!user || !pass) { showLoginError('Administrative fields cannot be left blank.'); return; }
-
-        if (user === 'Suzzan9' && pass === 'Suzzan999') {
-            localStorage.setItem('mentorGuruAdmin', 'true');
-            showDashboard();
-        } else {
-            showLoginError('Access Denied: Invalid Administrative Tokens.');
-        }
-    }
-
-    function showLoginError(msg) {
-        const banner = document.getElementById('loginAlertBanner');
-        const card   = document.getElementById('loginCard');
-        document.getElementById('loginAlertMsg').textContent = msg;
-        banner.classList.remove('hidden');
-        void card.offsetWidth;
-        card.classList.add('animate-shake');
-    }
-
-    // ===== LOGOUT =====
-    function logoutAdmin() {
-        localStorage.removeItem('mentorGuruAdmin');
-        showLogin();
-        document.getElementById('adminLoginForm').reset();
-        document.getElementById('loginAlertBanner').classList.add('hidden');
-    }
-
-    // ===== CLOCK =====
-    function updateClock() {
-        const el  = document.getElementById('currentTime');
-        if (!el) return;
-        const now = new Date();
-        const y   = now.getFullYear();
-        const m   = String(now.getMonth()+1).padStart(2,'0');
-        const d   = String(now.getDate()).padStart(2,'0');
-        let   h   = now.getHours();
-        const mi  = String(now.getMinutes()).padStart(2,'0');
-        const ap  = h >= 12 ? 'PM' : 'AM';
-        h = h % 12 || 12;
-        if (el) el.textContent = `${y}-${m}-${d} ${h}:${mi} ${ap}`;
-    }
-    setInterval(updateClock, 10000);
-
-    // ===== VIEW SWITCHER =====
-    function switchView(viewName) {
-        document.querySelectorAll('.view-panel').forEach(p => p.classList.add('hidden'));
-        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-        const destView = document.getElementById(`view-${viewName}`);
-        if(destView) destView.classList.remove('hidden');
-        const navLink = document.getElementById(`nav-${viewName}`);
-        if(navLink) navLink.classList.add('active');
-        const titles = {
-            dashboard:   'Dashboard Overview',
-            students:    'Students Ledger Log',
-            mentors:     'Mentors Desk Directory',
-            courses:     'Course Catalog Manager',
-            enrollments: 'Student Enrollments',
-            payments:    'Student Payment Ledger',
-            requests:    'Course Requests',
-            chat:        'System Messages'
-        };
-        document.getElementById('viewHeaderTitle').textContent = titles[viewName] || 'Superuser Control Center';
-        
-        if (viewName === 'requests') renderRequestsTable();
-        if (viewName === 'chat') renderAdminChatContacts();
-    }
-
-    // ===== TOAST =====
-    function showNotification(title, message, isSuccess = true) {
-        const toast = document.getElementById('toastNotification');
-        document.getElementById('toastTitle').textContent   = title;
-        document.getElementById('toastMessage').textContent = message;
-        if (isSuccess) {
-            toast.classList.replace('border-red-500/20','border-emerald-500/20');
-            document.getElementById('toastIcon').className = 'w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center';
-            document.getElementById('toastIcon').innerHTML = '<i class="fa-solid fa-circle-check text-base"></i>';
-        } else {
-            toast.classList.replace('border-emerald-500/20','border-red-500/20');
-            document.getElementById('toastIcon').className = 'w-8 h-8 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center';
-            document.getElementById('toastIcon').innerHTML = '<i class="fa-solid fa-circle-exclamation text-base"></i>';
-        }
-        toast.classList.remove('translate-y-24','opacity-0');
-        toast.classList.add('translate-y-0','opacity-100');
-        setTimeout(() => {
-            toast.classList.remove('translate-y-0','opacity-100');
-            toast.classList.add('translate-y-24','opacity-0');
-        }, 3000);
-    }
-
-    // Mode badge helper
-    function modeBadge(mode) {
-        if (!mode) return '<span class="text-slate-500">—</span>';
-        const isOnline = mode.toLowerCase() === 'online';
-        return isOnline
-            ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold badge-online"><i class="fa-solid fa-wifi"></i> Online</span>`
-            : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold badge-physical"><i class="fa-solid fa-building"></i> Physical</span>`;
-    }
-
-    // ===== LOAD SYSTEM DATA FROM localStorage =====
-    function loadSystemData() {
-        // Students & Mentors
-        const users = lsGet(LS_STUDENTS, []).concat(lsGet(LS_MENTORS, []));
-        studentsCache = lsGet(LS_STUDENTS, []);
-        mentorsCache  = lsGet(LS_MENTORS,  []);
-
-        // Courses - seed defaults if empty
-        let saved = lsGet(LS_COURSES, null);
-        if (!saved || saved.length === 0) {
-            saved = DEFAULT_COURSES;
-            lsSet(LS_COURSES, saved);
-        }
-        coursesCache = saved;
-
-        // Enrollments
-        applicationsCache = lsGet(LS_ENROLLMENTS, []);
-
-        // Update enrollment KPI badge in sidebar
-        const pendingEnrollCount = applicationsCache.filter(a => !a.studentIdAssigned).length;
-        const enrollBadge = document.getElementById('enrollBadgeCount');
-        if (enrollBadge) enrollBadge.textContent = pendingEnrollCount > 0 ? pendingEnrollCount : '';
-        if (enrollBadge) enrollBadge.style.display = pendingEnrollCount > 0 ? 'inline-flex' : 'none';
-
-        const pending = [...studentsCache, ...mentorsCache].filter(u => u.status === 'Pending').length;
-        document.getElementById('statTotalStudents').textContent  = studentsCache.length;
-        document.getElementById('statTotalMentors').textContent   = mentorsCache.length;
-        document.getElementById('statTotalCourses').textContent   = coursesCache.length;
-        document.getElementById('statTotalPayments').textContent  = 'NPR ' + (applicationsCache.filter(a => a.paymentStatus === 'Paid').length * 500).toLocaleString();
-        document.getElementById('statPendingReviews').textContent = pending;
-
-        // Recent registrations feed
-        const recentList = document.getElementById('recentRegistrationsList');
-        const allUsers = [
-            ...studentsCache.map(u => ({...u, type:'Student'})),
-            ...mentorsCache.map(u => ({...u, type:'Mentor'}))
-        ];
-        allUsers.sort((a,b) => {
-            const ta = a.registeredAt ? new Date(a.registeredAt) : 0;
-            const tb = b.registeredAt ? new Date(b.registeredAt) : 0;
-            return tb - ta;
-        });
-        recentList.innerHTML = allUsers.slice(0,8).map(u => {
-            const badge = u.type === 'Student'
-                ? `<span class="px-1.5 py-0.5 text-[9px] font-bold bg-blue-50 text-blue-600 border border-blue-200 rounded">Student</span>`
-                : `<span class="px-1.5 py-0.5 text-[9px] font-bold bg-purple-50 text-purple-600 border border-purple-200 rounded">Mentor</span>`;
-            const statusBadge = u.status === 'Approved'
-                ? `<span class="px-1.5 py-0.5 text-[9px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200 rounded">Approved</span>`
-                : `<span class="px-1.5 py-0.5 text-[9px] font-bold bg-amber-50 text-amber-600 border border-amber-200 rounded animate-pulse">Pending</span>`;
-            const d = u.registeredAt ? new Date(u.registeredAt).toLocaleString() : 'N/A';
-            return `<div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-50 to-rose-100 border border-red-100 flex items-center justify-center text-red-500 font-bold text-xs">${(u.name||'?')[0].toUpperCase()}</div>
-                    <div>
-                        <p class="text-xs font-semibold text-slate-800">${u.name}</p>
-                        <p class="text-[10px] text-slate-500">${d}</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1.5">${badge}${statusBadge}</div>
-            </div>`;
-        }).join('') || '<p class="text-xs text-slate-500 text-center py-6">No registrations yet.</p>';
-
-        renderStudentsTable(studentsCache);
-        renderMentorsTable(mentorsCache);
-        renderCoursesTable(coursesCache);
-        renderPaymentsTable(applicationsCache);
-        renderEnrollmentsTable(applicationsCache);
-        
-        // Requests badge
-        if (window.getCourseRequests) {
-            const pendingReqs = window.getCourseRequests().filter(r => r.status === 'Pending').length;
-            const reqBadge = document.getElementById('requestsBadgeCount');
-            if (reqBadge) {
-                reqBadge.textContent = pendingReqs > 0 ? pendingReqs : '';
-                reqBadge.style.display = pendingReqs > 0 ? 'inline-flex' : 'none';
-            }
-        }
-    }
-
-    // ===== USER STATUS MUTATION (localStorage) =====
-    function mutateUserStatus(role, email, targetStatus) {
-        const lsKey = role === 'Student' ? LS_STUDENTS : LS_MENTORS;
-        const arr   = lsGet(lsKey, []);
-        const idx   = arr.findIndex(u => u.email === email);
-        if (idx !== -1) {
-            arr[idx].status = targetStatus;
-            lsSet(lsKey, arr);
-            showNotification(
-                targetStatus === 'Approved' ? 'Access Approved' : 'Gateway Suspended',
-                `${role} ${arr[idx].name}'s account ${targetStatus === 'Approved' ? 'verified and activated.' : 'has been suspended.'}`,
-                targetStatus === 'Approved'
-            );
-            loadSystemData();
-        }
-    }
-
-    // ===== STUDENTS TABLE =====
-    function renderStudentsTable(students) {
-        const tbody = document.getElementById('studentTableBody');
-        if (!tbody) return;
-        if (students.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="9" class="px-6 py-12 text-center text-slate-500"><i class="fa-solid fa-user-slash text-3xl mb-2 block opacity-30"></i><p>No students found.</p><button onclick="openAccountModal('Student',null)" class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-red-700/20 hover:bg-red-700/40 text-red-400 border border-red-700/30 rounded-xl text-xs font-semibold transition"><i class="fa-solid fa-user-plus"></i> Create First Student</button></td></tr>`;
-            return;
-        }
-        tbody.innerHTML = students.map((s, idx) => {
-            const d  = s.registeredAt ? new Date(s.registeredAt).toLocaleDateString() : 'N/A';
-            const statusColor = s.status === 'Active' || s.status === 'Approved'
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                : s.status === 'Suspended'
-                ? 'bg-red-500/10 border-red-500/20 text-red-400'
-                : 'bg-amber-500/10 border-amber-500/20 text-amber-500';
-            const sb = `<span class="px-2.5 py-1 text-[10px] font-bold border rounded-full uppercase ${statusColor}">${s.status||'Active'}</span>`;
-            const loginId  = s.loginId  ? `<span class="font-mono text-cyan-600 font-bold">${s.loginId}</span>`  : `<span class="text-slate-400">—</span>`;
-            const pwShow   = s.password ? `<span class="font-mono text-amber-600">${s.password}</span>` : `<span class="text-slate-400">—</span>`;
-            const courseCell = s.course
-                ? `<span class="inline-flex items-center gap-1 px-2 py-1 bg-red-50 border border-red-100 text-red-700 rounded-lg text-[10px] font-semibold max-w-[140px] truncate"><i class="fa-solid fa-book-open text-red-400 flex-shrink-0"></i><span class="truncate">${s.course}</span></span>`
-                : `<span class="text-slate-500 text-[10px]">—</span>`;
-            return `<tr class="border-b border-slate-100 hover:bg-slate-50 transition">
-                <td class="px-5 py-3.5 whitespace-nowrap text-slate-500 text-[10px]">${d}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap font-semibold text-slate-800">${s.name}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap text-slate-600">${s.email}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap text-slate-600">${s.phone||'N/A'}</td>
-                <td class="px-5 py-3.5">${courseCell}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap">${loginId}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap">${pwShow}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap">${sb}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap">
-                    <div class="flex items-center gap-1.5">
-                        <button onclick="openAccountModal('Student',${idx})" class="px-2.5 py-1.5 bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-700 rounded-lg border border-slate-200 hover:border-blue-200 transition text-[10px] font-semibold"><i class="fa-solid fa-edit mr-1"></i>Edit</button>
-                        <button onclick="viewCredentials('Student',${idx})" class="px-2.5 py-1.5 bg-slate-100 hover:bg-cyan-50 text-slate-600 hover:text-cyan-700 rounded-lg border border-slate-200 hover:border-cyan-200 transition text-[10px] font-semibold"><i class="fa-solid fa-key mr-1"></i>Creds</button>
-                        <button onclick="deleteAccount('Student',${idx})" class="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg border border-red-100 transition text-[10px] font-semibold"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                </td>
-            </tr>`;
-        }).join('');
-    }
-
-    // ===== MENTORS TABLE =====
-    function renderMentorsTable(mentors) {
-        const tbody = document.getElementById('mentorTableBody');
-        if (!tbody) return;
-        if (mentors.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-12 text-center text-slate-500"><i class="fa-solid fa-user-slash text-3xl mb-2 block opacity-30"></i><p>No mentors found.</p><button onclick="openAccountModal('Mentor',null)" class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-purple-700/20 hover:bg-purple-700/40 text-purple-400 border border-purple-700/30 rounded-xl text-xs font-semibold transition"><i class="fa-solid fa-user-tie"></i> Create First Mentor</button></td></tr>`;
-            return;
-        }
-        tbody.innerHTML = mentors.map((m, idx) => {
-            const d  = m.registeredAt ? new Date(m.registeredAt).toLocaleDateString() : 'N/A';
-            const statusColor = m.status === 'Active' || m.status === 'Approved'
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                : m.status === 'Suspended'
-                ? 'bg-red-500/10 border-red-500/20 text-red-400'
-                : 'bg-amber-500/10 border-amber-500/20 text-amber-500';
-            const sb = `<span class="px-2.5 py-1 text-[10px] font-bold border rounded-full uppercase ${statusColor}">${m.status||'Active'}</span>`;
-            const loginId  = m.loginId  ? `<span class="font-mono text-cyan-600 font-bold">${m.loginId}</span>`  : `<span class="text-slate-400">—</span>`;
-            const pwShow   = m.password ? `<span class="font-mono text-amber-600">${m.password}</span>` : `<span class="text-slate-400">—</span>`;
-            return `<tr class="border-b border-slate-100 hover:bg-slate-50 transition">
-                <td class="px-5 py-3.5 whitespace-nowrap text-slate-500 text-[10px]">${d}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap font-semibold text-slate-800">${m.name}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap text-slate-600">${m.email}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap text-slate-600">${m.track||'N/A'}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap">${loginId}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap">${pwShow}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap">${sb}</td>
-                <td class="px-5 py-3.5 whitespace-nowrap">
-                    <div class="flex items-center gap-1.5">
-                        <button onclick="openAccountModal('Mentor',${idx})" class="px-2.5 py-1.5 bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-700 rounded-lg border border-slate-200 hover:border-blue-200 transition text-[10px] font-semibold"><i class="fa-solid fa-edit mr-1"></i>Edit</button>
-                        <button onclick="viewCredentials('Mentor',${idx})" class="px-2.5 py-1.5 bg-slate-100 hover:bg-cyan-50 text-slate-600 hover:text-cyan-700 rounded-lg border border-slate-200 hover:border-cyan-200 transition text-[10px] font-semibold"><i class="fa-solid fa-key mr-1"></i>Creds</button>
-                        <button onclick="deleteAccount('Mentor',${idx})" class="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg border border-red-100 transition text-[10px] font-semibold"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                </td>
-            </tr>`;
-        }).join('');
-    }
-
-    // ===== COURSES TABLE =====
-    function renderCoursesTable(courses) {
-        const tbody = document.getElementById('courseTableBody');
-        if (courses.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="9" class="px-6 py-12 text-center text-slate-500"><i class="fa-solid fa-folder-open text-3xl mb-2 block"></i>No courses defined. Click 'Create New Course'.</td></tr>`;
-            return;
-        }
-        tbody.innerHTML = courses.map((course, idx) => {
-            const modules = course.modules || [];
-            const img = course.thumbnail
-                ? `<img src="${course.thumbnail}" class="w-12 h-9 rounded object-cover border border-slate-200">`
-                : `<div class="w-12 h-9 bg-slate-100 rounded border border-slate-200 flex items-center justify-center text-slate-400"><i class="fa-regular fa-image"></i></div>`;
-            const catBadge = course.category === 'IT'
-                ? `<span class="px-2 py-0.5 text-[10px] font-bold rounded bg-red-50 text-red-600 border border-red-200">IT</span>`
-                : `<span class="px-2 py-0.5 text-[10px] font-bold rounded bg-indigo-50 text-indigo-600 border border-indigo-200">Non-IT</span>`;
-            return `<tr class="border-b border-slate-100 hover:bg-slate-50 transition">
-                <td class="px-5 py-3 whitespace-nowrap">${img}</td>
-                <td class="px-5 py-3 whitespace-nowrap font-semibold text-slate-800 max-w-[160px] truncate">${course.name}</td>
-                <td class="px-5 py-3 whitespace-nowrap">${catBadge}</td>
-                <td class="px-5 py-3 whitespace-nowrap">${modeBadge(course.mode)}</td>
-                <td class="px-5 py-3 whitespace-nowrap text-slate-600">${course.duration}</td>
-                <td class="px-5 py-3 whitespace-nowrap text-slate-700 font-semibold">${course.fee}</td>
-                <td class="px-5 py-3 whitespace-nowrap text-slate-500">${course.slots}</td>
-                <td class="px-5 py-3 whitespace-nowrap text-center">
-                    <button onclick="openSyllabusPreview(${idx})" class="px-2.5 py-1 rounded bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-800 transition font-semibold text-[10px]">
-                        <i class="fa-solid fa-list-check mr-1 text-red-500"></i>${modules.length} Modules
-                    </button>
-                </td>
-                <td class="px-5 py-3 whitespace-nowrap text-center">
-                    <div class="flex items-center justify-center gap-2">
-                        <button onclick="openCourseModal(${idx})" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 rounded border border-slate-200 font-semibold transition"><i class="fa-solid fa-edit"></i> Edit</button>
-                        <button onclick="deleteCourse(${idx})" class="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 rounded border border-red-100 font-semibold transition"><i class="fa-solid fa-trash"></i> Delete</button>
-                    </div>
-                </td>
-            </tr>`;
-        }).join('');
-    }
-
-    // ===== ENROLLMENTS TABLE =====
-    function renderEnrollmentsTable(apps) {
-        const tbody = document.getElementById('enrollmentTableBody');
-        if (!tbody) return;
-        if (apps.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-12 text-center text-slate-500"><i class="fa-solid fa-clipboard-list text-3xl mb-2 block opacity-30"></i><p>No enrollments yet.</p><p class="text-[10px] mt-1">Enrollments submitted from the home page will appear here.</p></td></tr>`;
-            return;
-        }
-        tbody.innerHTML = apps.map((app, idx) => {
-            const d = app.timestamp ? new Date(app.timestamp).toLocaleDateString(undefined, {month:'short',day:'numeric',year:'numeric'}) : 'N/A';
-            const payBadge = app.paymentStatus === 'Paid'
-                ? `<span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 rounded-full"><i class="fa-solid fa-check mr-0.5"></i>Paid</span>`
-                : `<span class="px-2 py-0.5 text-[10px] font-bold bg-amber-500/10 border border-amber-500/20 text-amber-600 rounded-full"><i class="fa-solid fa-clock mr-0.5"></i>Unpaid</span>`;
-            const idCell = app.studentIdAssigned
-                ? `<div class="flex flex-col items-center gap-1">
-                     <span class="font-mono font-bold text-cyan-600 text-xs">${app.studentIdAssigned}</span>
-                     <span class="text-[9px] text-emerald-500 font-semibold"><i class="fa-solid fa-circle-check mr-0.5"></i>Activated</span>
-                   </div>`
-                : `<button onclick="generateStudentIdFromEnrollment(${idx})" class="px-3 py-1.5 bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white rounded-lg text-[10px] font-bold shadow transition whitespace-nowrap border border-red-600/10">
-                     <i class="fa-solid fa-id-card mr-1"></i>Generate ID
-                   </button>`;
-            return `<tr class="border-b border-slate-100 hover:bg-red-50/30 transition">
-                <td class="px-4 py-3.5 whitespace-nowrap text-slate-500 text-[10px]">${d}</td>
-                <td class="px-4 py-3.5 whitespace-nowrap font-semibold text-slate-800">${app.name}</td>
-                <td class="px-4 py-3.5 whitespace-nowrap text-slate-600 max-w-[160px] truncate">${app.email}</td>
-                <td class="px-4 py-3.5 whitespace-nowrap text-slate-600">${app.phone||'—'}</td>
-                <td class="px-4 py-3.5 whitespace-nowrap">
-                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-red-50 border border-red-100 text-red-700 rounded-lg text-[10px] font-semibold max-w-[160px] truncate">
-                        <i class="fa-solid fa-book-open text-red-400"></i>${app.course||'—'}
-                    </span>
-                </td>
-                <td class="px-4 py-3.5 whitespace-nowrap text-center">${payBadge}</td>
-                <td class="px-4 py-3.5 whitespace-nowrap text-center">${idCell}</td>
-                <td class="px-4 py-3.5 whitespace-nowrap text-center">
-                    <button onclick="deleteEnrollment(${idx})" class="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg border border-red-100 transition text-[10px] font-semibold"><i class="fa-solid fa-trash"></i></button>
-                </td>
-            </tr>`;
-        }).join('');
-    }
-
-    function generateStudentIdFromEnrollment(idx) {
-        const enrollments = lsGet(LS_ENROLLMENTS, []);
-        const enroll = enrollments[idx];
-        if (!enroll) return;
-        if (enroll.studentIdAssigned) {
-            alert('A Student ID has already been assigned to this enrollment.');
-            return;
-        }
-
-        // Generate new credentials
-        const students   = lsGet(LS_STUDENTS, []);
-        const num        = String(students.length + 1).padStart(3, '0');
-        const newLoginId = 'STU' + num;
-        const newPw      = 'Guru@' + Math.random().toString(36).slice(2, 7).toUpperCase();
-
-        // Create student account
-        const newStudent = {
-            name:         enroll.name,
-            email:        enroll.email,
-            phone:        enroll.phone,
-            course:       enroll.course,
-            status:       'Active',
-            role:         'Student',
-            loginId:      newLoginId,
-            password:     newPw,
-            registeredAt: new Date().toISOString(),
-            track:        ''
-        };
-        students.push(newStudent);
-        lsSet(LS_STUDENTS, students);
-
-        // Mark enrollment as having a Student ID
-        enrollments[idx].studentIdAssigned = newLoginId;
-        enrollments[idx].studentPassword   = newPw;
-        enrollments[idx].status            = 'Approved';
-        lsSet(LS_ENROLLMENTS, enrollments);
-
-        loadSystemData();
-
-        // Show credentials modal
-        const newStudArr = lsGet(LS_STUDENTS, []);
-        const newStudIdx = newStudArr.length - 1;
-        document.getElementById('credModalRole').value = 'Student';
-        document.getElementById('credModalAccountIdx').value = newStudIdx;
-        document.getElementById('credModalTitle').textContent = 'Student ID Generated!';
-        document.getElementById('credModalSubtitle').textContent = enroll.name + ' — Student Account Created';
-        document.getElementById('credModalLoginId').textContent  = newLoginId;
-        document.getElementById('credModalPassword').textContent = newPw;
-        // Reset edit rows
-        document.getElementById('credLoginIdViewRow').classList.remove('hidden');
-        document.getElementById('credLoginIdEditRow').classList.add('hidden');
-        document.getElementById('credPasswordViewRow').classList.remove('hidden');
-        document.getElementById('credPasswordEditRow').classList.add('hidden');
-        document.getElementById('credModalIcon').innerHTML = '<i class="fa-solid fa-id-card"></i>';
-        document.getElementById('credModalIcon').className = 'w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center text-2xl mx-auto mb-3';
-        const cOverlay = document.getElementById('credentialsModalOverlay');
-        const cBox     = document.getElementById('credentialsModalBox');
-        cOverlay.classList.remove('opacity-0', 'pointer-events-none');
-        cBox.classList.remove('scale-[0.95]');
-        cBox.classList.add('scale-100');
-        showNotification('Student ID Generated', newLoginId + ' assigned to ' + enroll.name + '.');
-    }
-
-    function deleteEnrollment(idx) {
-        const enrollments = lsGet(LS_ENROLLMENTS, []);
-        const enroll = enrollments[idx];
-        if (!enroll) return;
-        if (!confirm('Remove enrollment for ' + enroll.name + ' from ' + (enroll.course||'this course') + '?')) return;
-        enrollments.splice(idx, 1);
-        lsSet(LS_ENROLLMENTS, enrollments);
-        loadSystemData();
-        showNotification('Enrollment Removed', enroll.name + "'s enrollment has been deleted.", false);
-    }
-
-    function filterEnrollmentsTable() {
-        const q = document.getElementById('enrollmentSearch').value.toLowerCase();
-        renderEnrollmentsTable(applicationsCache.filter(a =>
-            (a.name||'').toLowerCase().includes(q) ||
-            (a.email||'').toLowerCase().includes(q) ||
-            (a.course||'').toLowerCase().includes(q)
-        ));
-    }
-
-    // ===== PAYMENTS TABLE =====
-    function renderPaymentsTable(apps) {
-        const tbody = document.getElementById('paymentTableBody');
-        if (apps.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-12 text-center text-slate-500"><i class="fa-solid fa-receipt text-3xl mb-2 block"></i>No enrollment payment entries found.</td></tr>`;
-            return;
-        }
-        tbody.innerHTML = apps.map((app, idx) => {
-            const d  = app.timestamp ? new Date(app.timestamp.seconds ? app.timestamp.toDate() : app.timestamp).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}) : 'N/A';
-            const sb = app.paymentStatus === 'Paid'
-                ? `<span class="px-2.5 py-1 text-[10px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-full uppercase"><i class="fa-solid fa-check mr-1"></i>Paid</span>`
-                : `<span class="px-2.5 py-1 text-[10px] font-bold bg-red-50 border border-red-200 text-red-600 rounded-full uppercase"><i class="fa-solid fa-clock mr-1"></i>Unpaid</span>`;
-            const ab = app.paymentStatus === 'Paid'
-                ? `<button onclick="togglePaymentStatus(${idx},'Unpaid')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded border border-slate-200 transition font-semibold">Mark Unpaid</button>`
-                : `<button onclick="togglePaymentStatus(${idx},'Paid')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded shadow-md font-semibold transition">Approve Payment</button>`;
-            return `<tr class="border-b border-slate-100 hover:bg-slate-50 transition">
-                <td class="px-5 py-4 whitespace-nowrap text-slate-500">${d}</td>
-                <td class="px-5 py-4 whitespace-nowrap font-semibold text-slate-800">${app.name}</td>
-                <td class="px-5 py-4 whitespace-nowrap text-slate-600">${app.email}</td>
-                <td class="px-5 py-4 whitespace-nowrap text-slate-600">${app.course}</td>
-                <td class="px-5 py-4 whitespace-nowrap text-emerald-600 font-bold">NPR 500</td>
-                <td class="px-5 py-4 whitespace-nowrap text-center font-mono text-[10px] text-slate-600">${app.txnRef||'<span class="text-slate-400">N/A</span>'}</td>
-                <td class="px-5 py-4 whitespace-nowrap text-center">${sb}</td>
-                <td class="px-5 py-4 whitespace-nowrap text-center flex justify-center">${ab}</td>
-            </tr>`;
-        }).join('');
-    }
-
-    // ===== SEARCH FILTERS =====
-    function filterStudentsTable() {
-        const q = document.getElementById('studentSearch').value.toLowerCase();
-        renderStudentsTable(studentsCache.filter(s =>
-            s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q) || (s.phone&&s.phone.toLowerCase().includes(q))
-        ));
-    }
-    function filterMentorsTable() {
-        const q = document.getElementById('mentorSearch').value.toLowerCase();
-        renderMentorsTable(mentorsCache.filter(m =>
-            m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q) || (m.track&&m.track.toLowerCase().includes(q))
-        ));
-    }
-    function filterPaymentsTable() {
-        const q = document.getElementById('paymentSearch').value.toLowerCase();
-        renderPaymentsTable(applicationsCache.filter(a =>
-            a.name.toLowerCase().includes(q) || a.email.toLowerCase().includes(q) ||
-            a.course.toLowerCase().includes(q) || (a.txnRef&&a.txnRef.toLowerCase().includes(q))
-        ));
-    }
-
-    // ===== PAYMENT STATUS TOGGLE (localStorage) =====
-    function togglePaymentStatus(idx, newStatus) {
-        const enrollments = lsGet(LS_ENROLLMENTS, []);
-        if (enrollments[idx]) {
-            enrollments[idx].paymentStatus = newStatus;
-            enrollments[idx].status = newStatus === 'Paid' ? 'Approved' : 'Pending';
-            lsSet(LS_ENROLLMENTS, enrollments);
-            showNotification(
-                newStatus === 'Paid' ? 'Payment Verified' : 'Payment Reversed',
-                `Status updated for ${enrollments[idx].name}.`,
-                newStatus === 'Paid'
-            );
-            loadSystemData();
-        }
-    }
-
-    // ===== COURSE MODAL =====
-    let tempModules = [];
-
-    function openCourseModal(idx) {
-        const overlay = document.getElementById('courseModalOverlay');
-        const box     = document.getElementById('courseModalBox');
-        document.getElementById('courseForm').reset();
-        document.getElementById('courseFieldImageBase64').value = '';
-        document.getElementById('courseThumbnailImg').src = '';
-        document.getElementById('courseThumbnailImg').classList.add('hidden');
-        document.getElementById('placeholderImageField').classList.remove('hidden');
-
-        if (idx === null || idx === undefined || idx === '') {
-            document.getElementById('courseModalTitle').innerHTML = '<i class="fa-solid fa-plus text-red-500"></i> Create New Course Blueprint';
-            document.getElementById('editCourseIndex').value = '';
-            tempModules = [];
-        } else {
-            document.getElementById('courseModalTitle').innerHTML = '<i class="fa-solid fa-edit text-red-500"></i> Edit Course Blueprint';
-            const c = coursesCache[idx];
-            document.getElementById('editCourseIndex').value     = idx;
-            document.getElementById('courseFieldName').value     = c.name;
-            document.getElementById('courseFieldCategory').value = c.category;
-            document.getElementById('courseFieldSlots').value    = c.slots;
-            document.getElementById('courseFieldFee').value      = c.fee;
-            document.getElementById('courseFieldDuration').value = c.duration;
-            document.getElementById('courseFieldMode').value     = c.mode;
-            document.getElementById('courseFieldDesc').value     = c.desc||'';
-            document.getElementById('courseFieldImageBase64').value = c.thumbnail||'';
-            if (c.thumbnail) {
-                document.getElementById('courseThumbnailImg').src = c.thumbnail;
-                document.getElementById('courseThumbnailImg').classList.remove('hidden');
-                document.getElementById('placeholderImageField').classList.add('hidden');
-            }
-            tempModules = [...(c.modules||[])];
-        }
-        renderTempModulesList();
-        overlay.classList.remove('opacity-0','pointer-events-none');
-        box.classList.remove('scale-[0.95]');
-        box.classList.add('scale-100');
-    }
-
-    function closeCourseModal() {
-        const overlay = document.getElementById('courseModalOverlay');
-        const box     = document.getElementById('courseModalBox');
-        overlay.classList.add('opacity-0','pointer-events-none');
-        box.classList.add('scale-[0.95]');
-        box.classList.remove('scale-100');
-    }
-
-    function handleImageUpload(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = evt => {
-            const b64 = evt.target.result;
-            document.getElementById('courseFieldImageBase64').value = b64;
-            const img = document.getElementById('courseThumbnailImg');
-            img.src = b64;
-            img.classList.remove('hidden');
-            document.getElementById('placeholderImageField').classList.add('hidden');
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function addModuleToStringList() {
-        const f = document.getElementById('newModuleField');
-        const v = f.value.trim();
-        if (!v) return;
-        tempModules.push(v);
-        f.value = '';
-        renderTempModulesList();
-    }
-
-    function deleteModuleFromTempList(i) { tempModules.splice(i,1); renderTempModulesList(); }
-
-    function renderTempModulesList() {
-        const c = document.getElementById('modalModulesListContainer');
-        c.innerHTML = tempModules.length === 0
-            ? '<p class="text-[10px] text-slate-500 italic text-center py-2">No curriculum modules added yet.</p>'
-            : tempModules.map((m,i) => `
-                <div class="flex items-center justify-between p-2 rounded bg-slate-50 border border-slate-200 text-[10px] text-slate-700">
-                    <span class="truncate pr-4">${m}</span>
-                    <button type="button" onclick="deleteModuleFromTempList(${i})" class="text-red-400 hover:text-red-600 transition"><i class="fa-solid fa-trash"></i></button>
-                </div>`).join('');
-    }
-
-    function handleSaveCourse(e) {
-        e.preventDefault();
-        const idx   = document.getElementById('editCourseIndex').value;
-        const name  = document.getElementById('courseFieldName').value.trim();
-        const cat   = document.getElementById('courseFieldCategory').value;
-        const slots = document.getElementById('courseFieldSlots').value.trim();
-        const fee   = document.getElementById('courseFieldFee').value.trim();
-        const dur   = document.getElementById('courseFieldDuration').value.trim();
-        const mode  = document.getElementById('courseFieldMode').value;
-        const desc  = document.getElementById('courseFieldDesc').value.trim();
-        const thumb = document.getElementById('courseFieldImageBase64').value;
-
-        if (!name||!slots||!fee||!dur||!desc) { alert('Please fill out all required fields.'); return; }
-
-        const courses = lsGet(LS_COURSES, []);
-        const data = {
-            id: idx === '' ? 'course-' + Date.now() : (courses[parseInt(idx)] ? courses[parseInt(idx)].id : 'course-' + Date.now()),
-            name, category:cat, slots, fee, duration:dur, mode, desc, thumbnail:thumb, modules:tempModules
-        };
-
-        if (idx === '') {
-            courses.push(data);
-        } else {
-            courses[parseInt(idx)] = data;
-        }
-        lsSet(LS_COURSES, courses);
-        closeCourseModal();
-        loadSystemData();
-        showNotification('Success', 'Course blueprint saved and published!');
-    }
-
-    function deleteCourse(idx) {
-        if (confirm('Are you sure you want to delete this course blueprint?')) {
-            const courses = lsGet(LS_COURSES, []);
-            courses.splice(parseInt(idx), 1);
-            lsSet(LS_COURSES, courses);
-            loadSystemData();
-            showNotification('Course Deleted', 'Blueprint removed from catalog.', false);
-        }
-    }
-
-    // ===== ACCOUNT MODAL - CREDENTIAL GENERATORS =====
-    let _currentGenLoginId = '';
-    let _currentGenPassword = '';
-
-    function generateLoginId(role) {
-        const prefix = role === 'Student' ? 'STU' : 'MNT';
-        const arr    = role === 'Student' ? lsGet(LS_STUDENTS, []) : lsGet(LS_MENTORS, []);
-        const num    = String(arr.length + 1).padStart(3, '0');
-        return prefix + num;
-    }
-
-    function generatePassword() {
-        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#!';
-        let pw = '';
-        for (let i = 0; i < 9; i++) pw += chars[Math.floor(Math.random() * chars.length)];
-        return 'Guru@' + pw.substring(0, 5);
-    }
-
-    function regenerateCredentials() {
-        const role = document.getElementById('accountEditRole').value || 'Student';
-        _currentGenLoginId  = generateLoginId(role);
-        _currentGenPassword = generatePassword();
-        document.getElementById('displayLoginId').textContent  = _currentGenLoginId;
-        document.getElementById('displayPassword').textContent = _currentGenPassword;
-    }
-
-    function openAccountModal(role, idx) {
-        const overlay = document.getElementById('accountModalOverlay');
-        const box     = document.getElementById('accountModalBox');
-        document.getElementById('accountForm').reset();
-        document.getElementById('accountEditRole').value  = role;
-        document.getElementById('accountEditIndex').value = idx !== null ? idx : '';
-
-        // Populate course dropdown
-        const courseSelect = document.getElementById('accountFieldCourse');
-        const courses = lsGet(LS_COURSES, DEFAULT_COURSES);
-        courseSelect.innerHTML = '<option value="">-- Select Course --</option>' +
-            courses.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
-
-        // Toggle fields by role
-        document.getElementById('courseFieldWrap').classList.toggle('hidden', role === 'Mentor');
-        document.getElementById('trackFieldWrap').classList.toggle('hidden', role === 'Student');
-
-        const isStudent = role === 'Student';
-        document.getElementById('accountModalTitle').innerHTML =
-            `<i class="fa-solid fa-${isStudent ? 'user-graduate text-red-500' : 'chalkboard-user text-purple-400'}"></i> ${idx !== null ? 'Edit' : 'Create'} ${role} Account`;
-        document.getElementById('accountSaveBtn').className =
-            `flex-1 py-2.5 rounded-xl text-white text-xs font-bold shadow-lg transition ` +
-            (isStudent ? 'bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500'
-                       : 'bg-gradient-to-r from-purple-700 to-purple-600 hover:from-purple-600 hover:to-purple-500');
-
-        if (idx !== null) {
-            // Edit mode - prefill
-            const arr = role === 'Student' ? lsGet(LS_STUDENTS, []) : lsGet(LS_MENTORS, []);
-            const acct = arr[idx];
-            if (acct) {
-                document.getElementById('accountFieldName').value   = acct.name   || '';
-                document.getElementById('accountFieldEmail').value  = acct.email  || '';
-                document.getElementById('accountFieldPhone').value  = acct.phone  || '';
-                document.getElementById('accountFieldStatus').value = acct.status || 'Active';
-                if (role === 'Student') document.getElementById('accountFieldCourse').value = acct.course || '';
-                if (role === 'Mentor')  document.getElementById('accountFieldTrack').value  = acct.track  || '';
-                _currentGenLoginId  = acct.loginId  || '';
-                _currentGenPassword = acct.password || '';
-                document.getElementById('displayLoginId').textContent  = _currentGenLoginId;
-                document.getElementById('displayPassword').textContent = _currentGenPassword;
-            }
-        } else {
-            // Create mode - generate credentials
-            _currentGenLoginId  = generateLoginId(role);
-            _currentGenPassword = generatePassword();
-            document.getElementById('displayLoginId').textContent  = _currentGenLoginId;
-            document.getElementById('displayPassword').textContent = _currentGenPassword;
-        }
-        document.getElementById('generatedCredsBanner').classList.remove('hidden');
-
-        overlay.classList.remove('opacity-0', 'pointer-events-none');
-        box.classList.remove('scale-[0.95]');
-        box.classList.add('scale-100');
-    }
-
-    function closeAccountModal() {
-        const overlay = document.getElementById('accountModalOverlay');
-        const box     = document.getElementById('accountModalBox');
-        overlay.classList.add('opacity-0', 'pointer-events-none');
-        box.classList.remove('scale-100');
-        box.classList.add('scale-[0.95]');
-    }
-
-    function handleSaveAccount(e) {
-        e.preventDefault();
-        const role  = document.getElementById('accountEditRole').value;
-        const idx   = document.getElementById('accountEditIndex').value;
-        const name  = document.getElementById('accountFieldName').value.trim();
-        const email = document.getElementById('accountFieldEmail').value.trim();
-        const phone = document.getElementById('accountFieldPhone').value.trim();
-        const status= document.getElementById('accountFieldStatus').value;
-        const customPw = document.getElementById('accountFieldCustomPw').value.trim();
-        const course= role === 'Student' ? document.getElementById('accountFieldCourse').value : '';
-        const track = role === 'Mentor'  ? document.getElementById('accountFieldTrack').value.trim() : '';
-
-        const lsKey = role === 'Student' ? LS_STUDENTS : LS_MENTORS;
-        const arr   = lsGet(lsKey, []);
-
-        const finalPw = customPw || _currentGenPassword;
-        const acct = {
-            name, email, phone, status, course, track,
-            role,
-            loginId:      _currentGenLoginId,
-            password:     finalPw,
-            registeredAt: idx === '' ? new Date().toISOString() : (arr[parseInt(idx)] ? arr[parseInt(idx)].registeredAt : new Date().toISOString())
-        };
-
-        if (idx === '') {
-            arr.push(acct);
-        } else {
-            arr[parseInt(idx)] = acct;
-        }
-        lsSet(lsKey, arr);
-        closeAccountModal();
-        loadSystemData();
-
-        if (idx === '') {
-            // Show credentials modal for new accounts
-            const newArr   = lsGet(lsKey, []);
-            const newIdx   = newArr.length - 1;
-            document.getElementById('credModalRole').value = role;
-            document.getElementById('credModalAccountIdx').value = newIdx;
-            document.getElementById('credModalTitle').textContent = 'Account Created!';
-            document.getElementById('credModalSubtitle').textContent = name + ' — ' + role + ' Account';
-            document.getElementById('credModalLoginId').textContent  = _currentGenLoginId;
-            document.getElementById('credModalPassword').textContent = finalPw;
-            // Reset edit rows
-            document.getElementById('credLoginIdViewRow').classList.remove('hidden');
-            document.getElementById('credLoginIdEditRow').classList.add('hidden');
-            document.getElementById('credPasswordViewRow').classList.remove('hidden');
-            document.getElementById('credPasswordEditRow').classList.add('hidden');
-            document.getElementById('credModalIcon').innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-            document.getElementById('credModalIcon').className = 'w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center text-2xl mx-auto mb-3';
-            const cOverlay = document.getElementById('credentialsModalOverlay');
-            const cBox     = document.getElementById('credentialsModalBox');
-            cOverlay.classList.remove('opacity-0', 'pointer-events-none');
-            cBox.classList.remove('scale-[0.95]');
-            cBox.classList.add('scale-100');
-        } else {
-            showNotification('Account Updated', name + "'s profile has been updated.");
-        }
-    }
-
-    function deleteAccount(role, idx) {
-        const lsKey = role === 'Student' ? LS_STUDENTS : LS_MENTORS;
-        const arr   = lsGet(lsKey, []);
-        const acct  = arr[idx];
-        if (!acct) return;
-        if (confirm('Delete ' + role + ' account for ' + acct.name + '? This cannot be undone.')) {
-            arr.splice(idx, 1);
-            lsSet(lsKey, arr);
-            loadSystemData();
-            showNotification('Account Deleted', acct.name + "'s account has been removed.", false);
-        }
-    }
-
-    function viewCredentials(role, idx) {
-        const arr  = role === 'Student' ? lsGet(LS_STUDENTS, []) : lsGet(LS_MENTORS, []);
-        const acct = arr[idx];
-        if (!acct) return;
-        // Store context for editing
-        document.getElementById('credModalRole').value = role;
-        document.getElementById('credModalAccountIdx').value = idx;
-        document.getElementById('credModalTitle').textContent = 'Login Credentials';
-        document.getElementById('credModalSubtitle').textContent = acct.name + ' — ' + role + ' Account';
-        document.getElementById('credModalLoginId').textContent  = acct.loginId  || 'N/A';
-        document.getElementById('credModalPassword').textContent = acct.password || 'N/A';
-        // Reset edit rows back to view mode
-        document.getElementById('credLoginIdViewRow').classList.remove('hidden');
-        document.getElementById('credLoginIdEditRow').classList.add('hidden');
-        document.getElementById('credPasswordViewRow').classList.remove('hidden');
-        document.getElementById('credPasswordEditRow').classList.add('hidden');
-        // Icon: key for viewing
-        document.getElementById('credModalIcon').innerHTML = '<i class="fa-solid fa-key"></i>';
-        document.getElementById('credModalIcon').className = 'w-14 h-14 rounded-2xl bg-cyan-50 border border-cyan-200 text-cyan-600 flex items-center justify-center text-2xl mx-auto mb-3';
-        const cOverlay = document.getElementById('credentialsModalOverlay');
-        const cBox     = document.getElementById('credentialsModalBox');
-        cOverlay.classList.remove('opacity-0', 'pointer-events-none');
-        cBox.classList.remove('scale-[0.95]');
-        cBox.classList.add('scale-100');
-    }
-
-    function toggleCredEdit(field) {
-        if (field === 'loginId') {
-            const viewRow = document.getElementById('credLoginIdViewRow');
-            const editRow = document.getElementById('credLoginIdEditRow');
-            const isEditing = !editRow.classList.contains('hidden');
-            if (isEditing) {
-                editRow.classList.add('hidden');
-                viewRow.classList.remove('hidden');
-            } else {
-                document.getElementById('credLoginIdInput').value = document.getElementById('credModalLoginId').textContent;
-                viewRow.classList.add('hidden');
-                editRow.classList.remove('hidden');
-                document.getElementById('credLoginIdInput').focus();
-            }
-        } else {
-            const viewRow = document.getElementById('credPasswordViewRow');
-            const editRow = document.getElementById('credPasswordEditRow');
-            const isEditing = !editRow.classList.contains('hidden');
-            if (isEditing) {
-                editRow.classList.add('hidden');
-                viewRow.classList.remove('hidden');
-            } else {
-                document.getElementById('credPasswordInput').value = document.getElementById('credModalPassword').textContent;
-                viewRow.classList.add('hidden');
-                editRow.classList.remove('hidden');
-                document.getElementById('credPasswordInput').focus();
-            }
-        }
-    }
-
-    function saveCredField(field) {
-        const role = document.getElementById('credModalRole').value;
-        const idx  = parseInt(document.getElementById('credModalAccountIdx').value);
-        if (!role || isNaN(idx)) { showNotification('Error', 'Cannot save — no account context.', false); return; }
-        const lsKey = role === 'Student' ? LS_STUDENTS : LS_MENTORS;
-        const arr   = lsGet(lsKey, []);
-        if (!arr[idx]) { showNotification('Error', 'Account not found.', false); return; }
-
-        if (field === 'loginId') {
-            const newId = document.getElementById('credLoginIdInput').value.trim();
-            if (!newId) { alert('Login ID cannot be empty.'); return; }
-            arr[idx].loginId = newId;
-            lsSet(lsKey, arr);
-            document.getElementById('credModalLoginId').textContent = newId;
-            document.getElementById('credLoginIdEditRow').classList.add('hidden');
-            document.getElementById('credLoginIdViewRow').classList.remove('hidden');
-        } else {
-            const newPw = document.getElementById('credPasswordInput').value.trim();
-            if (!newPw) { alert('Password cannot be empty.'); return; }
-            arr[idx].password = newPw;
-            lsSet(lsKey, arr);
-            document.getElementById('credModalPassword').textContent = newPw;
-            document.getElementById('credPasswordEditRow').classList.add('hidden');
-            document.getElementById('credPasswordViewRow').classList.remove('hidden');
-        }
-        showNotification('Credentials Updated', role + ' credentials saved successfully.');
-        loadSystemData();
-    }
-
-    function closeCredentialsModal() {
-        const overlay = document.getElementById('credentialsModalOverlay');
-        const box     = document.getElementById('credentialsModalBox');
-        overlay.classList.add('opacity-0', 'pointer-events-none');
-        box.classList.remove('scale-100');
-        box.classList.add('scale-[0.95]');
-    }
-
-    function copyText(field) {
-        const text = field === 'loginId'
-            ? document.getElementById('displayLoginId').textContent
-            : document.getElementById('displayPassword').textContent;
-        navigator.clipboard.writeText(text).then(() => {
-            const btnId = field === 'loginId' ? 'copyLoginIdBtn' : 'copyPasswordBtn';
-            const btn = document.getElementById(btnId);
-            btn.innerHTML = '<i class="fa-solid fa-check text-emerald-400 text-xs"></i>';
-            setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy text-xs"></i>'; }, 1500);
-        }).catch(() => {
-            alert('Copied: ' + text);
-        });
-    }
-
-    function copyCredField(spanId, btnId) {
-        const text = document.getElementById(spanId).textContent;
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = document.getElementById(btnId);
-            const orig = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-            btn.classList.add('text-emerald-400');
-            setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('text-emerald-400'); }, 1500);
-        }).catch(() => { alert('Copied: ' + text); });
-    }
-
-    // ===== SYLLABUS PREVIEW =====
-    function openSyllabusPreview(idx) {
-        const c = coursesCache[idx];
-        if (!c) return;
-        document.getElementById('previewSyllabusCourseTitle').textContent = c.name;
-        const list = document.getElementById('previewSyllabusList');
-        const mods = c.modules||[];
-        list.innerHTML = mods.length === 0
-            ? '<p class="text-xs text-slate-500 italic text-center py-4">No modules defined.</p>'
-            : mods.map(m => `<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>${m}</div>`).join('');
-        const overlay = document.getElementById('syllabusPreviewModalOverlay');
-        const box     = document.getElementById('syllabusPreviewModalBox');
-        overlay.classList.remove('opacity-0','pointer-events-none');
-        box.classList.remove('scale-[0.95]');
-        box.classList.add('scale-100');
-    }
-
-    function closeSyllabusPreviewModal() {
-        const overlay = document.getElementById('syllabusPreviewModalOverlay');
-        const box     = document.getElementById('syllabusPreviewModalBox');
-        overlay.classList.add('opacity-0','pointer-events-none');
-        box.classList.add('scale-[0.95]');
-        box.classList.remove('scale-100');
-    }
-
-    // ===== COURSE REQUESTS LOGIC =====
-    function renderRequestsTable() {
-        const tbody = document.getElementById('requestsTableBody');
-        if (!tbody || !window.getCourseRequests) return;
-        const reqs = window.getCourseRequests();
-        
-        if (reqs.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-12 text-center text-slate-500"><i class="fa-solid fa-code-pull-request text-3xl mb-2 block opacity-30"></i><p>No course requests found.</p></td></tr>`;
-            return;
-        }
-        
-        tbody.innerHTML = reqs.map(req => {
-            const d = new Date(req.timestamp).toLocaleDateString(undefined, {month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
-            let statusBadge = '';
-            let actionBtns = '';
-            
-            if (req.status === 'Pending') {
-                statusBadge = `<span class="px-2 py-0.5 text-[10px] font-bold bg-amber-500/10 border border-amber-500/20 text-amber-600 rounded-full animate-pulse"><i class="fa-solid fa-clock mr-0.5"></i>Pending</span>`;
-                actionBtns = `
-                    <button onclick="handleCourseRequest('${req.id}', 'Approved')" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded border border-emerald-200 transition font-semibold text-[10px]"><i class="fa-solid fa-check"></i> Approve</button>
-                    <button onclick="handleCourseRequest('${req.id}', 'Rejected')" class="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded border border-red-200 transition font-semibold text-[10px]"><i class="fa-solid fa-xmark"></i> Reject</button>
-                `;
-            } else if (req.status === 'Approved') {
-                statusBadge = `<span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 rounded-full"><i class="fa-solid fa-check mr-0.5"></i>Approved</span>`;
-                actionBtns = `<span class="text-[10px] text-slate-400">Processed</span>`;
-            } else {
-                statusBadge = `<span class="px-2 py-0.5 text-[10px] font-bold bg-red-500/10 border border-red-500/20 text-red-600 rounded-full"><i class="fa-solid fa-xmark mr-0.5"></i>Rejected</span>`;
-                actionBtns = `<span class="text-[10px] text-slate-400">Processed</span>`;
-            }
-            
-            return `<tr class="border-b border-slate-100 hover:bg-slate-50 transition">
-                <td class="px-5 py-3 whitespace-nowrap text-slate-500 text-[10px]">${d}</td>
-                <td class="px-5 py-3 whitespace-nowrap font-mono font-bold text-cyan-600">${req.studentId}</td>
-                <td class="px-5 py-3 whitespace-nowrap font-semibold text-slate-800">${req.courseName}</td>
-                <td class="px-5 py-3 whitespace-nowrap text-center">${statusBadge}</td>
-                <td class="px-5 py-3 whitespace-nowrap text-center">
-                    <div class="flex items-center justify-center gap-2">
-                        ${actionBtns}
-                    </div>
-                </td>
-            </tr>`;
-        }).join('');
-    }
-
-    function handleCourseRequest(reqId, status) {
-        if (!window.updateCourseRequestStatus) return;
-        window.updateCourseRequestStatus(reqId, status);
-        showNotification('Request Updated', 'Course request marked as ' + status);
-        renderRequestsTable();
-        loadSystemData(); // updates badge
-    }
-
-    window.addEventListener('mg_requests_updated', () => {
-        loadSystemData(); // for badge
-        if (document.getElementById('view-requests').classList.contains('hidden') === false) {
-            renderRequestsTable();
-        }
-    });
-
-    // ===== ADMIN CHAT LOGIC =====
-    let aActiveChatContact = null;
-    let aPendingChatAttachment = null;
-    
-    function renderAdminChatContacts() {
-        const list = document.getElementById('achatContactsList');
-        if (!list || !window.getMessages) return;
-        
-        const allMsgs = window.getMessages();
-        const contactMap = new Map();
-        
-        // Find all unique users who have messaged admin or admin has messaged them
-        allMsgs.forEach(m => {
-            if (m.batchId) return; // Ignore group chats
-            if (m.senderId === 'admin' && m.receiverId) {
-                contactMap.set(m.receiverId, { role: m.receiverRole, timestamp: m.timestamp });
-            } else if (m.receiverId === 'admin' && m.senderId) {
-                contactMap.set(m.senderId, { role: m.senderRole, timestamp: m.timestamp });
-            }
-        });
-        
-        // Add all students and mentors anyway so admin can initiate
-        studentsCache.forEach(s => contactMap.set(s.loginId || s.email, { role: 'Student', name: s.name, timestamp: 0 }));
-        mentorsCache.forEach(m => contactMap.set(m.email, { role: 'Mentor', name: m.name, timestamp: 0 }));
-
-        const contacts = Array.from(contactMap.entries()).map(([id, data]) => {
-            let name = data.name || id;
-            if (!data.name) {
-                if (data.role === 'Student') {
-                    const stu = studentsCache.find(s => s.loginId === id || s.email === id);
-                    if (stu) name = stu.name;
-                } else if (data.role === 'Mentor') {
-                    const men = mentorsCache.find(m => m.email === id);
-                    if (men) name = men.name;
-                }
-            }
-            return { id, role: data.role, name, timestamp: data.timestamp };
-        });
-        
-        // Sort by timestamp desc
-        contacts.sort((a,b) => b.timestamp - a.timestamp);
-        
-        if (contacts.length === 0) {
-            list.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">No contacts found.</p>`;
-            return;
-        }
-
-        list.innerHTML = contacts.map(c => {
-            const colorClass = c.role === 'Mentor' ? 'bg-purple-100 text-purple-600' : 'bg-red-100 text-red-600';
-            return `
-                <button onclick="selectAdminChatContact('${c.id}', '${c.role}', '${c.name.replace(/'/g,"\\'")}')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 transition text-left">
-                    <div class="relative flex-shrink-0">
-                        <div class="w-10 h-10 rounded-full ${colorClass} flex items-center justify-center font-bold text-xs">${c.name.charAt(0).toUpperCase()}</div>
-                    </div>
-                    <div class="flex-grow overflow-hidden">
-                        <p class="text-xs font-bold text-slate-900 truncate">${c.name}</p>
-                        <p class="text-[10px] text-slate-500 truncate">${c.role} • ${c.id}</p>
-                    </div>
+    <!-- CREATE MENTOR MODAL -->
+    <div id="createMentorModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 heading-font">Create Mentor Account</h2>
+                <button onclick="closeCreateMentorModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
-            `;
-        }).join('');
-    }
-    
-    function selectAdminChatContact(id, role, name) {
-        aActiveChatContact = { id, role, name };
-        const header = document.getElementById('aactiveChatHeader');
-        const colorClass = role === 'Mentor' ? 'bg-purple-100 text-purple-600' : 'bg-red-100 text-red-600';
-        header.innerHTML = `
-            <div class="w-10 h-10 rounded-full ${colorClass} flex items-center justify-center font-bold text-xs">${name.charAt(0).toUpperCase()}</div>
-            <div>
-                <h5 class="font-bold text-slate-900 text-sm">${name}</h5>
-                <p class="text-[10px] text-slate-500">${role} • ${id}</p>
             </div>
-        `;
-        
-        document.getElementById('achatInputText').disabled = false;
-        document.getElementById('achatAttachBtn').disabled = false;
-        document.getElementById('achatSendBtn').disabled = false;
-        
-        renderAdminChatMessages();
-    }
-    
-    function renderAdminChatMessages() {
-        if (!aActiveChatContact) return;
-        const stream = document.getElementById('achatMessageStream');
-        if (!window.getMessages) return;
-        
-        const allMsgs = window.getMessages();
-        const chatMsgs = allMsgs.filter(m => 
-            (m.senderId === 'admin' && m.receiverId === aActiveChatContact.id) ||
-            (m.senderId === aActiveChatContact.id && m.receiverId === 'admin')
-        );
-        
-        stream.innerHTML = '';
-        if (chatMsgs.length === 0) {
-            stream.innerHTML = `
-                <div class="flex h-full items-center justify-center text-slate-400 text-sm flex-col gap-3">
-                    <p class="bg-slate-100 px-4 py-2 rounded-full text-xs font-semibold">Start the conversation</p>
+
+            <form id="createMentorForm" class="space-y-4" onsubmit="createMentor(event)">
+                <div id="mentorFormAlert"></div>
+
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="mentorName" class="form-input" placeholder="Dr. Jane Doe" required>
                 </div>
-            `;
-            return;
-        }
-        
-        chatMsgs.forEach(msg => {
-            const isMe = msg.senderId === 'admin';
-            const time = new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            let attachHtml = '';
-            if (msg.attachment) {
-                if (msg.attachment.type.startsWith('image/')) {
-                    attachHtml = `<div class="mt-2 rounded-lg overflow-hidden border border-black/10"><img src="${msg.attachment.data}" class="max-w-[200px] max-h-[200px] object-cover"></div>`;
-                } else {
-                    attachHtml = `
-                        <div class="mt-2 flex items-center gap-2 p-2 bg-black/5 rounded-lg border border-black/10">
-                            <i class="fa-solid fa-file-lines text-lg ${isMe ? 'text-white' : 'text-slate-500'}"></i>
-                            <div class="overflow-hidden">
-                                <p class="text-xs font-semibold truncate ${isMe ? 'text-white' : 'text-slate-800'}">${msg.attachment.name}</p>
-                                <p class="text-[9px] ${isMe ? 'text-white/70' : 'text-slate-500'}">${(msg.attachment.size/1024).toFixed(1)} KB ${msg.attachment.simulated ? '(Simulated)' : ''}</p>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-            
-            const alignClass = isMe ? 'justify-end' : 'justify-start';
-            const bubbleClass = isMe 
-                ? 'bg-slate-800 text-white rounded-br-none' 
-                : 'bg-white border border-slate-200 text-slate-800 rounded-bl-none shadow-sm';
-            
-            stream.innerHTML += `
-                <div class="flex ${alignClass} w-full">
-                    <div class="max-w-[80%]">
-                        <div class="p-3 rounded-2xl ${bubbleClass}">
-                            ${msg.text ? `<p class="text-sm leading-relaxed">${msg.text.replace(/\\n/g, '<br>').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>` : ''}
-                            ${attachHtml}
-                            <p class="text-[9px] mt-1 text-right ${isMe ? 'text-slate-300' : 'text-slate-400'}">${time}</p>
-                        </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="mentorEmail" class="form-input" placeholder="jane@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Specialty / Department</label>
+                    <input type="text" id="mentorTrack" class="form-input" placeholder="e.g., Full Stack Development" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Generated Mentor ID</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="mentorId" class="form-input" readonly>
+                        <button type="button" onclick="generateMentorId()" class="btn-primary">Generate</button>
                     </div>
                 </div>
-            `;
-        });
-        
-        stream.scrollTop = stream.scrollHeight;
-    }
 
-    async function handleAdminChatAttachment(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        if (window.fileToBase64) {
-            try {
-                aPendingChatAttachment = await window.fileToBase64(file);
-                document.getElementById('achatFilePreview').classList.remove('hidden');
-                document.getElementById('achatFileName').textContent = file.name;
-                document.getElementById('achatFileSize').textContent = (file.size/1024).toFixed(1) + ' KB';
-            } catch (err) {
-                showNotification('Error', 'Failed to attach file.', false);
+                <div class="form-group">
+                    <label class="form-label">Generated Password</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="mentorPassword" class="form-input" readonly>
+                        <button type="button" onclick="generatePassword('mentorPassword')" class="btn-primary">Generate</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Account Status</label>
+                    <select id="mentorStatus" class="form-input">
+                        <option value="Active">Active</option>
+                        <option value="Pending">Pending Approval</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full btn-primary">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RESET PASSWORD MODAL -->
+    <div id="resetPasswordModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 heading-font">Reset Password</h2>
+                <button onclick="closeResetPasswordModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form id="resetPasswordForm" class="space-y-4" onsubmit="submitResetPassword(event)">
+                <div id="resetAlert"></div>
+
+                <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="newPassword" class="form-input" readonly>
+                        <button type="button" onclick="generatePassword('newPassword')" class="btn-primary">Generate</button>
+                    </div>
+                </div>
+
+                <p class="text-sm text-gray-600">This password will replace the current one. Make sure to communicate it securely to the user.</p>
+
+                <button type="submit" class="w-full btn-primary">Confirm Password Reset</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize data structures
+        const adminData = {
+            students: JSON.parse(localStorage.getItem('mentorGuru_students') || '[]'),
+            mentors: JSON.parse(localStorage.getItem('mentorGuru_mentors') || '[]'),
+            activityLogs: JSON.parse(localStorage.getItem('mentorGuru_activityLogs') || '[]')
+        };
+
+        let currentEditingUser = null;
+        let currentEditingType = null;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboard();
+            renderStudentsTable();
+            renderMentorsTable();
+            renderActivityLogs();
+        });
+
+        // Switch Views
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            event.target.closest('.sidebar-link').classList.add('active');
+
+            const titles = {
+                'dashboard': 'Dashboard',
+                'students': 'Student Management',
+                'mentors': 'Mentor Management',
+                'activity': 'Activity Logs',
+                'settings': 'Settings'
+            };
+            document.getElementById('viewTitle').textContent = titles[viewName];
+        }
+
+        // Load Dashboard Stats
+        function loadDashboard() {
+            const totalStudents = adminData.students.length;
+            const totalMentors = adminData.mentors.length;
+            const activeAccounts = adminData.students.filter(s => s.status === 'Active').length +
+                                  adminData.mentors.filter(m => m.status === 'Active').length;
+            const pendingApprovals = adminData.students.filter(s => s.status === 'Pending').length +
+                                    adminData.mentors.filter(m => m.status === 'Pending').length;
+
+            document.getElementById('totalStudents').textContent = totalStudents;
+            document.getElementById('totalMentors').textContent = totalMentors;
+            document.getElementById('activeAccounts').textContent = activeAccounts;
+            document.getElementById('pendingApprovals').textContent = pendingApprovals;
+
+            loadRecentActivity();
+        }
+
+        // Load Recent Activity
+        function loadRecentActivity() {
+            const recentList = document.getElementById('recentActivityList');
+            const recentLogs = adminData.activityLogs.slice(-5).reverse();
+
+            if (recentLogs.length === 0) {
+                recentList.innerHTML = '<p class="text-sm text-gray-500">No recent activity</p>';
+                return;
+            }
+
+            recentList.innerHTML = recentLogs.map(log => `
+                <div class="text-sm border-b pb-2">
+                    <p class="font-medium text-gray-800">${log.action}</p>
+                    <p class="text-xs text-gray-500">${new Date(log.timestamp).toLocaleString()}</p>
+                </div>
+            `).join('');
+        }
+
+        // Generate Student ID
+        function generateStudentId() {
+            const existingIds = adminData.students.map(s => parseInt(s.loginId.replace('STU', '')));
+            const nextId = Math.max(...existingIds, 0) + 1;
+            document.getElementById('studentId').value = `STU${String(nextId).padStart(3, '0')}`;
+        }
+
+        // Generate Mentor ID
+        function generateMentorId() {
+            const existingIds = adminData.mentors.map(m => parseInt(m.loginId.replace('MNT', '')));
+            const nextId = Math.max(...existingIds, 0) + 1;
+            document.getElementById('mentorId').value = `MNT${String(nextId).padStart(3, '0')}`;
+        }
+
+        // Generate Password (simple implementation - use bcrypt in production)
+        function generatePassword(fieldId) {
+            const length = 12;
+            const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                password += charset.charAt(Math.floor(Math.random() * charset.length));
+            }
+            document.getElementById(fieldId).value = password;
+        }
+
+        // Create Student
+        function createStudent(e) {
+            e.preventDefault();
+            const alertDiv = document.getElementById('studentFormAlert');
+
+            const name = document.getElementById('studentName').value;
+            const email = document.getElementById('studentEmail').value;
+            const phone = document.getElementById('studentPhone').value;
+            const loginId = document.getElementById('studentId').value;
+            const password = document.getElementById('studentPassword').value;
+            const status = document.getElementById('studentStatus').value;
+
+            if (!loginId || !password) {
+                showFormAlert(alertDiv, 'error', 'Please generate Student ID and Password');
+                return;
+            }
+
+            if (adminData.students.find(s => s.loginId === loginId || s.email === email)) {
+                showFormAlert(alertDiv, 'error', 'Student ID or Email already exists');
+                return;
+            }
+
+            const student = {
+                uid: Date.now().toString(),
+                name, email, phone, loginId, password, status,
+                role: 'Student',
+                createdAt: new Date().toISOString(),
+                createdBy: 'Admin'
+            };
+
+            adminData.students.push(student);
+            localStorage.setItem('mentorGuru_students', JSON.stringify(adminData.students));
+            logActivity(`Created student account: ${loginId} (${name})`);
+            showFormAlert(alertDiv, 'success', `Student ${loginId} created successfully`);
+
+            setTimeout(() => {
+                closeCreateStudentModal();
+                renderStudentsTable();
+                loadDashboard();
+            }, 1500);
+        }
+
+        // Create Mentor
+        function createMentor(e) {
+            e.preventDefault();
+            const alertDiv = document.getElementById('mentorFormAlert');
+
+            const name = document.getElementById('mentorName').value;
+            const email = document.getElementById('mentorEmail').value;
+            const track = document.getElementById('mentorTrack').value;
+            const loginId = document.getElementById('mentorId').value;
+            const password = document.getElementById('mentorPassword').value;
+            const status = document.getElementById('mentorStatus').value;
+
+            if (!loginId || !password) {
+                showFormAlert(alertDiv, 'error', 'Please generate Mentor ID and Password');
+                return;
+            }
+
+            if (adminData.mentors.find(m => m.loginId === loginId || m.email === email)) {
+                showFormAlert(alertDiv, 'error', 'Mentor ID or Email already exists');
+                return;
+            }
+
+            const mentor = {
+                uid: Date.now().toString(),
+                name, email, track, loginId, password, status,
+                role: 'Mentor',
+                createdAt: new Date().toISOString(),
+                createdBy: 'Admin'
+            };
+
+            adminData.mentors.push(mentor);
+            localStorage.setItem('mentorGuru_mentors', JSON.stringify(adminData.mentors));
+            logActivity(`Created mentor account: ${loginId} (${name})`);
+            showFormAlert(alertDiv, 'success', `Mentor ${loginId} created successfully`);
+
+            setTimeout(() => {
+                closeCreateMentorModal();
+                renderMentorsTable();
+                loadDashboard();
+            }, 1500);
+        }
+
+        // Render Students Table
+        function renderStudentsTable() {
+            const tbody = document.getElementById('studentsTableBody');
+            if (adminData.students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">No students found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = adminData.students.map(student => `
+                <tr>
+                    <td><span class="font-mono font-bold text-red-600">${student.loginId}</span></td>
+                    <td>${student.name}</td>
+                    <td>${student.email}</td>
+                    <td><span class="badge badge-${student.status.toLowerCase()}">${student.status}</span></td>
+                    <td>${new Date(student.createdAt).toLocaleDateString()}</td>
+                    <td>
+                        <button onclick="editStudent('${student.uid}')" class="action-btn btn-edit"><i class="fa-solid fa-edit"></i> Edit</button>
+                        <button onclick="resetUserPassword('${student.uid}', 'student')" class="action-btn btn-reset"><i class="fa-solid fa-key"></i> Reset</button>
+                        <button onclick="toggleStudentStatus('${student.uid}')" class="action-btn ${student.status === 'Active' ? 'btn-deactivate' : 'btn-activate'}">
+                            <i class="fa-solid fa-${student.status === 'Active' ? 'ban' : 'check'}"></i> ${student.status === 'Active' ? 'Deactivate' : 'Activate'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Render Mentors Table
+        function renderMentorsTable() {
+            const tbody = document.getElementById('mentorsTableBody');
+            if (adminData.mentors.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-gray-500">No mentors found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = adminData.mentors.map(mentor => `
+                <tr>
+                    <td><span class="font-mono font-bold text-red-600">${mentor.loginId}</span></td>
+                    <td>${mentor.name}</td>
+                    <td>${mentor.email}</td>
+                    <td>${mentor.track}</td>
+                    <td><span class="badge badge-${mentor.status.toLowerCase()}">${mentor.status}</span></td>
+                    <td>${new Date(mentor.createdAt).toLocaleDateString()}</td>
+                    <td>
+                        <button onclick="editMentor('${mentor.uid}')" class="action-btn btn-edit"><i class="fa-solid fa-edit"></i> Edit</button>
+                        <button onclick="resetUserPassword('${mentor.uid}', 'mentor')" class="action-btn btn-reset"><i class="fa-solid fa-key"></i> Reset</button>
+                        <button onclick="toggleMentorStatus('${mentor.uid}')" class="action-btn ${mentor.status === 'Active' ? 'btn-deactivate' : 'btn-activate'}">
+                            <i class="fa-solid fa-${mentor.status === 'Active' ? 'ban' : 'check'}"></i> ${mentor.status === 'Active' ? 'Deactivate' : 'Activate'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Toggle Student Status
+        function toggleStudentStatus(uid) {
+            const student = adminData.students.find(s => s.uid === uid);
+            if (!student) return;
+
+            student.status = student.status === 'Active' ? 'Suspended' : 'Active';
+            localStorage.setItem('mentorGuru_students', JSON.stringify(adminData.students));
+            logActivity(`${student.status === 'Active' ? 'Activated' : 'Deactivated'} student: ${student.loginId}`);
+            renderStudentsTable();
+            loadDashboard();
+        }
+
+        // Toggle Mentor Status
+        function toggleMentorStatus(uid) {
+            const mentor = adminData.mentors.find(m => m.uid === uid);
+            if (!mentor) return;
+
+            mentor.status = mentor.status === 'Active' ? 'Suspended' : 'Active';
+            localStorage.setItem('mentorGuru_mentors', JSON.stringify(adminData.mentors));
+            logActivity(`${mentor.status === 'Active' ? 'Activated' : 'Deactivated'} mentor: ${mentor.loginId}`);
+            renderMentorsTable();
+            loadDashboard();
+        }
+
+        // Reset User Password
+        function resetUserPassword(uid, type) {
+            currentEditingUser = uid;
+            currentEditingType = type;
+            document.getElementById('resetPasswordModal').classList.add('show');
+            document.getElementById('newPassword').value = '';
+        }
+
+        // Submit Password Reset
+        function submitResetPassword(e) {
+            e.preventDefault();
+            const newPassword = document.getElementById('newPassword').value;
+            const alertDiv = document.getElementById('resetAlert');
+
+            if (!newPassword) {
+                showFormAlert(alertDiv, 'error', 'Please generate a new password');
+                return;
+            }
+
+            if (currentEditingType === 'student') {
+                const student = adminData.students.find(s => s.uid === currentEditingUser);
+                if (student) {
+                    student.password = newPassword;
+                    student.passwordResetAt = new Date().toISOString();
+                    localStorage.setItem('mentorGuru_students', JSON.stringify(adminData.students));
+                    logActivity(`Reset password for student: ${student.loginId}`);
+                    renderStudentsTable();
+                }
+            } else if (currentEditingType === 'mentor') {
+                const mentor = adminData.mentors.find(m => m.uid === currentEditingUser);
+                if (mentor) {
+                    mentor.password = newPassword;
+                    mentor.passwordResetAt = new Date().toISOString();
+                    localStorage.setItem('mentorGuru_mentors', JSON.stringify(adminData.mentors));
+                    logActivity(`Reset password for mentor: ${mentor.loginId}`);
+                    renderMentorsTable();
+                }
+            }
+
+            showFormAlert(alertDiv, 'success', 'Password reset successfully');
+            setTimeout(() => closeResetPasswordModal(), 1500);
+        }
+
+        // Filter Students
+        function filterStudents() {
+            const query = document.getElementById('studentSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#studentsTableBody tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        // Filter Mentors
+        function filterMentors() {
+            const query = document.getElementById('mentorSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#mentorsTableBody tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        // Activity Logs
+        function logActivity(action) {
+            const log = {
+                timestamp: new Date().toISOString(),
+                action: action,
+                userId: 'Admin',
+                userType: 'Admin',
+                status: 'Success'
+            };
+            adminData.activityLogs.push(log);
+            localStorage.setItem('mentorGuru_activityLogs', JSON.stringify(adminData.activityLogs));
+            renderActivityLogs();
+        }
+
+        // Render Activity Logs
+        function renderActivityLogs() {
+            const tbody = document.getElementById('activityLogsBody');
+            if (adminData.activityLogs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">No activity logs yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = adminData.activityLogs.slice(-20).reverse().map(log => `
+                <tr>
+                    <td>${new Date(log.timestamp).toLocaleString()}</td>
+                    <td>${log.userId}</td>
+                    <td><span class="badge badge-pending">${log.userType}</span></td>
+                    <td>${log.action}</td>
+                    <td>-</td>
+                    <td><span class="badge badge-active">${log.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Modal Functions
+        function openCreateStudentModal() {
+            document.getElementById('createStudentForm').reset();
+            document.getElementById('studentFormAlert').innerHTML = '';
+            document.getElementById('createStudentModal').classList.add('show');
+            generateStudentId();
+        }
+
+        function closeCreateStudentModal() {
+            document.getElementById('createStudentModal').classList.remove('show');
+        }
+
+        function openCreateMentorModal() {
+            document.getElementById('createMentorForm').reset();
+            document.getElementById('mentorFormAlert').innerHTML = '';
+            document.getElementById('createMentorModal').classList.add('show');
+            generateMentorId();
+        }
+
+        function closeCreateMentorModal() {
+            document.getElementById('createMentorModal').classList.remove('show');
+        }
+
+        function closeResetPasswordModal() {
+            document.getElementById('resetPasswordModal').classList.remove('show');
+        }
+
+        // Show Form Alert
+        function showFormAlert(container, type, message) {
+            container.innerHTML = `
+                <div class="alert alert-${type}">
+                    <i class="fa-solid fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Save Settings
+        function saveSettings() {
+            const settings = {
+                enforceStrongPassword: document.getElementById('enforceStrongPassword').checked,
+                enableSessionTimeout: document.getElementById('enableSessionTimeout').checked,
+                trackLoginAttempts: document.getElementById('trackLoginAttempts').checked,
+                inactiveDays: document.getElementById('inactiveDays').value
+            };
+            localStorage.setItem('mentorGuru_settings', JSON.stringify(settings));
+            alert('Settings saved successfully!');
+            logActivity('Updated system settings');
+        }
+
+        // Logout
+        function logoutAdmin() {
+            if (confirm('Are you sure you want to sign out?')) {
+                localStorage.removeItem('mentorGuruAdmin');
+                window.location.replace('admin_login.html');
             }
         }
-        e.target.value = '';
-    }
 
-    function clearAdminChatAttachment() {
-        aPendingChatAttachment = null;
-        document.getElementById('achatFilePreview').classList.add('hidden');
-    }
-
-    function sendAdminChatMessage(e) {
-        e.preventDefault();
-        if (!aActiveChatContact || !window.saveMessage) return;
-        
-        const input = document.getElementById('achatInputText');
-        const text = input.value.trim();
-        
-        if (!text && !aPendingChatAttachment) return;
-        
-        window.saveMessage(
-            'admin',
-            'Admin',
-            aActiveChatContact.id,
-            aActiveChatContact.role,
-            text,
-            aPendingChatAttachment
-        );
-        
-        input.value = '';
-        clearAdminChatAttachment();
-        renderAdminChatMessages();
-    }
-    
-    window.addEventListener('mg_messages_updated', () => {
-        if (document.getElementById('view-chat').classList.contains('hidden') === false) {
-            renderAdminChatContacts();
-            renderAdminChatMessages();
-        }
-    });
-
-    window.handleCourseRequest = handleCourseRequest;
-    window.selectAdminChatContact = selectAdminChatContact;
-    window.handleAdminChatAttachment = handleAdminChatAttachment;
-    window.clearAdminChatAttachment = clearAdminChatAttachment;
-    window.sendAdminChatMessage = sendAdminChatMessage;
-
-    // ===== BOOT =====
-
-    window.initPage                 = initPage;
-    window.showLogin                = showLogin;
-    window.showDashboard            = showDashboard;
-    window.toggleLoginPw            = toggleLoginPw;
-    window.handleAdminLogin         = handleAdminLogin;
-    window.logoutAdmin              = logoutAdmin;
-    window.switchView               = switchView;
-    window.mutateUserStatus         = mutateUserStatus;
-    window.openSyllabusPreview      = openSyllabusPreview;
-    window.closeSyllabusPreviewModal = closeSyllabusPreviewModal;
-    window.openCourseModal          = openCourseModal;
-    window.closeCourseModal         = closeCourseModal;
-    window.handleImageUpload        = handleImageUpload;
-    window.addModuleToStringList    = addModuleToStringList;
-    window.deleteModuleFromTempList = deleteModuleFromTempList;
-    window.handleSaveCourse         = handleSaveCourse;
-    window.deleteCourse             = deleteCourse;
-    window.togglePaymentStatus      = togglePaymentStatus;
-    window.filterStudentsTable      = filterStudentsTable;
-    window.filterMentorsTable       = filterMentorsTable;
-    window.filterPaymentsTable      = filterPaymentsTable;
-    window.openAccountModal                = openAccountModal;
-    window.closeAccountModal               = closeAccountModal;
-    window.handleSaveAccount               = handleSaveAccount;
-    window.deleteAccount                   = deleteAccount;
-    window.viewCredentials                 = viewCredentials;
-    window.toggleCredEdit                  = toggleCredEdit;
-    window.saveCredField                   = saveCredField;
-    window.closeCredentialsModal           = closeCredentialsModal;
-    window.copyText                        = copyText;
-    window.copyCredField                   = copyCredField;
-    window.regenerateCredentials           = regenerateCredentials;
-    window.generateStudentIdFromEnrollment = generateStudentIdFromEnrollment;
-    window.deleteEnrollment                = deleteEnrollment;
-    window.filterEnrollmentsTable          = filterEnrollmentsTable;
-
-    // Boot - call initPage directly (script is at bottom of body, DOM is ready)
-    try {
-        initPage();
-    } catch(err) {
-        alert('Admin page error: ' + err.message);
-    }
-</script>
+        // Close modals on outside click
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'createStudentModal') closeCreateStudentModal();
+            if (e.target.id === 'createMentorModal') closeCreateMentorModal();
+            if (e.target.id === 'resetPasswordModal') closeResetPasswordModal();
+        });
+    </script>
 </body>
 </html>
