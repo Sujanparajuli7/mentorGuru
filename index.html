@@ -127,8 +127,8 @@
                 <div class="hidden md:flex items-center gap-7">
                     <a href="#" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Home</a>
                     <a href="#courses" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Courses</a>
-                    <a href="login.html?tab=signup&role=Student" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Join as Student</a>
-                    <a href="login.html?tab=signup&role=Mentor" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Become a Mentor</a>
+                    <a href="login.html?tab=student" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Student Panel Login</a>
+                    <a href="login.html?tab=mentor" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Mentor Panel Login</a>
                     <a href="login.html" id="portalActionButton" class="btn-red py-2.5 px-5 text-sm rounded-xl">Access Portal</a>
                 </div>
 
@@ -145,8 +145,8 @@
         <div id="mobileDrawer" class="hidden md:hidden absolute w-full left-0 bg-white/95 border-b border-slate-200 shadow-lg px-4 py-5 space-y-3 z-50 backdrop-blur-md">
             <a href="#" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Home</a>
             <a href="#courses" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Courses</a>
-            <a href="login.html?tab=signup&role=Student" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Join as Student</a>
-            <a href="login.html?tab=signup&role=Mentor" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Become a Mentor</a>
+            <a href="login.html?tab=student" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Student Panel Login</a>
+            <a href="login.html?tab=mentor" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Mentor Panel Login</a>
             <a href="login.html" id="mobilePortalActionButton" class="btn-red block text-center py-3 text-sm rounded-xl" onclick="toggleMobileMenu()">Access Portal</a>
         </div>
     </nav>
@@ -169,7 +169,7 @@
                     <a href="#courses" class="btn-red py-3.5 px-8 rounded-xl text-sm">
                         Explore Courses
                     </a>
-                    <button onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'});" class="py-3.5 px-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm transition shadow-sm">
+                    <button onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'});" class="py-3.5 px-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium hover:text-red-600 transition">
                         Learn More
                     </button>
                 </div>
@@ -259,8 +259,8 @@
                 </div>
                 <div class="inline-flex p-1 rounded-xl bg-white border border-slate-200 self-start md:self-auto shadow-sm">
                     <button onclick="switchCategory('all')" id="tab-all" class="tab-btn active px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg border border-transparent transition">All</button>
-                    <button onclick="switchCategory('IT')" id="tab-IT" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg border border-transparent transition">IT Tracks</button>
-                    <button onclick="switchCategory('Non-IT')" id="tab-Non-IT" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg border border-transparent transition">Non-IT Tracks</button>
+                    <button onclick="switchCategory('IT')" id="tab-IT" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg border border-transparent transition">IT</button>
+                    <button onclick="switchCategory('Non-IT')" id="tab-Non-IT" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg border border-transparent transition">Non-IT</button>
                 </div>
             </div>
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="publicCourseGrid"></div>
@@ -275,7 +275,7 @@
         </div>
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="glass-card rounded-2xl p-6 text-center space-y-4">
-                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-red-100" alt="Mentor">
+                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-red-100" alt="Anupam K.C.">
                 <div>
                     <h4 class="text-lg font-bold text-slate-900">Anupam K.C.</h4>
                     <p class="text-red-600 text-xs font-semibold mt-1">Lead Cloud Architect &amp; DevOps Lead</p>
@@ -283,7 +283,7 @@
                 <p class="text-slate-500 text-xs">Ex-Senior DevOps Engineer at Silicon Valley firms.</p>
             </div>
             <div class="glass-card rounded-2xl p-6 text-center space-y-4">
-                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-slate-200" alt="Mentor">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-slate-200" alt="Shreya Baskota">
                 <div>
                     <h4 class="text-lg font-bold text-slate-900">Shreya Baskota</h4>
                     <p class="text-slate-500 text-xs font-semibold mt-1">Senior Data Scientist</p>
@@ -291,7 +291,7 @@
                 <p class="text-slate-500 text-xs">Analytics Lead specializing in AI Models and Python.</p>
             </div>
             <div class="glass-card rounded-2xl p-6 text-center space-y-4">
-                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-red-100" alt="Mentor">
+                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-red-100" alt="Sujan Shrestha">
                 <div>
                     <h4 class="text-lg font-bold text-slate-900">Sujan Shrestha</h4>
                     <p class="text-red-600 text-xs font-semibold mt-1">SEO Director &amp; Digital Marketer</p>
@@ -299,7 +299,7 @@
                 <p class="text-slate-500 text-xs">Google Certified Web Strategist for corporate scaling.</p>
             </div>
             <div class="glass-card rounded-2xl p-6 text-center space-y-4">
-                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-slate-200" alt="Mentor">
+                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-slate-200" alt="Pramila Devkota">
                 <div>
                     <h4 class="text-lg font-bold text-slate-900">Pramila Devkota</h4>
                     <p class="text-slate-550 text-slate-500 text-xs">Product Architect with extensive experience in system designs.</p>
@@ -320,10 +320,10 @@
                 <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
                     <div class="space-y-4">
                         <div class="flex text-red-500 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                        <p class="text-slate-700 text-sm leading-relaxed">"The interactive doubt clearing sessions changed how I write code. The Flutter curriculum was completely aligned with real-world problems. Secured a full-time role immediately!"</p>
+                        <p class="text-slate-700 text-sm leading-relaxed">"The interactive doubt clearing sessions changed how I write code. The Flutter curriculum was completely aligned with real-world projects."</p>
                     </div>
                     <div class="flex items-center gap-4 mt-6 pt-5 border-t border-slate-200">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-slate-200" alt="Student">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-slate-200" alt="Aparna Karki">
                         <div>
                             <h4 class="text-sm font-bold text-slate-900">Aparna Karki</h4>
                             <p class="text-xs text-slate-500">Flutter Developer, Logpoint</p>
@@ -332,11 +332,11 @@
                 </div>
                 <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
                     <div class="space-y-4">
-                        <div class="flex text-red-500 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
-                        <p class="text-slate-700 text-sm leading-relaxed">"Advanced SEO course details are highly customized. The strategies I learned during the live lab allowed me to organically double web sessions for my current agency client."</p>
+                        <div class="flex text-red-500 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="text-slate-700 text-sm leading-relaxed">"Advanced SEO course details are highly customized. The strategies I learned during the live lab allowed me to organically grow our brand traffic."</p>
                     </div>
                     <div class="flex items-center gap-4 mt-6 pt-5 border-t border-slate-200">
-                        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-slate-200" alt="Student">
+                        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-slate-200" alt="Niranjan Adhikari">
                         <div>
                             <h4 class="text-sm font-bold text-slate-900">Niranjan Adhikari</h4>
                             <p class="text-xs text-slate-500">Marketing Lead, SEO Desk</p>
@@ -346,10 +346,10 @@
                 <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
                     <div class="space-y-4">
                         <div class="flex text-red-500 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                        <p class="text-slate-700 text-sm leading-relaxed">"MentorGuru's UI/UX program is exceptionally designed. Going through layout wireframes, interactive user testing, and building case studies was an elite process."</p>
+                        <p class="text-slate-700 text-sm leading-relaxed">"MentorGuru's UI/UX program is exceptionally designed. Going through layout wireframes, interactive user testing, and building real prototypes was game-changing."</p>
                     </div>
                     <div class="flex items-center gap-4 mt-6 pt-5 border-t border-slate-200">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-slate-200" alt="Student">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-slate-200" alt="Pooja Sharma">
                         <div>
                             <h4 class="text-sm font-bold text-slate-900">Pooja Sharma</h4>
                             <p class="text-xs text-slate-500">UI/UX Designer, Leapfrog</p>
@@ -450,9 +450,9 @@
                     An educational ecosystem optimized to bridge talent gaps by deploying live interactive industry masterclasses.
                 </p>
                 <div class="flex gap-3">
-                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-slate-500 transition shadow-sm"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-slate-500 transition shadow-sm"><i class="fa-brands fa-linkedin-in"></i></a>
-                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-slate-500 transition shadow-sm"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-slate-500 transition"><i class="fa-brands fa-facebook-f text-xs"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-slate-500 transition"><i class="fa-brands fa-twitter text-xs"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-slate-500 transition"><i class="fa-brands fa-linkedin-in text-xs"></i></a>
                 </div>
             </div>
             <div class="space-y-4">
@@ -529,7 +529,7 @@
                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5 transition-all duration-300">
                         <i class="fa-solid fa-graduation-cap text-red-400 mr-1.5 transition-all duration-300"></i> Selected Course Program
                     </label>
-                    <input type="text" id="enrollCourseTitle" class="w-full px-4 py-3 rounded-xl border border-red-50 bg-red-50/40 text-red-700 font-bold text-sm cursor-not-allowed outline-none select-none" readonly>
+                    <input type="text" id="enrollCourseTitle" class="w-full px-4 py-3 rounded-xl border border-red-50 bg-red-50/40 text-red-700 font-bold text-sm cursor-not-allowed outline-none shadow-sm" readonly>
                 </div>
 
                 <!-- Cohort Enrollment Fee Option -->
@@ -558,11 +558,11 @@
 
                 <!-- Bottom Action Buttons -->
                 <div class="pt-4 flex gap-3">
-                    <button type="button" onclick="closeEnrollModal()" class="w-1/2 py-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-sm transition active:scale-98">
+                    <button type="button" onclick="closeEnrollModal()" class="w-1/2 py-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-sm transition active:scale-95">
                         Cancel
                     </button>
                     <button type="submit" id="enrollSubmitBtn" class="btn-red w-1/2 py-3 rounded-xl text-sm font-bold shadow-md hover:shadow-lg active:scale-98 transition flex items-center justify-center gap-2">
-                        Confirm &amp; Enroll
+                        <i class="fa-solid fa-check"></i> Confirm &amp; Enroll
                     </button>
                 </div>
             </form>
@@ -653,7 +653,7 @@
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400">
                     <i class="fa-solid fa-receipt text-green-500 mr-1"></i> Transaction Reference ID (Optional)
                 </label>
-                <input type="text" id="esewaTxnInput" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-xs focus:border-green-500 outline-none transition placeholder-gray-400 bg-gray-50/50" placeholder="e.g. 8X3Y7Z1A">
+                <input type="text" id="esewaTxnInput" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-xs focus:border-green-500 outline-none transition placeholder-gray-400 bg-gray-50" placeholder="TXN ID from eSewa receipt">
                 <p class="text-[9px] text-gray-400 leading-normal">
                     Enter the reference code from your eSewa receipt to speed up approval.
                 </p>
@@ -672,7 +672,7 @@
                   </button>
                 </a>
                 
-                <button onclick="confirmManualPayment(event)" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl transition duration-300 shadow-sm flex items-center justify-center gap-2">
+                <button onclick="confirmManualPayment(event)" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl transition duration-300 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-circle-check text-green-400"></i> I Have Sent NPR 500
                 </button>
             </div>
@@ -687,7 +687,7 @@
     <div class="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
         
         <!-- Chat Drawer Box Container -->
-        <div id="chatContainer" class="hidden w-[350px] sm:w-[380px] h-[480px] mb-4 bg-white rounded-2xl border border-gray-200 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform translate-y-4 opacity-0">
+        <div id="chatContainer" class="hidden w-[350px] sm:w-[380px] h-[480px] mb-4 bg-white rounded-2xl border border-gray-200 shadow-2xl flex flex-col overflow-hidden transition-all duration-300">
             
             <!-- Chat Header -->
             <div class="bg-gradient-to-r from-red-600 to-red-500 text-white px-5 py-4 flex justify-between items-center shadow-sm flex-shrink-0">
@@ -738,24 +738,24 @@
 
             <!-- Quick Action Options -->
             <div id="chatQuickActions" class="p-2.5 bg-white border-t border-gray-100 flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-none text-[9px] font-bold text-gray-600 flex-shrink-0">
-                <button onclick="sendQuickQuery('Show IT Course List')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">💻 IT Tracks</button>
-                <button onclick="sendQuickQuery('Show Non-IT Course List')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">📈 Non-IT Tracks</button>
-                <button onclick="sendQuickQuery('How much are the tuition fees?')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">💰 Fee Rates</button>
-                <button onclick="sendQuickQuery('What are the shift timings?')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">🕒 Timings</button>
-                <button onclick="sendQuickQuery('Where is your training center located?')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">📍 Location</button>
+                <button onclick="sendQuickQuery('Show IT Course List')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">IT Courses</button>
+                <button onclick="sendQuickQuery('Show Non-IT Course List')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">Non-IT</button>
+                <button onclick="sendQuickQuery('How much are the tuition fees?')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">Fee Info</button>
+                <button onclick="sendQuickQuery('What are the shift timings?')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">Timings</button>
+                <button onclick="sendQuickQuery('Where is your training center located?')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">Location</button>
             </div>
 
             <!-- Typing Send Area -->
             <form id="chatForm" class="p-2.5 bg-white border-t border-gray-100 flex gap-2 flex-shrink-0" novalidate>
-                <input type="text" id="chatInput" class="flex-grow px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs outline-none focus:border-red-500 focus:ring-1 focus:ring-red-100 transition" placeholder="Write in English or नेपाली...">
-                <button type="submit" class="w-10 h-10 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-red-200 active:scale-[0.95] transition hover:from-red-700 hover:to-red-600">
+                <input type="text" id="chatInput" class="flex-grow px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs outline-none focus:border-red-500 focus:ring-1 focus:ring-red-100 transition" placeholder="Ask anything...">
+                <button type="submit" class="w-10 h-10 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-red-200 active:scale-95 transition">
                     <i class="fa-solid fa-paper-plane text-xs"></i>
                 </button>
             </form>
         </div>
 
         <!-- Float Trigger Button Bubble -->
-        <button id="chatbotTrigger" onclick="toggleChatbot()" class="w-14 h-14 rounded-full bg-gradient-to-r from-red-600 to-red-500 text-white flex items-center justify-center shadow-lg shadow-red-200 hover:shadow-xl hover:from-red-700 hover:to-red-600 active:scale-[0.95] transition duration-200">
+        <button id="chatbotTrigger" onclick="toggleChatbot()" class="w-14 h-14 rounded-full bg-gradient-to-r from-red-600 to-red-500 text-white flex items-center justify-center shadow-lg shadow-red-500/30 hover:shadow-red-500/40 active:scale-95 transition">
             <i class="fa-solid fa-message text-lg" id="chatTriggerIcon"></i>
         </button>
     </div>
