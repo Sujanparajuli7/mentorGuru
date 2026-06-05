@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MentorGuru | Admin Command Node</title>
+    <meta name="description" content="Secure administrative gateway for MentorGuru operations control center.">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .heading-font { font-family: 'Outfit', sans-serif; }
+        .glass-panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+        }
+        .glass-input {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            color: #0f172a;
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            background: #ffffff;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+            outline: none;
+        }
+        .glass-input::placeholder { color: #94a3b8; }
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50%       { transform: translateY(-20px) scale(1.05); }
+        }
+        .animate-blob-1 { animation: float-slow 7s ease-in-out infinite; }
+        .animate-blob-2 { animation: float-slow 9s ease-in-out infinite 1s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60%  { transform: translateX(-6px); }
+            40%, 80%  { transform: translateX(6px); }
+        }
+        .animate-shake { animation: shake 0.4s ease-in-out; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+
+    <div class="absolute w-[450px] h-[450px] rounded-full bg-red-650/[0.02] bg-red-600/[0.02] blur-[130px] -top-32 -left-20 pointer-events-none animate-blob-1"></div>
+    <div class="absolute w-[450px] h-[450px] rounded-full bg-rose-650/[0.01] bg-rose-600/[0.01] blur-[120px] -bottom-40 -right-20 pointer-events-none animate-blob-2"></div>
+
+    <div id="loginCard" class="w-full max-w-md glass-panel rounded-3xl shadow-xl p-8 z-10 relative overflow-hidden transition-all duration-500 hover:border-red-500/10">
+        <div class="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-red-600 to-rose-500"></div>
+
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-red-600 to-rose-500 text-white text-2xl mb-4 shadow-lg shadow-red-500/20">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight text-slate-900 heading-font uppercase">SOC Command Node</h1>
+            <p class="text-xs text-red-600 mt-1 uppercase tracking-widest">MentorGuru Security Operations Center</p>
+        </div>
+
+        <div id="alertBanner" class="hidden mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-center gap-3">
+            <i class="fa-solid fa-triangle-exclamation text-red-600 text-base flex-shrink-0 animate-pulse"></i>
+            <p id="alertMessage" class="font-medium"></p>
+        </div>
+
+        <form id="adminLoginForm" class="space-y-5" onsubmit="handleAdminLogin(event)" novalidate>
+            <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Administrative Token ID</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-red-500/60"><i class="fa-solid fa-id-badge"></i></span>
+                    <input type="text" id="adminUsername" class="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-sm" placeholder="Username" autocomplete="username" required>
+                </div>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Operations Passphrase</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-red-500/60"><i class="fa-solid fa-key"></i></span>
+                    <input type="password" id="adminPassword" class="w-full pl-10 pr-11 py-3 rounded-xl glass-input text-sm" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" required>
+                    <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-red-500/60 hover:text-red-650 transition">
+                        <i id="eyeIcon" class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all duration-300 text-xs uppercase tracking-wider mt-2 border border-red-500/10">
+                <i class="fa-solid fa-terminal mr-2"></i> Authenticate Credentials
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-slate-200 text-center">
+            <a href="index.html" class="text-xs text-slate-500 hover:text-red-600 transition inline-flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left text-[10px]"></i> Return to Public Gate
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // If already logged in, skip straight to admin dashboard
+        if (sessionStorage.getItem('mentorGuruAdmin') === 'true') {
+            window.location.replace('admin.html');
+        }
+
+        function togglePasswordVisibility() {
+            var input = document.getElementById('adminPassword');
+            var icon  = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        }
+
+        function showError(message) {
+            var banner = document.getElementById('alertBanner');
+            var msg    = document.getElementById('alertMessage');
+            var card   = document.getElementById('loginCard');
+            msg.textContent = message;
+            banner.classList.remove('hidden');
+            card.classList.remove('animate-shake');
+            void card.offsetWidth;
+            card.classList.add('animate-shake');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            document.getElementById('alertBanner').classList.add('hidden');
+            document.getElementById('loginCard').classList.remove('animate-shake');
+
+            var username = document.getElementById('adminUsername').value.trim();
+            var password = document.getElementById('adminPassword').value;
+
+            if (!username || !password) {
+                showError('Administrative fields cannot be left blank.');
+                return;
+            }
+
+            if (username === 'Suzzan9' && password === 'Suzzan999') {
+                // Store auth in sessionStorage (clears when browser/tab closes)
+                sessionStorage.setItem('mentorGuruAdmin', 'true');
+
+                // Visual feedback
+                var btn = document.getElementById('submitBtn');
+                btn.innerHTML = '<i class="fa-solid fa-circle-check mr-2"></i> Access Granted...';
+                btn.style.background = 'linear-gradient(135deg, #059669, #047857)';
+                btn.disabled = true;
+
+                setTimeout(function() {
+                    window.location.replace('admin.html');
+                }, 600);
+            } else {
+                showError('Access Denied: Invalid Administrative Tokens.');
+            }
+        }
+    </script>
+</body>
+</html>

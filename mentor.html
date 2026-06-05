@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MentorGuru | Mentor Desk</title>
+    <meta name="description" content="MentorGuru Mentor Portal – Manage your assigned cohorts, evaluate student progress, log attendance, and manage educational resources.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .mentor-sidebar-link {
+            color: #6b7280;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .mentor-sidebar-link:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .mentor-sidebar-link.active {
+            background: #fee2e2;
+            border-left: 3px solid #dc2626;
+            color: #dc2626;
+            font-weight: 600;
+        }
+        .avatar-ring {
+            box-shadow: 0 0 0 3px white, 0 0 0 5px #dc2626;
+        }
+        .notif-dot {
+            width: 8px; height: 8px;
+            background: #dc2626;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px; right: 2px;
+            border: 1.5px solid white;
+        }
+        .badge-red { background: #fee2e2; color: #dc2626; font-size: 10px; font-weight: 700; padding: 2px 10px; border-radius: 999px; text-transform: uppercase; }
+        .badge-green { background: #d1fae5; color: #059669; font-size: 10px; font-weight: 700; padding: 2px 10px; border-radius: 999px; text-transform: uppercase; }
+        .badge-blue { background: #dbeafe; color: #2563eb; font-size: 10px; font-weight: 700; padding: 2px 10px; border-radius: 999px; text-transform: uppercase; }
+        
+        #sidebarOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 30;
+        }
+        #sidebarOverlay.open { display: block; }
+
+        @media (max-width: 768px) {
+            #mentorSidebar {
+                position: fixed;
+                left: -280px;
+                top: 0; bottom: 0;
+                z-index: 40;
+                transition: left 0.3s cubic-bezier(0.4,0,0.2,1);
+            }
+            #mentorSidebar.open { left: 0; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 flex min-h-screen">
+
+    <!-- =================== AUTH GUARD =================== -->
+    <script>
+        if (!sessionStorage.getItem('mentorGuruMentor')) {
+            window.location.replace('mentor_login.html');
+        }
+    </script>
+
+    <!-- =================== MOBILE OVERLAY =================== -->
+    <div id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
+    <!-- =================== SIDEBAR =================== -->
+    <aside id="mentorSidebar" class="w-64 bg-white border-r border-gray-200 flex flex-col z-20 flex-shrink-0 shadow-sm">
+        <!-- Logo -->
+        <div class="h-16 border-b border-gray-100 flex items-center px-6 gap-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-red-500 text-white flex items-center justify-center shadow-md shadow-red-200">
+                <i class="fa-solid fa-graduation-cap text-sm"></i>
+            </div>
+            <span class="text-lg font-bold text-gray-900">Mentor<span class="text-red-600">Guru</span></span>
+        </div>
+
+        <!-- Profile Snippet -->
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
+            <div class="relative">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-600 text-white flex items-center justify-center text-sm font-bold avatar-ring" id="sidebarAvatar">RK</div>
+                <div class="w-3 h-3 bg-emerald-500 rounded-full border-2 border-white absolute -bottom-0.5 -right-0.5"></div>
+            </div>
+            <div class="overflow-hidden">
+                <p class="text-sm font-semibold text-gray-900 truncate" id="sidebarName">Raj Kumar Shrestha</p>
+                <p class="text-[10px] text-gray-400 truncate" id="sidebarSpecialty">Cybersecurity Expert</p>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-grow py-5 px-3 space-y-0.5 overflow-y-auto">
+            <button onclick="switchMentorView('dashboard')" id="mnav-dashboard" class="mentor-sidebar-link active w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-gauge-high w-4"></i> Dashboard
+            </button>
+            <button onclick="switchMentorView('cohorts')" id="mnav-cohorts" class="mentor-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-layer-group w-4"></i> My Cohorts
+            </button>
+            <button onclick="switchMentorView('roster')" id="mnav-roster" class="mentor-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-users w-4"></i> Student Evaluations
+            </button>
+            <button onclick="switchMentorView('resources')" id="mnav-resources" class="mentor-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-folder-open w-4"></i> Resource Matrix
+            </button>
+            <button onclick="switchMentorView('schedule')" id="mnav-schedule" class="mentor-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-calendar-days w-4"></i> Routine Matrix
+            </button>
+            <button onclick="switchMentorView('batches')" id="mnav-batches" class="mentor-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-users-rectangle w-4"></i> Batches
+            </button>
+            <button onclick="switchMentorView('chat')" id="mnav-chat" class="mentor-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-messages w-4"></i> Messages
+            </button>
+        </nav>
+
+        <!-- Exit Actions -->
+        <div class="p-4 border-t border-gray-100">
+            <button onclick="logoutMentor()" class="w-full flex items-center justify-center gap-2 py-2.5 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 rounded-xl text-xs font-bold text-red-600 uppercase tracking-wider transition">
+                <i class="fa-solid fa-right-from-bracket"></i> Exit Portal
+            </button>
+        </div>
+    </aside>
+
+    <!-- =================== MAIN CONTENT WRAPPER =================== -->
+    <main class="flex-grow h-screen overflow-y-auto flex flex-col bg-gray-50">
+
+        <!-- Top Header Bar -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10 shadow-sm">
+            <div class="flex items-center gap-3">
+                <button id="hamburgerBtn" onclick="openMobileSidebar()" class="md:hidden w-9 h-9 rounded-xl bg-gray-100 hover:bg-red-50 text-gray-600 hover:text-red-600 flex items-center justify-center transition">
+                    <i class="fa-solid fa-bars text-sm"></i>
+                </button>
+                <div>
+                    <h1 class="text-lg font-bold text-gray-900" id="mentorViewHeader">Dashboard Summary</h1>
+                    <p class="text-xs text-gray-400 mt-0.5">Mentor Desk Operations Control</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs font-semibold text-gray-800" id="headerMentorName">Raj Kumar Shrestha</p>
+                    <p class="text-[10px] text-gray-400 font-medium">Faculty Lead</p>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-red-600 text-white flex items-center justify-center text-sm font-bold shadow-sm" id="headerAvatar">RK</div>
+            </div>
+        </header>
+
+        <div class="p-6 flex flex-col gap-8 flex-grow">
+
+            <!-- ===== DASHBOARD VIEW ===== -->
+            <div id="mview-dashboard" class="mentor-view space-y-6">
+                <!-- Welcome Metric Row -->
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Assigned Cohorts</p>
+                                <h3 class="text-2xl font-extrabold mt-2 text-gray-900" id="dashCohortCount">1</h3>
+                            </div>
+                            <div class="p-2.5 bg-red-50 text-red-600 rounded-xl"><i class="fa-solid fa-layer-group text-lg"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Active Students</p>
+                                <h3 class="text-2xl font-extrabold mt-2 text-gray-900" id="dashStudentCount">0</h3>
+                            </div>
+                            <div class="p-2.5 bg-gray-100 text-gray-700 rounded-xl"><i class="fa-solid fa-users text-lg"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Resources Hosted</p>
+                                <h3 class="text-2xl font-extrabold mt-2 text-gray-900" id="dashResourceCount">0</h3>
+                            </div>
+                            <div class="p-2.5 bg-red-50 text-red-500 rounded-xl"><i class="fa-solid fa-folder-open text-lg"></i></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Standard Class Time</p>
+                                <h3 class="text-base font-extrabold mt-3 text-gray-900">10:00 AM - 11:00 AM</h3>
+                            </div>
+                            <div class="p-2.5 bg-red-50 text-red-400 rounded-xl"><i class="fa-solid fa-clock text-lg"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Splitted Summary Panels -->
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-2xl border border-gray-200 p-5 lg:col-span-2 space-y-4 shadow-sm">
+                        <h4 class="font-bold text-gray-800 text-sm flex items-center gap-2 border-b border-gray-100 pb-3">
+                            <i class="fa-solid fa-chalkboard-user text-red-600"></i> Active Training Pipelines
+                        </h4>
+                        <div class="grid sm:grid-cols-2 gap-4" id="dashboardCohortsGrid"></div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-gray-200 p-5 space-y-4 shadow-sm">
+                        <h4 class="font-bold text-gray-800 text-sm flex items-center gap-2 border-b border-gray-100 pb-3">
+                            <i class="fa-solid fa-calendar text-red-600"></i> Daily Agenda Matrix
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="p-3 border border-red-100 bg-red-50/50 rounded-xl flex items-center gap-3">
+                                <div class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></div>
+                                <div class="flex-grow text-xs">
+                                    <p class="font-bold text-gray-900">Cybersecurity Essentials</p>
+                                    <p class="text-gray-500 mt-0.5">Routine Class Frame • 10:00 AM</p>
+                                </div>
+                            </div>
+                            <div class="p-3 border border-gray-100 bg-gray-50 rounded-xl flex items-center gap-3">
+                                <div class="w-2.5 h-2.5 rounded-full bg-gray-400"></div>
+                                <div class="flex-grow text-xs">
+                                    <p class="font-bold text-gray-700">Curriculum Review Block</p>
+                                    <p class="text-gray-400 mt-0.5">Asynchronous Session Evaluation</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== COHORTS VIEW ===== -->
+            <div id="mview-cohorts" class="mentor-view hidden space-y-6">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-red-600"></i> Assigned Instructional Cohorts
+                </h3>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" id="assignedCohortsGrid"></div>
+            </div>
+
+            <!-- ===== BATCHES VIEW ===== -->
+            <div id="mview-batches" class="mentor-view hidden space-y-6 flex-grow flex flex-col h-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <i class="fa-solid fa-users-rectangle text-red-600"></i> Manage Student Batches
+                    </h3>
+                    <button onclick="openCreateBatchModal()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow transition">
+                        <i class="fa-solid fa-plus mr-1"></i> Create Batch
+                    </button>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" id="mentorBatchesGrid"></div>
+            </div>
+
+            <!-- ===== MESSAGES / CHAT VIEW ===== -->
+            <div id="mview-chat" class="mentor-view hidden flex-grow h-full -mx-6 -mb-6 -mt-2">
+                <div class="flex h-full bg-white border-t border-gray-200">
+                    <!-- Sidebar Contacts -->
+                    <div class="w-80 border-r border-gray-200 flex flex-col bg-gray-50 flex-shrink-0 h-full">
+                        <div class="p-4 border-b border-gray-200 bg-white">
+                            <h4 class="font-bold text-gray-800 text-sm mb-3">Messages</h4>
+                            <div class="relative">
+                                <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                                <input type="text" placeholder="Search students & groups..." class="w-full pl-8 pr-3 py-2 bg-gray-100 border-none rounded-lg text-xs focus:ring-1 focus:ring-red-500">
+                            </div>
+                        </div>
+                        <div class="flex-grow overflow-y-auto p-2 space-y-1" id="mchatContactsList">
+                            <!-- Contacts loaded by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Chat Area -->
+                    <div class="flex-grow flex flex-col h-full bg-white relative">
+                        <!-- Chat Header -->
+                        <div class="h-16 border-b border-gray-200 px-6 flex items-center justify-between bg-white z-10 flex-shrink-0">
+                            <div class="flex items-center gap-3" id="mactiveChatHeader">
+                                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400"><i class="fa-solid fa-user"></i></div>
+                                <div>
+                                    <h5 class="font-bold text-gray-900 text-sm">Select a conversation</h5>
+                                    <p class="text-[10px] text-gray-500">To start messaging</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat Messages Stream -->
+                        <div class="flex-grow overflow-y-auto p-6 space-y-4 bg-gray-50/50" id="mchatMessageStream">
+                            <div class="flex h-full items-center justify-center text-gray-400 text-sm flex-col gap-3">
+                                <i class="fa-regular fa-comments text-4xl text-gray-300"></i>
+                                <p>No chat selected</p>
+                            </div>
+                        </div>
+
+                        <!-- Chat Input -->
+                        <div class="p-4 bg-white border-t border-gray-200 flex-shrink-0">
+                            <form id="mchatMessageForm" onsubmit="sendMentorChatMessage(event)" class="flex items-end gap-2 relative">
+                                <div class="flex-grow relative">
+                                    <div id="mchatFilePreview" class="hidden absolute bottom-full left-0 mb-2 p-2 bg-white border border-gray-200 rounded-lg shadow-lg flex items-center gap-3 w-64 max-w-full">
+                                        <div class="w-10 h-10 bg-red-50 text-red-500 rounded flex items-center justify-center text-lg"><i class="fa-solid fa-file"></i></div>
+                                        <div class="flex-grow overflow-hidden">
+                                            <p class="text-xs font-bold text-gray-800 truncate" id="mchatFileName">file.pdf</p>
+                                            <p class="text-[10px] text-gray-500" id="mchatFileSize">1.2 MB</p>
+                                        </div>
+                                        <button type="button" onclick="clearMentorChatAttachment()" class="text-gray-400 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button>
+                                    </div>
+                                    <textarea id="mchatInputText" rows="1" class="w-full pl-4 pr-12 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-1 focus:ring-red-500 resize-none bg-gray-50 max-h-32" placeholder="Type a message..." disabled></textarea>
+                                    
+                                    <input type="file" id="mchatAttachmentInput" class="hidden" onchange="handleMentorChatAttachment(event)">
+                                    <button type="button" onclick="document.getElementById('mchatAttachmentInput').click()" class="absolute right-3 bottom-3 text-gray-400 hover:text-red-600 transition" disabled id="mchatAttachBtn">
+                                        <i class="fa-solid fa-paperclip"></i>
+                                    </button>
+                                </div>
+                                <button type="submit" id="mchatSendBtn" class="w-12 h-12 bg-red-600 hover:bg-red-700 text-white rounded-xl flex items-center justify-center shadow-md transition disabled:opacity-50" disabled>
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== STUDENT ROSTER VIEW ===== -->
+            <div id="mview-roster" class="mentor-view hidden space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <i class="fa-solid fa-users text-red-600"></i> Student Performance & Attendance Matrix
+                    </h3>
+                    <select id="rosterCohortFilter" onchange="loadStudentRoster()" class="px-3 py-2 text-xs font-semibold bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-red-500">
+                        <option value="">Select Cohort</option>
+                    </select>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200">
+                                    <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase">Student profile</th>
+                                    <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase">Course Track</th>
+                                    <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase">Attendance Weight</th>
+                                    <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase">Calculated Grade</th>
+                                    <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase text-center">Diagnostics</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mentorRosterTableBody" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== RESOURCE MATRIX VIEW ===== -->
+            <div id="mview-resources" class="mentor-view hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open text-red-600"></i> Educational Resource Matrix
+                    </h3>
+                    <button onclick="openResourceModal()" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs rounded-xl shadow-md transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> Inject New Resource
+                    </button>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200">
+                                    <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase">Resource Asset</th>
+                                    <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase">Target Course</th>
+                                    <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase">Format</th>
+                                    <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase">Hyperlink</th>
+                                    <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase text-center">Purge</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mentorResourcesTableBody" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== CLASS SCHEDULE VIEW ===== -->
+            <div id="mview-schedule" class="mentor-view hidden space-y-6">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-days text-red-600"></i> Assigned Timetable Architecture
+                </h3>
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                    <div class="grid grid-cols-5 gap-4">
+                        <div class="space-y-2 text-center">
+                            <span class="text-xs font-bold text-gray-400 uppercase">Mon</span>
+                            <div class="p-3 bg-red-50 border border-red-100 rounded-xl text-xs font-semibold text-red-700">10:00 AM<br><span class="font-normal text-[10px] text-gray-500">Cybersecurity</span></div>
+                        </div>
+                        <div class="space-y-2 text-center">
+                            <span class="text-xs font-bold text-gray-400 uppercase">Tue</span>
+                            <div class="p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-400">Rest</div>
+                        </div>
+                        <div class="space-y-2 text-center">
+                            <span class="text-xs font-bold text-gray-400 uppercase">Wed</span>
+                            <div class="p-3 bg-red-50 border border-red-100 rounded-xl text-xs font-semibold text-red-700">10:00 AM<br><span class="font-normal text-[10px] text-gray-500">Cybersecurity</span></div>
+                        </div>
+                        <div class="space-y-2 text-center">
+                            <span class="text-xs font-bold text-gray-400 uppercase">Thu</span>
+                            <div class="p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-400">Rest</div>
+                        </div>
+                        <div class="space-y-2 text-center">
+                            <span class="text-xs font-bold text-gray-400 uppercase">Fri</span>
+                            <div class="p-3 bg-red-50 border border-red-100 rounded-xl text-xs font-semibold text-red-700">10:00 AM<br><span class="font-normal text-[10px] text-gray-500">Cybersecurity</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- =================== RESOURCE MODAL INJECTOR =================== -->
+    <div id="resourceModalOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 border border-gray-100 transform scale-95 transition-transform duration-300" id="resourceModalBox">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-4">
+                <h4 class="font-bold text-gray-900 text-sm"><i class="fa-solid fa-folder-plus text-red-600 mr-1.5"></i> Add Program Asset</h4>
+                <button onclick="closeResourceModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="mentorResourceForm" onsubmit="saveMentorResource(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Resource Asset Title</label>
+                    <input type="text" id="resTitle" required class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-1 focus:ring-red-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Target Academic Track</label>
+                    <select id="resCourse" required class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-1 focus:ring-red-500"></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Format Flag</label>
+                    <select id="resType" required class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-1 focus:ring-red-500">
+                        <option value="PDF">Document File (PDF)</option>
+                        <option value="Video">Video stream link</option>
+                        <option value="Slides">Presentation deck</option>
+                        <option value="ZIP">Code Engine Archive (ZIP)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Resource Destination URL</label>
+                    <input type="url" id="resUrl" required placeholder="https://" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-1 focus:ring-red-500">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs rounded-xl shadow-md transition">Commit Asset to Grid</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- =================== BATCH MODAL INJECTOR =================== -->
+    <div id="mBatchModalOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 border border-gray-100 transform scale-95 transition-transform duration-300" id="mBatchModalBox">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-4">
+                <h4 class="font-bold text-gray-900 text-sm"><i class="fa-solid fa-users-rectangle text-red-600 mr-1.5"></i> Create New Batch</h4>
+                <button onclick="closeCreateBatchModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="mentorBatchForm" onsubmit="handleCreateBatch(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Batch Name</label>
+                    <input type="text" id="mbatchName" required class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-1 focus:ring-red-500" placeholder="e.g. Cyber Morning Cohort A">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Target Academic Track</label>
+                    <select id="mbatchCourse" required onchange="renderBatchStudentSelection()" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:ring-1 focus:ring-red-500">
+                        <option value="">Select Course</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Select Students</label>
+                    <div id="mbatchStudentList" class="border border-gray-200 rounded-xl p-3 max-h-40 overflow-y-auto space-y-2 text-xs">
+                        <p class="text-gray-400 italic">Select a course to view available students.</p>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs rounded-xl shadow-md transition">Create Batch</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- =================== TOAST NOTIFIER =================== -->
+    <div id="mentorToast" class="fixed bottom-6 right-6 z-[110] px-5 py-3 rounded-xl bg-gray-900 text-white text-xs shadow-xl flex items-center gap-3 translate-y-24 opacity-0 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-red-400"></i>
+        <span id="mentorToastMsg">State synchronized.</span>
+    </div>
+
+    <!-- =================== DYNAMIC APPLICATION SCRIPTS =================== -->
+    <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { collection, getDocs, addDoc, deleteDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+    // Expose functions to window
+    window.switchMentorView = switchMentorView;
+    window.openMobileSidebar = openMobileSidebar;
+    window.closeMobileSidebar = closeMobileSidebar;
+    window.logoutMentor = logoutMentor;
+    window.openResourceModal = openResourceModal;
+    window.closeResourceModal = closeResourceModal;
+    window.saveMentorResource = saveMentorResource;
+    window.purgeResourceNode = purgeResourceNode;
+    window.pingStudentMock = pingStudentMock;
+    window.loadStudentRoster = loadStudentRoster;
+
+    let mentorProfile = {};
+    let currentUser = null;
+    let coursesCache = [];
+    let enrollmentsCache = [];
+    let resourcesCache = [];
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            currentUser = user;
+            await loadFirestoreData();
+        } else {
+            // fallback if using generic login
+            const session = sessionStorage.getItem('mentorGuruMentor');
+            if (!session) {
+                window.location.replace('mentor_login.html');
+            } else {
+                mentorProfile = JSON.parse(session);
+                bootMentorPortal();
+            }
+        }
+    });
+
+    async function loadFirestoreData() {
+        try {
+            // Fetch profile
+            const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+            if (userDoc.exists()) {
+                mentorProfile = { ...mentorProfile, ...userDoc.data() };
+            } else {
+                const session = JSON.parse(sessionStorage.getItem('mentorGuruMentor') || '{}');
+                mentorProfile = { ...session };
+            }
+
+            // Fetch courses
+            const coursesSnap = await getDocs(collection(db, 'courses'));
+            coursesCache = [];
+            coursesSnap.forEach(d => coursesCache.push({ id: d.id, ...d.data() }));
+
+            // Fetch enrollments
+            const enrollSnap = await getDocs(collection(db, 'enrollments'));
+            enrollmentsCache = [];
+            enrollSnap.forEach(d => enrollmentsCache.push({ id: d.id, ...d.data() }));
+
+            // Fetch resources
+            const resourcesSnap = await getDocs(collection(db, 'resources'));
+            resourcesCache = [];
+            resourcesSnap.forEach(d => resourcesCache.push({ id: d.id, ...d.data() }));
+
+            bootMentorPortal();
+        } catch (e) {
+            console.error("Error loading mentor data", e);
+        }
+    }
+
+    function bootMentorPortal() {
+        if(!mentorProfile.name) mentorProfile.name = 'Mentor';
+        if(!mentorProfile.specialty) mentorProfile.specialty = 'Specialty Instructor';
+        if(!mentorProfile.avatar) mentorProfile.avatar = mentorProfile.name.charAt(0).toUpperCase();
+
+        document.getElementById('sidebarName').textContent = mentorProfile.name;
+        document.getElementById('sidebarSpecialty').textContent = mentorProfile.specialty;
+        document.getElementById('headerMentorName').textContent = mentorProfile.name;
+        document.getElementById('sidebarAvatar').textContent = mentorProfile.avatar;
+        document.getElementById('headerAvatar').textContent = mentorProfile.avatar;
+
+        populateCohortFilterSelectors();
+        syncDashboardMetrics();
+        loadAssignedCohortsGrid();
+        loadStudentRoster();
+        loadResourceMatrixTable();
+    }
+
+    function syncDashboardMetrics() {
+        const assignedTracks = coursesCache.filter(c => c.name.toLowerCase().includes('cybersecurity'));
+        const assignedTrackNames = assignedTracks.map(t => t.name.toLowerCase());
+        
+        const targetedStudents = enrollmentsCache.filter(app => app.status === 'Approved' && assignedTrackNames.includes(app.course.toLowerCase()));
+        const targetingResources = resourcesCache.filter(r => assignedTrackNames.includes(r.course.toLowerCase()));
+
+        document.getElementById('dashCohortCount').textContent = assignedTracks.length;
+        document.getElementById('dashStudentCount').textContent = targetedStudents.length;
+        document.getElementById('dashResourceCount').textContent = targetingResources.length;
+    }
+
+    function populateCohortFilterSelectors() {
+        const rosterFilter = document.getElementById('rosterCohortFilter');
+        const resCourseSelect = document.getElementById('resCourse');
+
+        if(!rosterFilter) return;
+
+        rosterFilter.innerHTML = '<option value="">All Assigned Cohorts</option>';
+        resCourseSelect.innerHTML = '';
+
+        coursesCache.filter(c => c.name.toLowerCase().includes('cybersecurity')).forEach(course => {
+            const opt = document.createElement('option');
+            opt.value = course.name;
+            opt.textContent = course.name;
+            rosterFilter.appendChild(opt.cloneNode(true));
+            resCourseSelect.appendChild(opt.cloneNode(true));
+        });
+    }
+
+    function loadAssignedCohortsGrid() {
+        const grid = document.getElementById('assignedCohortsGrid');
+        const dashGrid = document.getElementById('dashboardCohortsGrid');
+        if(!grid) return;
+
+        const assignedTracks = coursesCache.filter(c => c.name.toLowerCase().includes('cybersecurity'));
+
+        let appendHtml = '';
+        if(assignedTracks.length === 0) {
+            appendHtml = '<p class="text-xs text-gray-400 p-4">No active cohort blueprints cataloged.</p>';
+            grid.innerHTML = appendHtml;
+            if(dashGrid) dashGrid.innerHTML = appendHtml;
+            return;
+        }
+
+        assignedTracks.forEach(track => {
+            const enrollmentCount = enrollmentsCache.filter(a => a.course === track.name && a.status === 'Approved').length;
+            appendHtml += `
+                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="badge-blue">${track.mode}</span>
+                        <span class="badge-green">${track.duration}</span>
+                    </div>
+                    <h4 class="font-bold text-sm text-gray-900">${track.name}</h4>
+                    <p class="text-xs text-gray-400"><i class="fa-solid fa-users mr-1"></i> ${enrollmentCount} Registered Profiles</p>
+                    <div class="pt-2 flex gap-2 border-t border-gray-50">
+                        <button onclick="switchMentorView('roster')" class="flex-1 text-center py-1.5 text-[11px] font-bold bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition">Diagnostics</button>
+                    </div>
+                </div>`;
+        });
+
+        grid.innerHTML = appendHtml;
+        if(dashGrid) dashGrid.innerHTML = appendHtml;
+    }
+
+    function loadStudentRoster() {
+        const tableBody = document.getElementById('mentorRosterTableBody');
+        if(!tableBody) return;
+
+        const selectedCohort = document.getElementById('rosterCohortFilter').value;
+        
+        let students = enrollmentsCache.filter(app => app.status === 'Approved');
+        // Filter to assigned track metrics
+        if(selectedCohort) {
+            students = students.filter(s => s.course === selectedCohort);
+        } else {
+            students = students.filter(s => (s.course || '').toLowerCase().includes('cybersecurity'));
+        }
+
+        if(students.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="5" class="px-5 py-8 text-center text-xs text-gray-400">No active student listings found match criteria.</td></tr>`;
+            return;
+        }
+
+        tableBody.innerHTML = '';
+        students.forEach((student, index) => {
+            // Mock diagnostic vectors matching user session updates structure
+            const mockProgressVal = 75 + (index * 4) % 25;
+            const mockGrade = mockProgressVal > 85 ? 'A' : 'B';
+            
+            tableBody.innerHTML += `
+                <tr class="hover:bg-gray-50/70 transition">
+                    <td class="px-5 py-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold">${(student.name || '?').charAt(0)}</div>
+                            <div>
+                                <p class="text-xs font-bold text-gray-900">${student.name}</p>
+                                <p class="text-[10px] text-gray-400">${student.email}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-5 py-4 text-xs font-semibold text-gray-700">${student.course}</td>
+                    <td class="px-5 py-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-24 bg-gray-100 rounded-full h-1.5">
+                                <div class="bg-red-600 h-1.5 rounded-full" style="width: ${mockProgressVal}%"></div>
+                            </div>
+                            <span class="text-xs font-bold text-gray-700">${mockProgressVal}%</span>
+                        </div>
+                    </td>
+                    <td class="px-5 py-4"><span class="px-2 py-0.5 rounded text-[11px] font-extrabold bg-gray-100 text-gray-800">${mockGrade}</span></td>
+                    <td class="px-5 py-4 text-center">
+                        <button onclick="pingStudentMock('${student.name}')" class="text-xs text-red-600 hover:underline font-semibold"><i class="fa-solid fa-bolt mr-1"></i>Remind</button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    function loadResourceMatrixTable() {
+        const tableBody = document.getElementById('mentorResourcesTableBody');
+        if(!tableBody) return;
+
+        const cyberResources = resourcesCache.filter(r => (r.course || '').toLowerCase().includes('cybersecurity'));
+
+        if(cyberResources.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="5" class="px-5 py-8 text-center text-xs text-gray-400">No managed file nodes running inside tracking profile.</td></tr>`;
+            return;
+        }
+
+        tableBody.innerHTML = '';
+        cyberResources.forEach((res) => {
+            tableBody.innerHTML += `
+                <tr class="hover:bg-gray-50/70 transition">
+                    <td class="px-5 py-4 text-xs font-bold text-gray-900">${res.title}</td>
+                    <td class="px-5 py-4 text-xs text-gray-600 font-medium">${res.course}</td>
+                    <td class="px-5 py-4"><span class="badge-red">${res.type}</span></td>
+                    <td class="px-5 py-4 text-xs truncate max-w-[140px] text-blue-500 underline font-medium"><a href="${res.url}" target="_blank">${res.url}</a></td>
+                    <td class="px-5 py-4 text-center">
+                        <button onclick="purgeResourceNode('${res.id}')" class="text-gray-400 hover:text-red-600 text-xs transition"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    function openResourceModal() {
+        const overlay = document.getElementById('resourceModalOverlay');
+        const box = document.getElementById('resourceModalBox');
+        overlay.classList.remove('hidden');
+        setTimeout(() => {
+            overlay.classList.remove('opacity-0');
+            box.classList.remove('scale-95');
+        }, 50);
+    }
+
+    function closeResourceModal() {
+        const overlay = document.getElementById('resourceModalOverlay');
+        const box = document.getElementById('resourceModalBox');
+        overlay.classList.add('opacity-0');
+        box.classList.add('scale-95');
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+    }
+
+    async function saveMentorResource(e) {
+        e.preventDefault();
+        const title = document.getElementById('resTitle').value.trim();
+        const course = document.getElementById('resCourse').value;
+        const type = document.getElementById('resType').value;
+        const url = document.getElementById('resUrl').value.trim();
+
+        const newResource = { title, course, type, url, added: new Date().toLocaleDateString() };
+        try {
+            const docRef = await addDoc(collection(db, 'resources'), newResource);
+            newResource.id = docRef.id;
+            resourcesCache.push(newResource);
+
+            document.getElementById('mentorResourceForm').reset();
+            closeResourceModal();
+            loadResourceMatrixTable();
+            syncDashboardMetrics();
+            triggerPortalToast('Resource hosted in operational registry.');
+        } catch (err) {
+            console.error("Error saving resource:", err);
+            triggerPortalToast('Error saving resource');
+        }
+    }
+
+    async function purgeResourceNode(id) {
+        try {
+            await deleteDoc(doc(db, 'resources', id));
+            resourcesCache = resourcesCache.filter(r => r.id !== id);
+            loadResourceMatrixTable();
+            syncDashboardMetrics();
+            triggerPortalToast('Resource asset dropped.');
+        } catch (err) {
+            console.error("Error deleting resource:", err);
+            triggerPortalToast('Error dropping resource asset.');
+        }
+    }
+
+    function pingStudentMock(name) {
+        triggerPortalToast(`Diagnostic prompt sent to ${name}.`);
+    }
+
+    function triggerPortalToast(msg) {
+        const toast = document.getElementById('mentorToast');
+        document.getElementById('mentorToastMsg').textContent = msg;
+        toast.classList.remove('translate-y-24', 'opacity-0');
+        setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 2500);
+    }
+
+    // ========= BATCHES =========
+    function renderBatches() {
+        const grid = document.getElementById('mentorBatchesGrid');
+        if (!grid || !window.getBatches) return;
+        
+        const batches = window.getBatches().filter(b => b.mentorId === currentMentor.email);
+        grid.innerHTML = '';
+        
+        if (batches.length === 0) {
+            grid.innerHTML = `<div class="col-span-full py-10 text-center text-sm text-gray-400 border-2 border-dashed border-gray-200 rounded-2xl">No batches created yet.</div>`;
+            return;
+        }
+        
+        batches.forEach(batch => {
+            grid.innerHTML += `
+                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-3">
+                    <div class="flex justify-between items-start">
+                        <h4 class="font-bold text-gray-900 text-sm">${escHTML(batch.name)}</h4>
+                        <span class="badge-blue"><i class="fa-solid fa-users"></i> ${batch.studentIds.length}</span>
+                    </div>
+                    <p class="text-xs font-medium text-gray-500">${escHTML(batch.course)}</p>
+                    <div class="mt-auto pt-3 border-t border-gray-100 flex gap-2">
+                        <button onclick="switchMentorView('chat'); selectMentorChatContact('${batch.id}', 'Batch', '${escHTML(batch.name)}');" class="flex-1 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg text-xs font-bold transition border border-gray-200">
+                            <i class="fa-solid fa-message mr-1 text-red-500"></i> Group Chat
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function openCreateBatchModal() {
+        const select = document.getElementById('mbatchCourse');
+        select.innerHTML = '<option value="">Select Course</option>';
+        const assignedTracks = currentMentor.cohorts || [];
+        assignedTracks.forEach(t => {
+            select.innerHTML += `<option value="${t.name}">${t.name}</option>`;
+        });
+        
+        document.getElementById('mbatchStudentList').innerHTML = '<p class="text-gray-400 italic">Select a course to view available students.</p>';
+        
+        const overlay = document.getElementById('mBatchModalOverlay');
+        const box = document.getElementById('mBatchModalBox');
+        overlay.classList.remove('hidden');
+        setTimeout(() => {
+            overlay.classList.remove('opacity-0');
+            box.classList.remove('scale-95');
+        }, 50);
+    }
+
+    function closeCreateBatchModal() {
+        const overlay = document.getElementById('mBatchModalOverlay');
+        const box = document.getElementById('mBatchModalBox');
+        overlay.classList.add('opacity-0');
+        box.classList.add('scale-95');
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+        document.getElementById('mentorBatchForm').reset();
+    }
+
+    function renderBatchStudentSelection() {
+        const course = document.getElementById('mbatchCourse').value;
+        const list = document.getElementById('mbatchStudentList');
+        if (!course) {
+            list.innerHTML = '<p class="text-gray-400 italic">Select a course to view available students.</p>';
+            return;
+        }
+        
+        const enrolledStudents = enrollmentsCache.filter(e => e.course === course && e.status === 'Approved');
+        if (enrolledStudents.length === 0) {
+            list.innerHTML = '<p class="text-gray-400 italic">No approved students in this course.</p>';
+            return;
+        }
+        
+        list.innerHTML = '';
+        enrolledStudents.forEach(student => {
+            list.innerHTML += `
+                <label class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer transition border border-transparent hover:border-gray-200">
+                    <input type="checkbox" name="mbatchStudents" value="${student.email}" class="rounded text-red-600 focus:ring-red-500">
+                    <div class="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-[9px] font-bold">${student.name.charAt(0)}</div>
+                    <div>
+                        <p class="font-bold text-gray-800">${escHTML(student.name)}</p>
+                        <p class="text-[9px] text-gray-500">${escHTML(student.email)}</p>
+                    </div>
+                </label>
+            `;
+        });
+    }
+
+    function handleCreateBatch(e) {
+        e.preventDefault();
+        if (!window.createBatch) return;
+        
+        const name = document.getElementById('mbatchName').value.trim();
+        const course = document.getElementById('mbatchCourse').value;
+        
+        const checkboxes = document.querySelectorAll('input[name="mbatchStudents"]:checked');
+        const studentIds = Array.from(checkboxes).map(cb => cb.value);
+        
+        if (studentIds.length === 0) {
+            triggerPortalToast('Select at least one student.');
+            return;
+        }
+        
+        window.createBatch(name, currentMentor.email, course, studentIds);
+        triggerPortalToast('Batch created successfully.');
+        closeCreateBatchModal();
+        renderBatches();
+        renderMentorChatContacts();
+    }
+
+    // ========= CHAT SYSTEM =========
+    let mActiveChatContact = null;
+    let mPendingChatAttachment = null;
+
+    function renderMentorChatContacts() {
+        const list = document.getElementById('mchatContactsList');
+        if (!list) return;
+        
+        let html = `
+            <button onclick="selectMentorChatContact('admin', 'Admin', 'Admin Support')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition text-left">
+                <div class="relative flex-shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-headset"></i></div>
+                </div>
+                <div class="flex-grow overflow-hidden">
+                    <p class="text-xs font-bold text-gray-900 truncate">Admin Support</p>
+                    <p class="text-[10px] text-gray-500 truncate">System Administrator</p>
+                </div>
+            </button>
+        `;
+        
+        // Batches (Group Chats)
+        const myBatches = window.getBatches ? window.getBatches().filter(b => b.mentorId === currentMentor.email) : [];
+        if (myBatches.length > 0) {
+            html += `
+                <div class="px-3 pt-4 pb-1">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">My Batches</p>
+                </div>
+            `;
+            myBatches.forEach(batch => {
+                html += `
+                    <button onclick="selectMentorChatContact('${batch.id}', 'Batch', '${escHTML(batch.name)}')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition text-left">
+                        <div class="relative flex-shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-users"></i></div>
+                        </div>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="text-xs font-bold text-gray-900 truncate">${escHTML(batch.name)}</p>
+                            <p class="text-[10px] text-gray-500 truncate">Group Chat</p>
+                        </div>
+                    </button>
+                `;
+            });
+        }
+        
+        // Direct Students
+        // We collect unique students from all assigned cohorts
+        const assignedTracksNames = currentMentor.cohorts ? currentMentor.cohorts.map(t => t.name) : [];
+        const assignedStudents = enrollmentsCache.filter(e => assignedTracksNames.includes(e.course) && e.status === 'Approved');
+        
+        // Remove duplicates if a student is in multiple courses
+        const uniqueStudents = [];
+        const seenEmails = new Set();
+        assignedStudents.forEach(s => {
+            if (!seenEmails.has(s.email)) {
+                seenEmails.add(s.email);
+                uniqueStudents.push(s);
+            }
+        });
+
+        if (uniqueStudents.length > 0) {
+            html += `
+                <div class="px-3 pt-4 pb-1">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Direct Students</p>
+                </div>
+            `;
+            uniqueStudents.forEach(student => {
+                html += `
+                    <button onclick="selectMentorChatContact('${student.email}', 'Student', '${escHTML(student.name)}')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition text-left">
+                        <div class="relative flex-shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-xs">${student.name.charAt(0)}</div>
+                        </div>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="text-xs font-bold text-gray-900 truncate">${escHTML(student.name)}</p>
+                            <p class="text-[10px] text-gray-500 truncate">${escHTML(student.course)}</p>
+                        </div>
+                    </button>
+                `;
+            });
+        }
+        
+        list.innerHTML = html;
+    }
+
+    function selectMentorChatContact(id, role, name) {
+        mActiveChatContact = { id, role, name };
+        
+        const header = document.getElementById('mactiveChatHeader');
+        let iconHtml = '<i class="fa-solid fa-user"></i>';
+        if (role === 'Admin') iconHtml = '<i class="fa-solid fa-headset"></i>';
+        if (role === 'Student') iconHtml = name.charAt(0);
+        if (role === 'Batch') iconHtml = '<i class="fa-solid fa-users"></i>';
+        
+        let colorClass = role === 'Admin' ? 'bg-slate-800 text-white' : (role === 'Batch' ? 'bg-indigo-100 text-indigo-600' : 'bg-red-100 text-red-600');
+
+        header.innerHTML = `
+            <div class="w-10 h-10 rounded-full ${colorClass} flex items-center justify-center font-bold text-xs">${iconHtml}</div>
+            <div>
+                <h5 class="font-bold text-gray-900 text-sm">${escHTML(name)}</h5>
+                <p class="text-[10px] text-gray-500">${role}</p>
+            </div>
+        `;
+        
+        document.getElementById('mchatInputText').disabled = false;
+        document.getElementById('mchatAttachBtn').disabled = false;
+        document.getElementById('mchatSendBtn').disabled = false;
+        
+        renderMentorChatMessages();
+    }
+
+    function renderMentorChatMessages() {
+        if (!mActiveChatContact) return;
+        const stream = document.getElementById('mchatMessageStream');
+        if (!window.getMessages) return;
+        
+        const allMsgs = window.getMessages();
+        const myId = currentMentor.email;
+        
+        let chatMsgs = [];
+        if (mActiveChatContact.role === 'Batch') {
+            chatMsgs = allMsgs.filter(m => m.batchId === mActiveChatContact.id);
+        } else {
+            chatMsgs = allMsgs.filter(m => 
+                (m.senderId === myId && m.receiverId === mActiveChatContact.id) ||
+                (m.senderId === mActiveChatContact.id && m.receiverId === myId)
+            );
+        }
+        
+        stream.innerHTML = '';
+        if (chatMsgs.length === 0) {
+            stream.innerHTML = `
+                <div class="flex h-full items-center justify-center text-gray-400 text-sm flex-col gap-3">
+                    <p class="bg-gray-100 px-4 py-2 rounded-full text-xs font-semibold">Start the conversation</p>
+                </div>
+            `;
+            return;
+        }
+        
+        chatMsgs.forEach(msg => {
+            const isMe = msg.senderId === myId;
+            const time = new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            let attachHtml = '';
+            if (msg.attachment) {
+                if (msg.attachment.type.startsWith('image/')) {
+                    attachHtml = `<div class="mt-2 rounded-lg overflow-hidden border border-black/10"><img src="${msg.attachment.data}" class="max-w-[200px] max-h-[200px] object-cover"></div>`;
+                } else {
+                    attachHtml = `
+                        <div class="mt-2 flex items-center gap-2 p-2 bg-black/5 rounded-lg border border-black/10">
+                            <i class="fa-solid fa-file-lines text-lg ${isMe ? 'text-white' : 'text-red-500'}"></i>
+                            <div class="overflow-hidden">
+                                <p class="text-xs font-semibold truncate ${isMe ? 'text-white' : 'text-gray-800'}">${escHTML(msg.attachment.name)}</p>
+                                <p class="text-[9px] ${isMe ? 'text-white/70' : 'text-gray-500'}">${(msg.attachment.size/1024).toFixed(1)} KB ${msg.attachment.simulated ? '(Simulated)' : ''}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            const senderNameHtml = (!isMe && mActiveChatContact.role === 'Batch') ? `<p class="text-[9px] font-bold text-gray-500 mb-1">${escHTML(msg.senderId)}</p>` : '';
+
+            const alignClass = isMe ? 'justify-end' : 'justify-start';
+            const bubbleClass = isMe 
+                ? 'bg-red-600 text-white rounded-br-none' 
+                : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none shadow-sm';
+            
+            stream.innerHTML += `
+                <div class="flex ${alignClass} w-full">
+                    <div class="max-w-[80%]">
+                        ${senderNameHtml}
+                        <div class="p-3 rounded-2xl ${bubbleClass}">
+                            ${msg.text ? `<p class="text-sm leading-relaxed">${escHTML(msg.text).replace(/\\n/g, '<br>')}</p>` : ''}
+                            ${attachHtml}
+                            <p class="text-[9px] mt-1 text-right ${isMe ? 'text-red-200' : 'text-gray-400'}">${time}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        stream.scrollTop = stream.scrollHeight;
+    }
+
+    async function handleMentorChatAttachment(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        if (window.fileToBase64) {
+            try {
+                mPendingChatAttachment = await window.fileToBase64(file);
+                document.getElementById('mchatFilePreview').classList.remove('hidden');
+                document.getElementById('mchatFileName').textContent = file.name;
+                document.getElementById('mchatFileSize').textContent = (file.size/1024).toFixed(1) + ' KB';
+            } catch (err) {
+                triggerPortalToast('Failed to attach file.');
+            }
+        }
+        e.target.value = '';
+    }
+
+    function clearMentorChatAttachment() {
+        mPendingChatAttachment = null;
+        document.getElementById('mchatFilePreview').classList.add('hidden');
+    }
+
+    function sendMentorChatMessage(e) {
+        e.preventDefault();
+        if (!mActiveChatContact || !window.saveMessage) return;
+        
+        const input = document.getElementById('mchatInputText');
+        const text = input.value.trim();
+        
+        if (!text && !mPendingChatAttachment) return;
+        
+        const isBatch = mActiveChatContact.role === 'Batch';
+        
+        window.saveMessage(
+            currentMentor.email,
+            'Mentor',
+            isBatch ? null : mActiveChatContact.id,
+            isBatch ? null : mActiveChatContact.role,
+            text,
+            mPendingChatAttachment,
+            isBatch ? mActiveChatContact.id : null
+        );
+        
+        input.value = '';
+        clearMentorChatAttachment();
+        renderMentorChatMessages();
+    }
+
+    // Storage Event Listeners
+    window.addEventListener('mg_messages_updated', () => {
+        if (mActiveChatContact && document.getElementById('mview-chat').classList.contains('hidden') === false) {
+            renderMentorChatMessages();
+        }
+    });
+    window.addEventListener('mg_batches_updated', () => {
+        if (document.getElementById('mview-chat').classList.contains('hidden') === false) {
+            renderMentorChatContacts();
+        }
+        if (document.getElementById('mview-batches').classList.contains('hidden') === false) {
+            renderBatches();
+        }
+    });
+
+    // Attach to global for HTML attributes
+    window.openCreateBatchModal = openCreateBatchModal;
+    window.closeCreateBatchModal = closeCreateBatchModal;
+    window.renderBatchStudentSelection = renderBatchStudentSelection;
+    window.handleCreateBatch = handleCreateBatch;
+    window.selectMentorChatContact = selectMentorChatContact;
+    window.handleMentorChatAttachment = handleMentorChatAttachment;
+    window.clearMentorChatAttachment = clearMentorChatAttachment;
+    window.sendMentorChatMessage = sendMentorChatMessage;
+
+    const portalViews = { dashboard: 'Dashboard Summary', cohorts: 'My Cohorts', roster: 'Student Evaluations', resources: 'Resource Matrix', schedule: 'Routine Matrix', batches: 'Manage Batches', chat: 'Messages' };
+
+    
+    function switchMentorView(viewName) {
+        document.querySelectorAll('.mentor-view').forEach(v => v.classList.add('hidden'));
+        document.querySelectorAll('.mentor-sidebar-link').forEach(b => b.classList.remove('active'));
+
+        const destView = document.getElementById('mview-' + viewName);
+        if(destView) destView.classList.remove('hidden');
+
+        const activeNav = document.getElementById('mnav-' + viewName);
+        if(activeNav) activeNav.classList.add('active');
+
+        document.getElementById('mentorViewHeader').textContent = portalViews[viewName] || 'Mentor Portal';
+        closeMobileSidebar();
+        
+        // Refresh dynamic views
+        if (viewName === 'batches') renderBatches();
+        if (viewName === 'chat') renderMentorChatContacts();
+    }
+
+    function openMobileSidebar() {
+        document.getElementById('mentorSidebar').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.add('open');
+    }
+    function closeMobileSidebar() {
+        document.getElementById('mentorSidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('open');
+    }
+
+    async function logoutMentor() {
+        try {
+            await signOut(auth);
+        } catch(e) {}
+        sessionStorage.removeItem('mentorGuruMentor');
+        window.location.href = 'index.html';
+    }
+</script>
+</body>
+</html>

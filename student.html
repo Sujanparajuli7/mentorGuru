@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MentorGuru | Student Portal</title>
+    <meta name="description" content="MentorGuru Student Portal – Track your enrolled courses, progress, payments, and connect with your mentors.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== STUDENT PORTAL EXTRA STYLES ===== */
+        .student-sidebar-link {
+            color: #6b7280;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .student-sidebar-link:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .student-sidebar-link.active {
+            background: #fee2e2;
+            border-left: 3px solid #dc2626;
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        /* Progress Bar */
+        .progress-bar-track {
+            background: #f3f4f6;
+            border-radius: 999px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Course progress card */
+        .course-card-student {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .course-card-student:hover {
+            border-color: #fca5a5;
+            box-shadow: 0 8px 24px rgba(220,38,38,0.12);
+            transform: translateY(-3px);
+        }
+
+        /* Avatar Ring */
+        .avatar-ring {
+            box-shadow: 0 0 0 3px white, 0 0 0 5px #dc2626;
+        }
+
+        /* Notification dot */
+        .notif-dot {
+            width: 8px; height: 8px;
+            background: #dc2626;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px; right: 2px;
+            border: 1.5px solid white;
+        }
+
+        /* Badge */
+        .badge-red {
+            background: #fee2e2;
+            color: #dc2626;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-green {
+            background: #d1fae5;
+            color: #059669;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-yellow {
+            background: #fef3c7;
+            color: #d97706;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-gray {
+            background: #f3f4f6;
+            color: #6b7280;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Timeline dot */
+        .timeline-dot {
+            width: 10px; height: 10px;
+            background: #dc2626;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 4px;
+            box-shadow: 0 0 0 3px #fee2e2;
+        }
+
+        /* Skeleton shimmer */
+        @keyframes shimmer {
+            0% { background-position: -400px 0; }
+            100% { background-position: 400px 0; }
+        }
+        .shimmer {
+            animation: shimmer 1.5s infinite linear;
+            background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+            background-size: 800px 100%;
+        }
+
+        /* Pulse green dot (online) */
+        .online-dot {
+            width: 9px; height: 9px;
+            background: #10b981;
+            border-radius: 50%;
+            border: 2px solid white;
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Mobile sidebar overlay */
+        #sidebarOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 30;
+        }
+        #sidebarOverlay.open { display: block; }
+
+        @media (max-width: 768px) {
+            #studentSidebar {
+                position: fixed;
+                left: -280px;
+                top: 0; bottom: 0;
+                z-index: 40;
+                transition: left 0.3s cubic-bezier(0.4,0,0.2,1);
+            }
+            #studentSidebar.open { left: 0; }
+        }
+
+        /* Greeting wave */
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+        }
+        .wave-hand { animation: wave 1.2s ease-in-out 2; }
+
+        /* Circular progress */
+        .circle-progress {
+            transform: rotate(-90deg);
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 flex min-h-screen">
+
+    <!-- =================== AUTH GUARD =================== -->
+    <script>
+        // Simple student auth check (mirrors admin pattern using sessionStorage)
+        if (!sessionStorage.getItem('mentorGuruStudent')) {
+            window.location.replace('student_login.html');
+        }
+    </script>
+
+    <!-- =================== MOBILE OVERLAY =================== -->
+    <div id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
+    <!-- =================== SIDEBAR =================== -->
+    <aside id="studentSidebar" class="w-64 bg-white border-r border-gray-200 flex flex-col z-20 flex-shrink-0 shadow-sm">
+
+        <!-- Logo -->
+        <div class="h-16 border-b border-gray-100 flex items-center px-6 gap-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-red-500 text-white flex items-center justify-center shadow-md shadow-red-200">
+                <i class="fa-solid fa-graduation-cap text-sm"></i>
+            </div>
+            <span class="text-lg font-bold text-gray-900">Mentor<span class="text-red-600">Guru</span></span>
+        </div>
+
+        <!-- Student Profile Snippet -->
+        <div class="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
+            <div class="relative">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-600 text-white flex items-center justify-center text-sm font-bold avatar-ring" id="sidebarAvatar">AS</div>
+                <div class="online-dot absolute -bottom-0.5 -right-0.5"></div>
+            </div>
+            <div class="overflow-hidden">
+                <p class="text-sm font-semibold text-gray-900 truncate" id="sidebarName">Aarav Sharma</p>
+                <p class="text-[10px] text-gray-400 truncate" id="sidebarEmail">aarav.sharma@email.com</p>
+            </div>
+        </div>
+
+        <!-- Nav Links -->
+        <nav class="flex-grow py-5 px-3 space-y-0.5 overflow-y-auto">
+            <button onclick="switchStudentView('dashboard')" id="snav-dashboard" class="student-sidebar-link active w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-gauge-high w-4"></i> Dashboard
+            </button>
+            <button onclick="switchStudentView('mycourses')" id="snav-mycourses" class="student-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-book-open w-4"></i> My Courses
+            </button>
+            <button onclick="switchStudentView('requests')" id="snav-requests" class="student-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-code-pull-request w-4"></i> Course Requests
+            </button>
+            <button onclick="switchStudentView('progress')" id="snav-progress" class="student-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-chart-line w-4"></i> Progress
+            </button>
+            <button onclick="switchStudentView('payments')" id="snav-payments" class="student-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-wallet w-4"></i> Payments
+            </button>
+            <button onclick="switchStudentView('schedule')" id="snav-schedule" class="student-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-calendar-days w-4"></i> Schedule
+            </button>
+            <button onclick="switchStudentView('mentors')" id="snav-mentors" class="student-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-chalkboard-user w-4"></i> Mentors
+            </button>
+            <button onclick="switchStudentView('resources')" id="snav-resources" class="student-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-folder-open w-4"></i> Resources
+            </button>
+            <button onclick="switchStudentView('chat')" id="snav-chat" class="student-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-messages w-4"></i> Messages
+            </button>
+            <button onclick="switchStudentView('profile')" id="snav-profile" class="student-sidebar-link w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+                <i class="fa-solid fa-circle-user w-4"></i> My Profile
+            </button>
+        </nav>
+
+        <!-- Logout -->
+        <div class="p-4 border-t border-gray-100">
+            <a href="index.html" class="w-full flex items-center justify-center gap-2 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 rounded-xl text-xs font-bold text-gray-500 uppercase tracking-wider transition mb-2">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+            <button onclick="logoutStudent()" class="w-full flex items-center justify-center gap-2 py-2.5 bg-red-50 hover:bg-red-100 border border-red-200 hover:border-red-300 rounded-xl text-xs font-bold text-red-600 uppercase tracking-wider transition">
+                <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- =================== MAIN CONTENT =================== -->
+    <main class="flex-grow h-screen overflow-y-auto flex flex-col bg-gray-50">
+
+        <!-- Top Header Bar -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10 shadow-sm">
+            <div class="flex items-center gap-3">
+                <!-- Mobile hamburger -->
+                <button id="hamburgerBtn" onclick="openMobileSidebar()" class="md:hidden w-9 h-9 rounded-xl bg-gray-100 hover:bg-red-50 text-gray-600 hover:text-red-600 flex items-center justify-center transition">
+                    <i class="fa-solid fa-bars text-sm"></i>
+                </button>
+                <div>
+                    <h1 class="text-lg font-bold text-gray-900" id="studentViewHeader">My Dashboard</h1>
+                    <p class="text-xs text-gray-400 mt-0.5">MentorGuru Learning Hub</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <!-- Notifications -->
+                <div class="relative">
+                    <button onclick="toggleNotifications()" class="w-9 h-9 rounded-xl bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 flex items-center justify-center transition">
+                        <i class="fa-solid fa-bell text-sm"></i>
+                    </button>
+                    <div class="notif-dot"></div>
+                    <!-- Dropdown -->
+                    <div id="notifDropdown" class="hidden absolute right-0 top-12 w-72 bg-white border border-gray-100 rounded-2xl shadow-xl z-50 overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
+                            <span class="text-xs font-bold text-gray-900 uppercase tracking-wider">Notifications</span>
+                            <span class="badge-red">3 New</span>
+                        </div>
+                        <div class="divide-y divide-gray-50 max-h-64 overflow-y-auto">
+                            <div class="px-4 py-3 hover:bg-red-50 transition cursor-pointer">
+                                <p class="text-xs font-semibold text-gray-800">Class Tomorrow 10 AM</p>
+                                <p class="text-[11px] text-gray-400 mt-0.5">Cybersecurity Essentials – Session 8</p>
+                            </div>
+                            <div class="px-4 py-3 hover:bg-red-50 transition cursor-pointer">
+                                <p class="text-xs font-semibold text-gray-800">Payment Due in 3 Days</p>
+                                <p class="text-[11px] text-gray-400 mt-0.5">Second installment – NPR 4,500</p>
+                            </div>
+                            <div class="px-4 py-3 hover:bg-red-50 transition cursor-pointer">
+                                <p class="text-xs font-semibold text-gray-800">New Resource Uploaded</p>
+                                <p class="text-[11px] text-gray-400 mt-0.5">Network Fundamentals PDF added</p>
+                            </div>
+                        </div>
+                        <div class="px-4 py-3 border-t border-gray-100 text-center">
+                            <button class="text-xs text-red-600 font-semibold hover:underline">See all</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avatar -->
+                <div class="hidden sm:flex items-center gap-2">
+                    <div class="text-right">
+                        <p class="text-xs font-semibold text-gray-800" id="headerStudentName">Aarav Sharma</p>
+                        <p class="text-[10px] text-gray-400">Student</p>
+                    </div>
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-red-500 to-red-600 text-white flex items-center justify-center text-sm font-bold shadow-sm" id="headerAvatar">AS</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-6 flex flex-col gap-8 flex-grow">
+
+        <!-- ===== DASHBOARD VIEW ===== -->
+        <div id="sview-dashboard" class="student-view space-y-6">
+
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-red-600 via-red-500 to-red-400 rounded-2xl p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-red-200 relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-48 h-48 bg-white/10 rounded-full pointer-events-none"></div>
+                <div class="absolute right-24 bottom-[-20px] w-32 h-32 bg-white/5 rounded-full pointer-events-none"></div>
+                <div>
+                    <p class="text-red-100 text-sm font-medium mb-1">
+                        <span class="wave-hand inline-block">👋</span> Welcome back,
+                    </p>
+                    <h2 class="text-2xl font-extrabold" id="welcomeName">Aarav Sharma</h2>
+                    <p class="text-red-100 text-sm mt-1">You're doing great! Keep up the momentum.</p>
+                </div>
+                <div class="flex gap-3 z-10">
+                    <div class="bg-white/15 backdrop-blur-sm rounded-xl px-5 py-3 text-center border border-white/20">
+                        <p class="text-2xl font-extrabold" id="dashCoursesCount">2</p>
+                        <p class="text-xs text-red-100 mt-0.5">Active Courses</p>
+                    </div>
+                    <div class="bg-white/15 backdrop-blur-sm rounded-xl px-5 py-3 text-center border border-white/20">
+                        <p class="text-2xl font-extrabold" id="dashCompletionPct">68%</p>
+                        <p class="text-xs text-red-100 mt-0.5">Avg. Progress</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats Row -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="stat-card border-t-4 border-t-red-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Enrolled Courses</p>
+                            <h3 class="text-3xl font-extrabold text-gray-900" id="dashQuickEnrolledCount">2</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-book"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-4"><i class="fa-solid fa-circle-check text-red-500 mr-1"></i> IT & Non-IT programs</p>
+                </div>
+
+                <div class="stat-card border-t-4 border-t-gray-800">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Sessions Attended</p>
+                            <h3 class="text-3xl font-extrabold text-gray-900" id="dashQuickSessionsAttended">14</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-700 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-4"><i class="fa-solid fa-arrow-trend-up text-gray-600 mr-1"></i> This month</p>
+                </div>
+
+                <div class="stat-card border-t-4 border-t-red-400">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Next Class</p>
+                            <h3 class="text-xl font-extrabold text-gray-900" id="dashQuickNextClassTime">10 AM</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-4" id="dashQuickNextClassDate"><i class="fa-solid fa-bell text-red-400 mr-1"></i> Tomorrow, Jun 1</p>
+                </div>
+
+                <div class="stat-card border-t-4 border-t-red-300">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Certificates</p>
+                            <h3 class="text-3xl font-extrabold text-gray-900">0</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-4"><i class="fa-solid fa-star text-red-300 mr-1"></i> Complete a course to earn</p>
+                </div>
+            </div>
+
+            <!-- Course Progress + Upcoming Schedule -->
+            <div class="grid lg:grid-cols-3 gap-6">
+
+                <!-- My Active Courses Mini -->
+                <div class="glass-card rounded-2xl p-6 lg:col-span-2 space-y-4">
+                    <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                        <h4 class="font-bold text-gray-800 flex items-center gap-2">
+                            <i class="fa-solid fa-book-open text-red-500"></i> Active Courses
+                        </h4>
+                        <button onclick="switchStudentView('mycourses')" class="text-xs text-red-600 font-semibold hover:underline">View All →</button>
+                    </div>
+                    <!-- Course 1 -->
+                    <div class="course-card-student" id="dashCourseCardCyber">
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-lg flex-shrink-0">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-gray-900">Cybersecurity Essentials</p>
+                                    <p class="text-xs text-gray-400 mt-0.5">Session 8 of 20 · 10 AM–11 AM</p>
+                                </div>
+                            </div>
+                            <span class="badge-green">Active</span>
+                        </div>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between text-xs text-gray-500">
+                                <span>Progress</span><span class="font-semibold text-red-600">40%</span>
+                            </div>
+                            <div class="progress-bar-track">
+                                <div class="progress-bar-fill" style="width:40%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Course 2 -->
+                    <div class="course-card-student" id="dashCourseCardPython">
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-700 flex items-center justify-center text-lg flex-shrink-0">
+                                    <i class="fa-brands fa-python"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-gray-900">Python for Beginners</p>
+                                    <p class="text-xs text-gray-400 mt-0.5">Session 14 of 16 · 4 PM–5 PM</p>
+                                </div>
+                            </div>
+                            <span class="badge-yellow">87%</span>
+                        </div>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between text-xs text-gray-500">
+                                <span>Progress</span><span class="font-semibold text-red-600">87%</span>
+                            </div>
+                            <div class="progress-bar-track">
+                                <div class="progress-bar-fill" style="width:87%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Schedule -->
+                <div class="glass-card rounded-2xl p-6 space-y-4">
+                    <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                        <h4 class="font-bold text-gray-800 flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-days text-red-500"></i> This Week
+                        </h4>
+                    </div>
+                    <div class="space-y-3" id="dashTimelineList">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                    <h4 class="font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-red-500"></i> Recent Activity
+                    </h4>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3" id="dashRecentActivityGrid">
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== MY COURSES VIEW ===== -->
+        <div id="sview-mycourses" class="student-view hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-red-500"></i> My Enrolled Courses
+                </h3>
+                <div class="flex gap-2" id="myCoursesCountBadges"></div>
+            </div>
+            <!-- Dynamic grid populated by JS -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" id="studentCoursesGrid"></div>
+        </div>
+
+        <!-- ===== COURSE REQUESTS VIEW ===== -->
+        <div id="sview-requests" class="student-view hidden space-y-6 flex-grow flex flex-col h-full">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <i class="fa-solid fa-code-pull-request text-red-500"></i> Request New Course
+            </h3>
+            
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <p class="text-sm text-gray-600">Select a course from our catalog to submit a request to the admin for enrollment.</p>
+                <form id="courseRequestForm" onsubmit="submitCourseRequest(event)" class="flex gap-3">
+                    <select id="courseRequestSelect" required class="flex-grow px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white">
+                        <option value="">Loading courses...</option>
+                    </select>
+                    <button type="submit" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl transition flex-shrink-0">
+                        Submit Request
+                    </button>
+                </form>
+            </div>
+
+            <h4 class="font-bold text-gray-800 mt-4 mb-2"><i class="fa-solid fa-clock-rotate-left text-red-500 mr-2"></i> My Request History</h4>
+            <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex-grow">
+                <div class="overflow-x-auto h-full">
+                    <table class="w-full text-left text-sm relative">
+                        <thead class="sticky top-0 bg-gray-50 z-10">
+                            <tr>
+                                <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase border-b border-gray-200">Course Name</th>
+                                <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase border-b border-gray-200">Date Requested</th>
+                                <th class="px-5 py-4 font-bold text-gray-500 text-xs uppercase border-b border-gray-200 text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="courseRequestsTableBody" class="divide-y divide-gray-100">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== MESSAGES / CHAT VIEW ===== -->
+        <div id="sview-chat" class="student-view hidden flex-grow h-full -mx-6 -mb-6 -mt-2">
+            <div class="flex h-full bg-white border-t border-gray-200">
+                <!-- Sidebar Contacts -->
+                <div class="w-80 border-r border-gray-200 flex flex-col bg-gray-50 flex-shrink-0 h-full">
+                    <div class="p-4 border-b border-gray-200 bg-white">
+                        <h4 class="font-bold text-gray-800 text-sm mb-3">Messages</h4>
+                        <div class="relative">
+                            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <input type="text" placeholder="Search contacts..." class="w-full pl-8 pr-3 py-2 bg-gray-100 border-none rounded-lg text-xs focus:ring-1 focus:ring-red-500">
+                        </div>
+                    </div>
+                    <div class="flex-grow overflow-y-auto p-2 space-y-1" id="chatContactsList">
+                        <!-- Contacts loaded by JS -->
+                    </div>
+                </div>
+
+                <!-- Chat Area -->
+                <div class="flex-grow flex flex-col h-full bg-white relative">
+                    <!-- Chat Header -->
+                    <div class="h-16 border-b border-gray-200 px-6 flex items-center justify-between bg-white z-10 flex-shrink-0">
+                        <div class="flex items-center gap-3" id="activeChatHeader">
+                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400"><i class="fa-solid fa-user"></i></div>
+                            <div>
+                                <h5 class="font-bold text-gray-900 text-sm">Select a contact</h5>
+                                <p class="text-[10px] text-gray-500">To start messaging</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages Stream -->
+                    <div class="flex-grow overflow-y-auto p-6 space-y-4 bg-gray-50/50" id="chatMessageStream">
+                        <!-- Messages go here -->
+                        <div class="flex h-full items-center justify-center text-gray-400 text-sm flex-col gap-3">
+                            <i class="fa-regular fa-comments text-4xl text-gray-300"></i>
+                            <p>No chat selected</p>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="p-4 bg-white border-t border-gray-200 flex-shrink-0">
+                        <form id="chatMessageForm" onsubmit="sendChatMessage(event)" class="flex items-end gap-2 relative">
+                            <div class="flex-grow relative">
+                                <!-- File Preview Overlay -->
+                                <div id="chatFilePreview" class="hidden absolute bottom-full left-0 mb-2 p-2 bg-white border border-gray-200 rounded-lg shadow-lg flex items-center gap-3 w-64 max-w-full">
+                                    <div class="w-10 h-10 bg-red-50 text-red-500 rounded flex items-center justify-center text-lg"><i class="fa-solid fa-file"></i></div>
+                                    <div class="flex-grow overflow-hidden">
+                                        <p class="text-xs font-bold text-gray-800 truncate" id="chatFileName">file.pdf</p>
+                                        <p class="text-[10px] text-gray-500" id="chatFileSize">1.2 MB</p>
+                                    </div>
+                                    <button type="button" onclick="clearChatAttachment()" class="text-gray-400 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                                <textarea id="chatInputText" rows="1" class="w-full pl-4 pr-12 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-1 focus:ring-red-500 resize-none bg-gray-50 max-h-32" placeholder="Type a message..." disabled></textarea>
+                                
+                                <input type="file" id="chatAttachmentInput" class="hidden" onchange="handleChatAttachment(event)">
+                                <button type="button" onclick="document.getElementById('chatAttachmentInput').click()" class="absolute right-3 bottom-3 text-gray-400 hover:text-red-600 transition" disabled id="chatAttachBtn">
+                                    <i class="fa-solid fa-paperclip"></i>
+                                </button>
+                            </div>
+                            <button type="submit" id="chatSendBtn" class="w-12 h-12 bg-red-600 hover:bg-red-700 text-white rounded-xl flex items-center justify-center shadow-md transition disabled:opacity-50" disabled>
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ===== PROGRESS VIEW ===== -->
+        <div id="sview-progress" class="student-view hidden space-y-6">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-red-500"></i> My Learning Progress
+            </h3>
+
+            <!-- Overall stats -->
+            <div class="grid sm:grid-cols-3 gap-4">
+                <div class="stat-card text-center border-t-4 border-t-red-500">
+                    <div class="flex justify-center mb-3">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle cx="40" cy="40" r="34" fill="none" stroke="#fee2e2" stroke-width="8"/>
+                            <circle class="circle-progress" cx="40" cy="40" r="34" fill="none" stroke="#dc2626" stroke-width="8"
+                                stroke-dasharray="213.6"
+                                stroke-dashoffset="128.2"
+                                stroke-linecap="round"/>
+                        </svg>
+                        <div class="absolute flex items-center justify-center" style="margin-top:28px;margin-left:-64px;">
+                            <span class="text-sm font-extrabold text-red-600">40%</span>
+                        </div>
+                    </div>
+                    <p class="text-sm font-bold text-gray-900">Cybersecurity</p>
+                    <p class="text-xs text-gray-400 mt-1">8 / 20 sessions</p>
+                </div>
+                <div class="stat-card text-center border-t-4 border-t-gray-700">
+                    <div class="flex justify-center mb-3">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle cx="40" cy="40" r="34" fill="none" stroke="#f3f4f6" stroke-width="8"/>
+                            <circle class="circle-progress" cx="40" cy="40" r="34" fill="none" stroke="#374151" stroke-width="8"
+                                stroke-dasharray="213.6"
+                                stroke-dashoffset="27.8"
+                                stroke-linecap="round"/>
+                        </svg>
+                        <div class="absolute flex items-center justify-center" style="margin-top:28px;margin-left:-64px;">
+                            <span class="text-sm font-extrabold text-gray-700">87%</span>
+                        </div>
+                    </div>
+                    <p class="text-sm font-bold text-gray-900">Python</p>
+                    <p class="text-xs text-gray-400 mt-1">14 / 16 sessions</p>
+                </div>
+                <div class="stat-card text-center border-t-4 border-t-red-300 flex flex-col items-center justify-center">
+                    <div class="text-4xl font-extrabold text-red-500 mb-1">68%</div>
+                    <p class="text-sm font-bold text-gray-900">Overall Average</p>
+                    <p class="text-xs text-gray-400 mt-1">Across all enrolled courses</p>
+                    <div class="progress-bar-track w-full mt-3">
+                        <div class="progress-bar-fill" style="width:68%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Session Log -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <div class="flex justify-between items-center pb-4 border-b border-gray-100">
+                    <h4 class="font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-red-500"></i> Session Attendance Log
+                    </h4>
+                    <div class="flex items-center gap-3 text-xs">
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span> Present</span>
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-400 inline-block"></span> Absent</span>
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-gray-300 inline-block"></span> Upcoming</span>
+                    </div>
+                </div>
+
+                <!-- Cybersecurity sessions -->
+                <div>
+                    <p class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Cybersecurity Essentials</p>
+                    <div class="flex flex-wrap gap-2">
+                        <!-- Present sessions -->
+                        <div class="flex flex-col items-center gap-1" title="Session 1 – Present">
+                            <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">1</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">2</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">3</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-8 h-8 rounded-lg bg-red-100 text-red-500 flex items-center justify-center text-xs font-bold border border-red-200">4</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">5</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">6</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">7</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">8</div>
+                        </div>
+                        <!-- Upcoming -->
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">9</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">10</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">11</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">12</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">13</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">14</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">15</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">16</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">17</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">18</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">19</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">20</div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2">7 Present · 1 Absent · 12 Upcoming</p>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4">
+                    <p class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Python for Beginners</p>
+                    <div class="flex flex-wrap gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">1</div>
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">2</div>
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">3</div>
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">4</div>
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">5</div>
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">6</div>
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">7</div>
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">8</div>
+                        <div class="w-8 h-8 rounded-lg bg-red-100 text-red-500 flex items-center justify-center text-xs font-bold border border-red-200">9</div>
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">10</div>
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">11</div>
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">12</div>
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">13</div>
+                        <div class="w-8 h-8 rounded-lg bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">14</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">15</div>
+                        <div class="w-8 h-8 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold border border-gray-200">16</div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2">13 Present · 1 Absent · 2 Upcoming</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PAYMENTS VIEW ===== -->
+        <div id="sview-payments" class="student-view hidden space-y-6">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <i class="fa-solid fa-wallet text-red-500"></i> Payment History
+            </h3>
+
+            <!-- Summary Cards -->
+            <div class="grid sm:grid-cols-3 gap-4">
+                <div class="stat-card border-t-4 border-t-red-500">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Total Fee</p>
+                    <h3 class="text-2xl font-extrabold text-gray-900" id="totalFeeAmount">NPR 0</h3>
+                    <p class="text-xs text-gray-400 mt-3"><i class="fa-solid fa-info-circle text-red-400 mr-1"></i> For your requested/enrolled courses</p>
+                </div>
+                <div class="stat-card border-t-4 border-t-green-500">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Paid Amount</p>
+                    <h3 class="text-2xl font-extrabold text-gray-900" id="paidFeeAmount">NPR 0</h3>
+                    <p class="text-xs text-gray-400 mt-3"><i class="fa-solid fa-circle-check text-green-500 mr-1"></i> Received by MentorGuru</p>
+                </div>
+                <div class="stat-card border-t-4 border-t-yellow-500">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Due Amount</p>
+                    <h3 class="text-2xl font-extrabold text-gray-900" id="dueFeeAmount">NPR 0</h3>
+                    <p class="text-xs text-gray-400 mt-3"><i class="fa-solid fa-clock text-yellow-500 mr-1"></i> Pending verification</p>
+                </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <h4 class="font-bold text-gray-800 flex items-center gap-2 pb-4 border-b border-gray-100">
+                    <i class="fa-solid fa-receipt text-red-500"></i> Transaction Ledger
+                </h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="bg-gray-50 rounded-xl">
+                                <th class="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wider rounded-l-xl">Date</th>
+                                <th class="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">Course</th>
+                                <th class="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">Method</th>
+                                <th class="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wider">Amount</th>
+                                <th class="px-4 py-3 font-semibold text-gray-500 text-xs uppercase tracking-wider rounded-r-xl">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100" id="studentPaymentsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pt-4 border-t border-gray-100">
+                    <button onclick="showPaymentAlert()" class="btn-red py-2.5 px-6 rounded-xl text-sm">
+                        <i class="fa-solid fa-qrcode mr-2"></i> Pay via eSewa
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SCHEDULE VIEW ===== -->
+        <div id="sview-schedule" class="student-view hidden space-y-6">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <i class="fa-solid fa-calendar-days text-red-500"></i> Class Schedule
+            </h3>
+
+            <!-- Weekly calendar grid -->
+            <div class="glass-card rounded-2xl p-6 space-y-5">
+                <div class="flex items-center justify-between pb-4 border-b border-gray-100">
+                    <h4 class="font-bold text-gray-800">June 2026 · Week View</h4>
+                    <div class="flex gap-3 text-xs" id="weeklyScheduleLegend">
+                    </div>
+                </div>
+                <div class="grid grid-cols-5 gap-3" id="weeklyScheduleGrid">
+                </div>
+            </div>
+
+            <!-- Upcoming reminder list -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <h4 class="font-bold text-gray-800 flex items-center gap-2 pb-4 border-b border-gray-100">
+                    <i class="fa-solid fa-bell text-red-500"></i> Upcoming Reminders
+                </h4>
+                <div class="space-y-3" id="upcomingRemindersList">
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== MENTORS VIEW ===== -->
+        <div id="sview-mentors" class="student-view hidden space-y-6">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <i class="fa-solid fa-chalkboard-user text-red-500"></i> My Mentors
+            </h3>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Mentor 1 -->
+                <div class="course-card-student text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-red-700 text-white flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg shadow-red-100">
+                        RK
+                    </div>
+                    <h4 class="text-sm font-bold text-gray-900">Raj Kumar Shrestha</h4>
+                    <p class="text-xs text-red-600 font-semibold mt-0.5">Cybersecurity Expert</p>
+                    <p class="text-xs text-gray-400 mt-2">8+ Years in Network Security & Ethical Hacking</p>
+                    <div class="flex items-center justify-center gap-1.5 mt-3">
+                        <div class="online-dot"></div>
+                        <span class="text-[10px] text-gray-400">Available 9 AM – 12 PM</span>
+                    </div>
+                    <div class="flex gap-2 mt-4">
+                        <button class="flex-1 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold transition">
+                            <i class="fa-solid fa-envelope mr-1"></i> Message
+                        </button>
+                        <button class="flex-1 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-semibold transition">
+                            <i class="fa-solid fa-calendar mr-1"></i> Schedule
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mentor 2 -->
+                <div class="course-card-student text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gray-700 to-gray-900 text-white flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg shadow-gray-100">
+                        SP
+                    </div>
+                    <h4 class="text-sm font-bold text-gray-900">Sita Poudel</h4>
+                    <p class="text-xs text-red-600 font-semibold mt-0.5">Python & Data Science</p>
+                    <p class="text-xs text-gray-400 mt-2">6+ Years in ML, AI & Backend Development</p>
+                    <div class="flex items-center justify-center gap-1.5 mt-3">
+                        <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+                        <span class="text-[10px] text-gray-400">Available 3 PM – 6 PM</span>
+                    </div>
+                    <div class="flex gap-2 mt-4">
+                        <button class="flex-1 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold transition">
+                            <i class="fa-solid fa-envelope mr-1"></i> Message
+                        </button>
+                        <button class="flex-1 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-semibold transition">
+                            <i class="fa-solid fa-calendar mr-1"></i> Schedule
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== RESOURCES VIEW ===== -->
+        <div id="sview-resources" class="student-view hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="fa-solid fa-folder-open text-red-500"></i> Course Resources
+                </h3>
+                <div class="relative w-full sm:w-64">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
+                    <input type="text" id="studentResourceSearch" oninput="renderStudentResources()" class="w-full pl-9 pr-4 py-2.5 rounded-xl glass-input text-xs" placeholder="Search resources...">
+                </div>
+            </div>
+
+            <!-- Filter tabs -->
+            <div class="flex gap-2 flex-wrap" id="resourceTypeTabs">
+                <button data-rtype="" onclick="setResourceTypeFilter(this, '')" class="resource-tab-btn tab-btn active px-4 py-2 rounded-xl border border-gray-200 text-xs font-semibold transition">All</button>
+                <button data-rtype="PDF" onclick="setResourceTypeFilter(this, 'PDF')" class="resource-tab-btn tab-btn px-4 py-2 rounded-xl border border-gray-200 text-xs font-semibold transition">PDFs</button>
+                <button data-rtype="Video" onclick="setResourceTypeFilter(this, 'Video')" class="resource-tab-btn tab-btn px-4 py-2 rounded-xl border border-gray-200 text-xs font-semibold transition">Videos</button>
+                <button data-rtype="Slides" onclick="setResourceTypeFilter(this, 'Slides')" class="resource-tab-btn tab-btn px-4 py-2 rounded-xl border border-gray-200 text-xs font-semibold transition">Slides</button>
+                <button data-rtype="ZIP" onclick="setResourceTypeFilter(this, 'ZIP')" class="resource-tab-btn tab-btn px-4 py-2 rounded-xl border border-gray-200 text-xs font-semibold transition">Code/ZIP</button>
+            </div>
+
+            <!-- Dynamic resource cards populated by JS -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" id="studentResourcesGrid"></div>
+        </div>
+
+        <!-- ===== PROFILE VIEW ===== -->
+        <div id="sview-profile" class="student-view hidden space-y-6">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <i class="fa-solid fa-circle-user text-red-500"></i> My Profile
+            </h3>
+
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Profile Card -->
+                <div class="glass-card rounded-2xl p-6 text-center space-y-4">
+                    <div class="relative inline-block">
+                        <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-red-500 to-red-700 text-white flex items-center justify-center text-3xl font-extrabold mx-auto shadow-xl shadow-red-200 avatar-ring" id="profileAvatar">AS</div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-extrabold text-gray-900" id="profileName">Aarav Sharma</h4>
+                        <p class="text-xs text-red-600 font-semibold mt-0.5">Student</p>
+                        <p class="text-xs text-gray-400 mt-1" id="profileMemberSince">Member since May 2026</p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 space-y-2">
+                        <div class="flex items-center gap-2 text-xs text-gray-600">
+                            <i class="fa-solid fa-envelope text-red-400 w-4"></i>
+                            <span id="profileEmail">aarav.sharma@email.com</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-600">
+                            <i class="fa-solid fa-phone text-red-400 w-4"></i>
+                            <span id="profilePhone">98XXXXXXXX</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-gray-600">
+                            <i class="fa-solid fa-location-dot text-red-400 w-4"></i>
+                            <span id="profileCity">Kathmandu, Nepal</span>
+                        </div>
+                    </div>
+                    <!-- Enrolled courses count badge -->
+                    <div class="pt-3 border-t border-gray-100">
+                        <p class="text-xs text-gray-400 mb-2 font-semibold uppercase tracking-wider">Enrolled Courses</p>
+                        <div id="profileEnrolledBadges" class="flex flex-wrap gap-1.5 justify-center"></div>
+                    </div>
+                </div>
+
+                <!-- Edit Profile Form -->
+                <div class="glass-card rounded-2xl p-6 space-y-4 lg:col-span-2">
+                    <h4 class="font-bold text-gray-800 flex items-center gap-2 pb-4 border-b border-gray-100">
+                        <i class="fa-solid fa-pen-to-square text-red-500"></i> Edit Information
+                    </h4>
+                    <form class="space-y-4" onsubmit="saveProfile(event)">
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Full Name</label>
+                                <input type="text" id="editName" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm" placeholder="Your full name">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Email Address</label>
+                                <input type="email" id="editEmail" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm" placeholder="your@email.com">
+                            </div>
+                        </div>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Phone Number</label>
+                                <input type="tel" id="editPhone" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm" placeholder="98XXXXXXXX">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">City / District</label>
+                                <input type="text" id="editCity" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm" placeholder="Kathmandu">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Bio (Optional)</label>
+                            <textarea id="editBio" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm h-20 resize-none" placeholder="Tell us a bit about yourself..."></textarea>
+                        </div>
+                        <div class="border-t border-gray-100 pt-4 flex gap-3">
+                            <button type="submit" class="btn-red py-2.5 px-6 rounded-xl text-sm">
+                                <i class="fa-solid fa-floppy-disk mr-2"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Change Password -->
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <h4 class="font-bold text-gray-800 flex items-center gap-2 pb-4 border-b border-gray-100">
+                    <i class="fa-solid fa-lock text-red-500"></i> Change Password
+                </h4>
+                <form class="grid sm:grid-cols-3 gap-4" onsubmit="changePassword(event)">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Current Password</label>
+                        <input type="password" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm" placeholder="••••••••">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">New Password</label>
+                        <input type="password" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm" placeholder="••••••••">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Confirm Password</label>
+                        <input type="password" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm" placeholder="••••••••">
+                    </div>
+                    <div class="sm:col-span-3">
+                        <button type="submit" class="btn-red py-2.5 px-6 rounded-xl text-sm">
+                            <i class="fa-solid fa-key mr-2"></i> Update Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        </div><!-- /p-6 wrapper -->
+    </main>
+
+    <!-- =================== TOAST =================== -->
+    <div id="studentToast" class="fixed bottom-6 right-6 z-[100] px-5 py-3.5 rounded-xl bg-gray-900 text-white text-sm shadow-xl flex items-center gap-3 translate-y-24 opacity-0 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-red-400 text-base"></i>
+        <span id="studentToastMsg">Saved!</span>
+    </div>
+
+    <!-- =================== SCRIPT =================== -->
+    <script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { collection, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+    // Expose functions to window
+    window.setResourceTypeFilter = setResourceTypeFilter;
+    window.switchStudentView = switchStudentView;
+    window.toggleNotifications = toggleNotifications;
+    window.openMobileSidebar = openMobileSidebar;
+    window.closeMobileSidebar = closeMobileSidebar;
+    window.saveProfile = saveProfile;
+    window.changePassword = changePassword;
+    window.showPaymentAlert = showPaymentAlert;
+    window.logoutStudent = logoutStudent;
+
+    // ========= RESOURCE TYPE ICON MAP =========
+    const RICON = {
+        'PDF':    { icon: 'fa-file-pdf',       color: 'text-red-500',    bg: 'bg-red-50' },
+        'Video':  { icon: 'fa-video',           color: 'text-purple-500', bg: 'bg-purple-50' },
+        'Slides': { icon: 'fa-file-powerpoint', color: 'text-blue-500',   bg: 'bg-blue-50' },
+        'ZIP':    { icon: 'fa-file-code',       color: 'text-green-500',  bg: 'bg-green-50' },
+        'Link':   { icon: 'fa-link',            color: 'text-cyan-500',   bg: 'bg-cyan-50' },
+        'Other':  { icon: 'fa-file',            color: 'text-gray-500',   bg: 'bg-gray-100' },
+    };
+    function getRIcon(type) { return RICON[type] || RICON['Other']; }
+
+    // ========= COURSE COLOR PALETTES =========
+    const PALETTE = [
+        { grad: 'from-red-500 to-red-700',   text: 'text-white', icon: 'fa-shield-halved' },
+        { grad: 'from-gray-700 to-gray-900', text: 'text-yellow-300', icon: 'fa-code' },
+        { grad: 'from-blue-500 to-blue-700', text: 'text-white', icon: 'fa-chart-bar' },
+        { grad: 'from-purple-500 to-purple-700', text: 'text-white', icon: 'fa-brain' },
+        { grad: 'from-green-500 to-green-700', text: 'text-white', icon: 'fa-leaf' },
+    ];
+
+    // ========= STATE =========
+    let currentProfile = {};
+    let studentResourceTypeFilter = '';
+    let currentUser = null;
+    let myEnrollmentsCache = [];
+    let coursesCache = [];
+    let resourcesCache = [];
+
+    // ========= BOOT =========
+    // ========= BOOT =========
+    const session = sessionStorage.getItem('mentorGuruStudent');
+    if (!session) {
+        window.location.replace('student_login.html');
+    } else {
+        currentProfile = JSON.parse(session);
+        if (!currentProfile.joinDate) {
+            currentProfile.joinDate = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        }
+        applyProfileToUI();
+        await loadMockData();
+    }
+
+    async function loadFirestoreData() {
+        try {
+            // Fetch profile
+            const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+            if (userDoc.exists()) {
+                currentProfile = { ...currentProfile, ...userDoc.data() };
+            } else {
+                const session = JSON.parse(sessionStorage.getItem('mentorGuruStudent') || '{}');
+                currentProfile = { ...session };
+            }
+            if (!currentProfile.joinDate) {
+                currentProfile.joinDate = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            }
+            applyProfileToUI();
+
+            // Fetch courses
+            const coursesSnap = await getDocs(collection(db, 'courses'));
+            coursesCache = [];
+            coursesSnap.forEach(d => coursesCache.push({ id: d.id, ...d.data() }));
+
+            if (coursesCache.length === 0) {
+                coursesCache = JSON.parse(localStorage.getItem('mentorGuru_courses') || '[]');
+            }
+
+            // Fetch enrollments
+            const enrollSnap = await getDocs(collection(db, 'enrollments'));
+            myEnrollmentsCache = [];
+            enrollSnap.forEach(d => {
+                const app = d.data();
+                if (app.status === 'Approved' && app.email.toLowerCase() === (currentProfile.email || '').toLowerCase()) {
+                    const course = coursesCache.find(c => c.name === app.course);
+                    if (course) {
+                        myEnrollmentsCache.push({ app, course });
+                    }
+                }
+            });
+
+            // Fetch resources
+            const resourcesSnap = await getDocs(collection(db, 'resources'));
+            resourcesCache = [];
+            resourcesSnap.forEach(d => resourcesCache.push(d.data()));
+
+            renderStudentCourses();
+            renderStudentResources();
+        } catch (e) {
+            console.error("Error loading student data", e);
+        }
+    }
+
+    async function loadMockData() {
+        // Load courses
+        coursesCache = JSON.parse(localStorage.getItem('mentorGuru_courses') || '[]');
+        
+        // Load enrollments
+        const allEnrollments = JSON.parse(localStorage.getItem('mentorGuru_enrollments') || '[]');
+        myEnrollmentsCache = [];
+        allEnrollments.forEach(app => {
+            // In the mock environment, the student is considered enrolled if the admin explicitly set their course in the student profile OR if they submitted a payment
+            if (app.status === 'Approved' && app.email.toLowerCase() === (currentProfile.email || '').toLowerCase()) {
+                const course = coursesCache.find(c => c.name === app.course);
+                if (course) {
+                    myEnrollmentsCache.push({ app, course });
+                }
+            }
+        });
+
+        // Also add the course assigned directly via admin panel account creation if it exists and isn't already in myEnrollmentsCache
+        if (currentProfile.course && currentProfile.status === 'Active') {
+            const exists = myEnrollmentsCache.find(e => e.course.name === currentProfile.course);
+            if (!exists) {
+                const courseObj = coursesCache.find(c => c.name === currentProfile.course);
+                if (courseObj) {
+                    myEnrollmentsCache.push({ app: { status: 'Approved', course: courseObj.name }, course: courseObj });
+                }
+            }
+        }
+
+        // Fetch resources (no mock resources set up yet, keep empty or fetch if we had a mock array)
+        resourcesCache = [];
+        
+        renderStudentCourses();
+        renderStudentResources();
+        renderStudentPayments();
+    }
+
+    function parseFee(feeStr) {
+        if (!feeStr) return 0;
+        const num = parseInt(feeStr.replace(/[^\d]/g, ''));
+        return isNaN(num) ? 0 : num;
+    }
+
+    function renderStudentPayments() {
+        const tbody = document.getElementById('studentPaymentsTableBody');
+        if (!tbody) return;
+
+        // Filter student's enrollments
+        const allEnrollments = JSON.parse(localStorage.getItem('mentorGuru_enrollments') || '[]');
+        const myEnrollments = allEnrollments.filter(app => app.email.toLowerCase() === (currentProfile.email || '').toLowerCase());
+
+        // Also check if they have a course assigned directly in their profile which isn't in myEnrollments
+        if (currentProfile.course && currentProfile.status === 'Active') {
+            const exists = myEnrollments.find(e => e.course === currentProfile.course);
+            if (!exists) {
+                myEnrollments.push({
+                    course: currentProfile.course,
+                    status: 'Approved',
+                    paymentStatus: 'Paid',
+                    timestamp: new Date().toISOString()
+                });
+            }
+        }
+
+        tbody.innerHTML = '';
+        
+        let totalFee = 0;
+        let paidAmount = 0;
+        let dueAmount = 0;
+
+        if (myEnrollments.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-xs text-gray-400">No payment records found.</td></tr>`;
+            document.getElementById('totalFeeAmount').textContent = 'NPR 0';
+            document.getElementById('paidFeeAmount').textContent = 'NPR 0';
+            document.getElementById('dueFeeAmount').textContent = 'NPR 0';
+            return;
+        }
+
+        myEnrollments.forEach(app => {
+            const course = coursesCache.find(c => c.name === app.course);
+            const feeStr = course ? course.fee : 'NPR 0';
+            const feeVal = parseFee(feeStr);
+
+            totalFee += feeVal;
+            if (app.paymentStatus === 'Paid') {
+                paidAmount += feeVal;
+            } else {
+                dueAmount += feeVal;
+            }
+
+            const dateStr = app.timestamp ? new Date(app.timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
+            const method = app.paymentStatus === 'Paid' ? '<span class="flex items-center gap-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/eSewa_logo.png/120px-eSewa_logo.png" class="h-4 object-contain" alt="eSewa"> eSewa</span>' : '—';
+            const statusBadge = app.paymentStatus === 'Paid' ? '<span class="badge-green">Verified</span>' : '<span class="badge-yellow">Pending</span>';
+
+            tbody.innerHTML += `
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-4 py-3 text-xs text-gray-600">${escHTML(dateStr)}</td>
+                    <td class="px-4 py-3 text-xs text-gray-800 font-medium">${escHTML(app.course)}</td>
+                    <td class="px-4 py-3 text-xs">${method}</td>
+                    <td class="px-4 py-3 text-xs font-bold text-gray-900">${escHTML(feeStr)}</td>
+                    <td class="px-4 py-3">${statusBadge}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('totalFeeAmount').textContent = 'NPR ' + totalFee.toLocaleString();
+        document.getElementById('paidFeeAmount').textContent = 'NPR ' + paidAmount.toLocaleString();
+        document.getElementById('dueFeeAmount').textContent = 'NPR ' + dueAmount.toLocaleString();
+    }
+
+    // ========= INIT UI FROM PROFILE =========
+    function applyProfileToUI() {
+        const { name, email, phone, city, joinDate } = currentProfile;
+        const n = name || 'Student';
+        const initials = n.split(' ').map(x => x[0]).join('').toUpperCase().slice(0, 2);
+
+        // Sidebar
+        safeSet('sidebarAvatar', initials);
+        safeSet('sidebarName', n);
+        safeSet('sidebarEmail', email || '');
+        // Header
+        safeSet('headerStudentName', n);
+        safeSet('headerAvatar', initials);
+        // Welcome banner
+        safeSet('welcomeName', n);
+        // Profile view
+        safeSet('profileAvatar', initials);
+        safeSet('profileName', n);
+        safeSet('profileEmail', email || '');
+        safeSet('profilePhone', phone || '—');
+        safeSet('profileCity', city || '—');
+        safeSet('profileMemberSince', 'Member since ' + (joinDate || ''));
+        // Edit form pre-fill
+        safeVal('editName', n);
+        safeVal('editEmail', email || '');
+        safeVal('editPhone', phone || '');
+        safeVal('editCity', city || '');
+        safeVal('editBio', currentProfile.bio || '');
+    }
+
+    function safeSet(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+    function safeVal(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
+
+    // ========= RENDER MY ENROLLED COURSES =========
+    function renderStudentCourses() {
+        const grid = document.getElementById('studentCoursesGrid');
+        if (!grid) return;
+
+        const enrolled = myEnrollmentsCache;
+        const badgeEl  = document.getElementById('myCoursesCountBadges');
+
+        // Update count badges
+        if (badgeEl) {
+            badgeEl.innerHTML = `
+                <span class="badge-green py-1.5 px-3">${enrolled.length} Active</span>
+                <span class="badge-gray py-1.5 px-3">0 Completed</span>`;
+        }
+
+        // Update dashboard welcome counters
+        safeSet('dashCoursesCount', enrolled.length);
+
+        grid.innerHTML = '';
+
+        if (enrolled.length === 0) {
+            grid.innerHTML = `
+                <div class="col-span-full py-14 text-center border-2 border-dashed border-gray-200 rounded-2xl">
+                    <i class="fa-solid fa-book-open text-4xl text-gray-200 mb-4 block"></i>
+                    <p class="text-gray-500 font-semibold text-sm">No enrolled courses yet.</p>
+                    <p class="text-xs text-gray-400 mt-1">Ask your admin to approve your enrollment.</p>
+                    <a href="index.html" class="inline-block mt-4 btn-red py-2 px-5 rounded-xl text-xs">Browse Courses</a>
+                </div>`;
+            return;
+        }
+
+        enrolled.forEach(({ app, course }, idx) => {
+            const p  = PALETTE[idx % PALETTE.length];
+            const img = course.thumbnail
+                ? `<img src="${course.thumbnail}" class="absolute inset-0 w-full h-full object-cover opacity-80" alt="">`
+                : '';
+
+            grid.innerHTML += `
+                <div class="course-card-student group">
+                    <div class="h-36 bg-gradient-to-br ${p.grad} rounded-xl mb-4 flex items-center justify-center relative overflow-hidden">
+                        ${img}
+                        <i class="fa-solid ${p.icon} text-5xl ${p.text}/80 relative z-10"></i>
+                        <div class="absolute top-3 right-3"><span class="badge-green">Active</span></div>
+                    </div>
+                    <h4 class="text-sm font-bold text-gray-900 mb-1">${escHTML(course.name)}</h4>
+                    <p class="text-xs text-gray-400 mb-3">${escHTML(course.category)} Course · ${escHTML(course.mode)} · ${escHTML(course.duration)}</p>
+                    <div class="flex items-center gap-2 text-xs text-gray-500 mb-4">
+                        <i class="fa-solid fa-clock text-red-400"></i> ${escHTML(course.slots)}
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="switchStudentView('resources')" class="flex-1 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold transition">
+                            <i class="fa-solid fa-folder mr-1"></i> Resources
+                        </button>
+                        <button onclick="switchStudentView('progress')" class="flex-1 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-semibold transition">
+                            <i class="fa-solid fa-chart-line mr-1"></i> Progress
+                        </button>
+                    </div>
+                </div>`;
+        });
+
+        // Add explore more tile
+        grid.innerHTML += `
+            <div class="border-2 border-dashed border-gray-200 hover:border-red-300 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 text-center cursor-pointer transition group" onclick="window.location.href='index.html'">
+                <div class="w-14 h-14 rounded-2xl bg-red-50 group-hover:bg-red-100 text-red-400 flex items-center justify-center text-2xl transition">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-gray-700">Explore More Courses</p>
+                    <p class="text-xs text-gray-400 mt-1">Browse our full IT & Non-IT catalog</p>
+                </div>
+            </div>`;
+
+        // Update profile enrolled badges
+        const profileBadges = document.getElementById('profileEnrolledBadges');
+        if (profileBadges) {
+            profileBadges.innerHTML = enrolled.length > 0
+                ? enrolled.map(({ course }) => `<span class="badge-red py-1 px-2">${escHTML(course.name)}</span>`).join('')
+                : '<span class="text-xs text-gray-400">No enrollments yet</span>';
+        }
+    }
+
+    // ========= RENDER RESOURCES =========
+    function renderStudentResources() {
+        const grid = document.getElementById('studentResourcesGrid');
+        if (!grid) return;
+
+        const enrolled = myEnrollmentsCache;
+        const enrolledNames = enrolled.map(e => e.course.name.toLowerCase());
+
+        const searchQuery  = (document.getElementById('studentResourceSearch')?.value || '').toLowerCase().trim();
+
+        // Filter: only resources for enrolled courses
+        let filtered = resourcesCache.filter(r => enrolledNames.includes(r.course.toLowerCase()));
+
+        // Filter by type tab
+        if (studentResourceTypeFilter) {
+            filtered = filtered.filter(r => r.type === studentResourceTypeFilter);
+        }
+        // Filter by search
+        if (searchQuery) {
+            filtered = filtered.filter(r =>
+                r.title.toLowerCase().includes(searchQuery) ||
+                r.course.toLowerCase().includes(searchQuery) ||
+                r.type.toLowerCase().includes(searchQuery)
+            );
+        }
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `
+                <div class="col-span-full py-12 text-center border-2 border-dashed border-gray-200 rounded-2xl">
+                    <i class="fa-solid fa-folder-open text-4xl text-gray-200 mb-3 block"></i>
+                    <p class="text-sm font-semibold text-gray-500">No resources available yet.</p>
+                    <p class="text-xs text-gray-400 mt-1">Your admin will upload materials here.</p>
+                </div>`;
+            return;
+        }
+
+        grid.innerHTML = '';
+        filtered.forEach(r => {
+            const { icon, color, bg } = getRIcon(r.type);
+            const actionIcon = r.type === 'Video' ? 'fa-play' : (r.type === 'Link' ? 'fa-external-link' : 'fa-download');
+            const actionFn   = r.url ? `window.open('${escHTML(r.url)}','_blank')` : `showStudentToast('No download link provided','fa-info-circle','text-yellow-400')`;
+
+            grid.innerHTML += `
+                <div class="course-card-student flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl ${bg} ${color} flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="fa-solid ${icon}"></i>
+                    </div>
+                    <div class="flex-grow overflow-hidden">
+                        <p class="text-sm font-semibold text-gray-800 truncate">${escHTML(r.title)}</p>
+                        <p class="text-xs text-gray-400">${escHTML(r.type)} · ${escHTML(r.course)}</p>
+                        ${r.description ? `<p class="text-[10px] text-gray-400 truncate mt-0.5">${escHTML(r.description)}</p>` : ''}
+                    </div>
+                    <button onclick="${actionFn}" class="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 flex items-center justify-center transition flex-shrink-0">
+                        <i class="fa-solid ${actionIcon} text-xs"></i>
+                    </button>
+                </div>`;
+        });
+    }
+
+    // ========= RESOURCE TYPE FILTER TABS =========
+    function setResourceTypeFilter(btn, type) {
+        studentResourceTypeFilter = type;
+        document.querySelectorAll('.resource-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderStudentResources();
+    }
+
+    // ========= VIEW SWITCHER =========
+    const viewTitles = {
+        dashboard: 'My Dashboard',
+        mycourses: 'My Courses',
+        progress:  'Learning Progress',
+        payments:  'Payments & Billing',
+        schedule:  'Class Schedule',
+        mentors:   'My Mentors',
+        resources: 'Course Resources',
+        profile:   'My Profile',
+        requests:  'Course Requests',
+        chat:      'Messages'
+    };
+
+    function switchStudentView(viewName) {
+        document.querySelectorAll('.student-view').forEach(v => v.classList.add('hidden'));
+        document.querySelectorAll('.student-sidebar-link').forEach(b => b.classList.remove('active'));
+
+        const target = document.getElementById('sview-' + viewName);
+        if (target) target.classList.remove('hidden');
+
+        const navBtn = document.getElementById('snav-' + viewName);
+        if (navBtn) navBtn.classList.add('active');
+
+        document.getElementById('studentViewHeader').textContent = viewTitles[viewName] || 'Portal';
+        closeMobileSidebar();
+
+        // Refresh dynamic views on switch
+        if (viewName === 'mycourses') renderStudentCourses();
+        if (viewName === 'resources') renderStudentResources();
+        if (viewName === 'profile')   { renderStudentCourses(); applyProfileToUI(); }
+        if (viewName === 'requests')  { renderCourseRequestForm(); renderCourseRequestsList(); }
+        if (viewName === 'chat')      { renderChatContacts(); }
+        if (viewName === 'payments')  renderStudentPayments();
+    }
+
+    // ========= COURSE REQUESTS =========
+    function renderCourseRequestForm() {
+        const select = document.getElementById('courseRequestSelect');
+        if (!select) return;
+        
+        // Find courses student is not already enrolled in or requested
+        const myEnrollments = enrollmentsCache.filter(e => e.email === currentProfile.email).map(e => e.course);
+        const myRequests = window.getCourseRequests ? window.getCourseRequests().filter(r => r.studentId === currentProfile.email).map(r => r.courseName) : [];
+        
+        const availableCourses = coursesCache.filter(c => !myEnrollments.includes(c.name) && !myRequests.includes(c.name));
+        
+        select.innerHTML = '<option value="">Select a course to request...</option>';
+        availableCourses.forEach(c => {
+            select.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+        });
+        
+        if (availableCourses.length === 0) {
+            select.innerHTML = '<option value="">You have requested or enrolled in all available courses.</option>';
+            select.disabled = true;
+        } else {
+            select.disabled = false;
+        }
+    }
+
+    function renderCourseRequestsList() {
+        const tbody = document.getElementById('courseRequestsTableBody');
+        if (!tbody || !window.getCourseRequests) return;
+        
+        const myRequests = window.getCourseRequests().filter(r => r.studentId === currentProfile.email);
+        
+        if (myRequests.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" class="px-5 py-8 text-center text-xs text-gray-400">No course requests found.</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = '';
+        myRequests.reverse().forEach(req => {
+            let statusBadge = '<span class="badge-gray">Pending</span>';
+            if (req.status === 'Approved') statusBadge = '<span class="badge-green">Approved</span>';
+            if (req.status === 'Rejected') statusBadge = '<span class="badge-red" style="background:#fee2e2; color:#dc2626;">Rejected</span>';
+            
+            const date = new Date(req.timestamp).toLocaleDateString();
+            
+            tbody.innerHTML += `
+                <tr class="hover:bg-gray-50 transition border-b border-gray-100 last:border-0">
+                    <td class="px-5 py-4 text-xs font-bold text-gray-900">${req.courseName}</td>
+                    <td class="px-5 py-4 text-xs text-gray-500">${date}</td>
+                    <td class="px-5 py-4 text-right">${statusBadge}</td>
+                </tr>
+            `;
+        });
+    }
+
+    function submitCourseRequest(e) {
+        e.preventDefault();
+        const select = document.getElementById('courseRequestSelect');
+        const courseName = select.value;
+        if (!courseName) return;
+        
+        if (window.createCourseRequest) {
+            window.createCourseRequest(currentProfile.email, currentProfile.name || 'Student', courseName);
+            showStudentToast('Course request submitted successfully!');
+            renderCourseRequestForm();
+            renderCourseRequestsList();
+        }
+    }
+
+    // ========= CHAT SYSTEM =========
+    let activeChatContact = null;
+    let pendingChatAttachment = null;
+
+    function renderChatContacts() {
+        const list = document.getElementById('chatContactsList');
+        if (!list) return;
+        
+        // Get Admin
+        let html = `
+            <button onclick="selectChatContact('admin', 'Admin', 'Admin Support')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition text-left">
+                <div class="relative flex-shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-headset"></i></div>
+                </div>
+                <div class="flex-grow overflow-hidden">
+                    <p class="text-xs font-bold text-gray-900 truncate">Admin Support</p>
+                    <p class="text-[10px] text-gray-500 truncate">System Administrator</p>
+                </div>
+            </button>
+        `;
+        
+        // Get Mentors (mock assigned mentors based on enrolled courses)
+        // For simulation, we'll just show a general mentor contact if they are enrolled in something
+        const myEnrollments = enrollmentsCache.filter(e => e.email === currentProfile.email && e.status === 'Approved');
+        if (myEnrollments.length > 0) {
+            html += `
+                <div class="px-3 pt-4 pb-1">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">My Mentors</p>
+                </div>
+                <button onclick="selectChatContact('mentor1', 'Mentor', 'Raj Kumar Shrestha')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition text-left">
+                    <div class="relative flex-shrink-0">
+                        <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-xs">RK</div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-white absolute -bottom-0.5 -right-0.5"></div>
+                    </div>
+                    <div class="flex-grow overflow-hidden">
+                        <p class="text-xs font-bold text-gray-900 truncate">Raj Kumar Shrestha</p>
+                        <p class="text-[10px] text-gray-500 truncate">Cybersecurity Lead</p>
+                    </div>
+                </button>
+            `;
+        }
+
+        // Get Batches (Group Chats)
+        const allBatches = window.getBatches ? window.getBatches() : [];
+        const myBatches = allBatches.filter(b => b.studentIds.includes(currentProfile.email));
+        
+        if (myBatches.length > 0) {
+            html += `
+                <div class="px-3 pt-4 pb-1">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">My Groups</p>
+                </div>
+            `;
+            myBatches.forEach(batch => {
+                html += `
+                    <button onclick="selectChatContact('${batch.id}', 'Batch', '${escHTML(batch.name)}')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition text-left">
+                        <div class="relative flex-shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-users"></i></div>
+                        </div>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="text-xs font-bold text-gray-900 truncate">${escHTML(batch.name)}</p>
+                            <p class="text-[10px] text-gray-500 truncate">Group Chat</p>
+                        </div>
+                    </button>
+                `;
+            });
+        }
+        
+        list.innerHTML = html;
+    }
+
+    function selectChatContact(id, role, name) {
+        activeChatContact = { id, role, name };
+        
+        // Update Header
+        const header = document.getElementById('activeChatHeader');
+        let iconHtml = '<i class="fa-solid fa-user"></i>';
+        if (role === 'Admin') iconHtml = '<i class="fa-solid fa-headset"></i>';
+        if (role === 'Mentor') iconHtml = 'RK';
+        if (role === 'Batch') iconHtml = '<i class="fa-solid fa-users"></i>';
+        
+        let colorClass = role === 'Admin' ? 'bg-slate-800 text-white' : (role === 'Batch' ? 'bg-indigo-100 text-indigo-600' : 'bg-red-100 text-red-600');
+
+        header.innerHTML = `
+            <div class="w-10 h-10 rounded-full ${colorClass} flex items-center justify-center font-bold text-xs">${iconHtml}</div>
+            <div>
+                <h5 class="font-bold text-gray-900 text-sm">${escHTML(name)}</h5>
+                <p class="text-[10px] text-gray-500">${role}</p>
+            </div>
+        `;
+        
+        document.getElementById('chatInputText').disabled = false;
+        document.getElementById('chatAttachBtn').disabled = false;
+        document.getElementById('chatSendBtn').disabled = false;
+        
+        renderChatMessages();
+    }
+
+    function renderChatMessages() {
+        if (!activeChatContact) return;
+        const stream = document.getElementById('chatMessageStream');
+        if (!window.getMessages) return;
+        
+        const allMsgs = window.getMessages();
+        const myId = currentProfile.email;
+        
+        // Filter messages for active chat
+        let chatMsgs = [];
+        if (activeChatContact.role === 'Batch') {
+            chatMsgs = allMsgs.filter(m => m.batchId === activeChatContact.id);
+        } else {
+            chatMsgs = allMsgs.filter(m => 
+                (m.senderId === myId && m.receiverId === activeChatContact.id) ||
+                (m.senderId === activeChatContact.id && m.receiverId === myId)
+            );
+        }
+        
+        stream.innerHTML = '';
+        if (chatMsgs.length === 0) {
+            stream.innerHTML = `
+                <div class="flex h-full items-center justify-center text-gray-400 text-sm flex-col gap-3">
+                    <p class="bg-gray-100 px-4 py-2 rounded-full text-xs font-semibold">Start the conversation</p>
+                </div>
+            `;
+            return;
+        }
+        
+        chatMsgs.forEach(msg => {
+            const isMe = msg.senderId === myId;
+            const time = new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            let attachHtml = '';
+            if (msg.attachment) {
+                if (msg.attachment.type.startsWith('image/')) {
+                    attachHtml = `<div class="mt-2 rounded-lg overflow-hidden border border-black/10"><img src="${msg.attachment.data}" class="max-w-[200px] max-h-[200px] object-cover"></div>`;
+                } else {
+                    attachHtml = `
+                        <div class="mt-2 flex items-center gap-2 p-2 bg-black/5 rounded-lg border border-black/10">
+                            <i class="fa-solid fa-file-lines text-lg ${isMe ? 'text-white' : 'text-red-500'}"></i>
+                            <div class="overflow-hidden">
+                                <p class="text-xs font-semibold truncate ${isMe ? 'text-white' : 'text-gray-800'}">${escHTML(msg.attachment.name)}</p>
+                                <p class="text-[9px] ${isMe ? 'text-white/70' : 'text-gray-500'}">${(msg.attachment.size/1024).toFixed(1)} KB ${msg.attachment.simulated ? '(Simulated)' : ''}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            // If group chat and not me, show sender name
+            const senderNameHtml = (!isMe && activeChatContact.role === 'Batch') ? `<p class="text-[9px] font-bold text-gray-500 mb-1">${escHTML(msg.senderId)}</p>` : '';
+
+            const alignClass = isMe ? 'justify-end' : 'justify-start';
+            const bubbleClass = isMe 
+                ? 'bg-red-600 text-white rounded-br-none' 
+                : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none shadow-sm';
+            
+            stream.innerHTML += `
+                <div class="flex ${alignClass} w-full">
+                    <div class="max-w-[80%]">
+                        ${senderNameHtml}
+                        <div class="p-3 rounded-2xl ${bubbleClass}">
+                            ${msg.text ? `<p class="text-sm leading-relaxed">${escHTML(msg.text).replace(/\\n/g, '<br>')}</p>` : ''}
+                            ${attachHtml}
+                            <p class="text-[9px] mt-1 text-right ${isMe ? 'text-red-200' : 'text-gray-400'}">${time}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        stream.scrollTop = stream.scrollHeight;
+    }
+
+    async function handleChatAttachment(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        if (window.fileToBase64) {
+            try {
+                pendingChatAttachment = await window.fileToBase64(file);
+                // Show preview
+                document.getElementById('chatFilePreview').classList.remove('hidden');
+                document.getElementById('chatFileName').textContent = file.name;
+                document.getElementById('chatFileSize').textContent = (file.size/1024).toFixed(1) + ' KB';
+            } catch (err) {
+                showStudentToast('Failed to attach file.', 'fa-xmark', 'text-red-500');
+            }
+        }
+        e.target.value = ''; // reset
+    }
+
+    function clearChatAttachment() {
+        pendingChatAttachment = null;
+        document.getElementById('chatFilePreview').classList.add('hidden');
+    }
+
+    function sendChatMessage(e) {
+        e.preventDefault();
+        if (!activeChatContact || !window.saveMessage) return;
+        
+        const input = document.getElementById('chatInputText');
+        const text = input.value.trim();
+        
+        if (!text && !pendingChatAttachment) return;
+        
+        const isBatch = activeChatContact.role === 'Batch';
+        
+        window.saveMessage(
+            currentProfile.email,
+            'Student',
+            isBatch ? null : activeChatContact.id,
+            isBatch ? null : activeChatContact.role,
+            text,
+            pendingChatAttachment,
+            isBatch ? activeChatContact.id : null
+        );
+        
+        input.value = '';
+        clearChatAttachment();
+        renderChatMessages();
+    }
+
+    // Storage Event Listeners
+    window.addEventListener('mg_messages_updated', () => {
+        if (activeChatContact && document.getElementById('sview-chat').classList.contains('hidden') === false) {
+            renderChatMessages();
+        }
+    });
+    window.addEventListener('mg_requests_updated', () => {
+        if (document.getElementById('sview-requests').classList.contains('hidden') === false) {
+            renderCourseRequestsList();
+        }
+    });
+    window.addEventListener('mg_batches_updated', () => {
+        if (document.getElementById('sview-chat').classList.contains('hidden') === false) {
+            renderChatContacts();
+        }
+    });
+
+    // Expose funcs
+    window.submitCourseRequest = submitCourseRequest;
+    window.selectChatContact = selectChatContact;
+    window.handleChatAttachment = handleChatAttachment;
+    window.clearChatAttachment = clearChatAttachment;
+    window.sendChatMessage = sendChatMessage;
+
+    // ========= NOTIFICATIONS =========
+    function toggleNotifications() {
+        document.getElementById('notifDropdown').classList.toggle('hidden');
+    }
+    document.addEventListener('click', (e) => {
+        const dd = document.getElementById('notifDropdown');
+        if (!dd.classList.contains('hidden') &&
+            !e.target.closest('#notifDropdown') &&
+            !e.target.closest('button[onclick="toggleNotifications()"]')) {
+            dd.classList.add('hidden');
+        }
+    });
+
+    // ========= MOBILE SIDEBAR =========
+    function openMobileSidebar() {
+        document.getElementById('studentSidebar').classList.add('open');
+        document.getElementById('sidebarOverlay').classList.add('open');
+    }
+    function closeMobileSidebar() {
+        document.getElementById('studentSidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('open');
+    }
+
+    // ========= TOAST =========
+    function showStudentToast(msg, icon = 'fa-circle-check', color = 'text-red-400') {
+        const toast = document.getElementById('studentToast');
+        document.getElementById('studentToastMsg').textContent = msg;
+        toast.querySelector('i').className = `fa-solid ${icon} text-base ${color}`;
+        toast.classList.remove('translate-y-24', 'opacity-0');
+        setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 3000);
+    }
+
+    // ========= HTML ESCAPE =========
+    function escHTML(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>'"]/g,
+            t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t] || t)
+        );
+    }
+
+    // ========= SAVE PROFILE =========
+    async function saveProfile(e) {
+        e.preventDefault();
+        const name  = document.getElementById('editName')?.value.trim() || '';
+        const email = document.getElementById('editEmail')?.value.trim() || '';
+        const phone = document.getElementById('editPhone')?.value.trim() || '';
+        const city  = document.getElementById('editCity')?.value.trim() || '';
+        const bio   = document.getElementById('editBio')?.value.trim() || '';
+
+        if (!name) { showStudentToast('Name cannot be empty', 'fa-circle-exclamation', 'text-yellow-400'); return; }
+
+        currentProfile = { ...currentProfile, name, email, phone, city, bio };
+
+        if (currentUser) {
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), currentProfile);
+            } catch (err) {
+                console.error("Failed to save profile to Firestore", err);
+            }
+        }
+        
+        sessionStorage.setItem('mentorGuruStudent', JSON.stringify({ name, email, phone }));
+
+        applyProfileToUI();
+        renderStudentCourses();
+        showStudentToast('Profile updated successfully!');
+    }
+
+    function changePassword(e) {
+        e.preventDefault();
+        showStudentToast('Password updated!', 'fa-lock', 'text-green-400');
+    }
+
+    // ========= PAYMENT =========
+    function showPaymentAlert() {
+        showStudentToast('Redirecting to eSewa payment...', 'fa-qrcode', 'text-green-400');
+    }
+
+    // ========= LOGOUT =========
+    async function logoutStudent() {
+        try {
+            await signOut(auth);
+        } catch(e) {}
+        sessionStorage.removeItem('mentorGuruStudent');
+        window.location.href = 'index.html';
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MentorGuru | Learn From Experts, Build Your Future</title>
+    <meta name="description" content="Join MentorGuru live training cohorts supervised by global architects. Build real projects, earn credentials, and access placement opportunities.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --red-primary: #dc2626;
+            --red-dark: #b91c1c;
+            --red-light: rgba(220, 38, 38, 0.06);
+            --red-mid: #ef4444;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --bg-white: #ffffff;
+            --bg-soft: #f8fafc;
+            --bg-card: #ffffff;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        
+        .heading-font {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Glassmorphism updates */
+        .glass-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #0f172a;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(239, 68, 68, 0.3) !important;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.08) !important;
+            transform: translateY(-4px) !important;
+        }
+
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, #fef2f2 0%, #ffffff 100%);
+        }
+
+        .glass-input {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            color: #0f172a !important;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .glass-input:focus {
+            background: #ffffff !important;
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+        
+        /* Modal background updates */
+        #enrollModalBox, #learnMoreModalBox, #esewaModalBox {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #0f172a;
+        }
+        
+        /* Modal specific inputs */
+        .enroll-input {
+            background-color: #ffffff !important;
+            border: 1.5px solid #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+
+        .enroll-input:focus {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        /* Glowing blobs animation */
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+        .animate-blob-1 {
+            animation: float-slow 8s ease-in-out infinite;
+        }
+        .animate-blob-2 {
+            animation: float-slow 10s ease-in-out infinite 2s;
+        }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <!-- Glowing Background blobs -->
+    <div class="absolute w-[500px] h-[500px] rounded-full bg-red-600/[0.02] blur-[120px] -top-40 -left-20 pointer-events-none animate-blob-1 z-0"></div>
+    <div class="absolute w-[600px] h-[600px] rounded-full bg-indigo-600/[0.02] blur-[140px] top-1/3 -right-20 pointer-events-none animate-blob-2 z-0"></div>
+
+    <!-- ===================== TOP RED STRIP ===================== -->
+    <div class="w-full h-1 bg-gradient-to-r from-red-600 to-red-400 z-50"></div>
+
+    <!-- ===================== NAVBAR ===================== -->
+    <nav class="sticky top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-red-500 text-white flex items-center justify-center text-sm shadow-md shadow-red-500/20">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <span class="text-xl font-extrabold tracking-tight text-slate-900 heading-font">Mentor<span class="text-red-600">Guru</span></span>
+                </a>
+
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex items-center gap-7">
+                    <a href="#" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Home</a>
+                    <a href="#courses" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Courses</a>
+                    <a href="student_login.html" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Join as Student</a>
+                    <a href="mentor_login.html" class="text-sm font-medium text-slate-600 hover:text-red-600 transition">Become a Mentor</a>
+                </div>
+
+                <!-- Mobile Menu Btn -->
+                <div class="md:hidden">
+                    <button id="mobileMenuBtn" class="text-slate-600 hover:text-red-600 p-2 rounded-lg hover:bg-slate-100 transition">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div id="mobileDrawer" class="hidden md:hidden absolute w-full left-0 bg-white/95 border-b border-slate-200 shadow-lg px-4 py-5 space-y-3 z-50 backdrop-blur-md">
+            <a href="#" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Home</a>
+            <a href="#courses" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Courses</a>
+            <a href="student_login.html" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Join as Student</a>
+            <a href="mentor_login.html" class="block text-base font-medium text-slate-600 hover:text-red-600 transition" onclick="toggleMobileMenu()">Become a Mentor</a>
+        </div>
+    </nav>
+
+    <!-- ===================== HERO ===================== -->
+    <header class="hero-gradient">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 grid md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6 text-center md:text-left">
+                <div class="section-label">
+                    <i class="fa-solid fa-sparkles mr-1"></i> High-Performance Learning Ecosystem
+                </div>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                    Learn From <span class="text-red-600">Experts</span>,<br>
+                    Build Your Future.
+                </h1>
+                <p class="text-slate-600 text-lg leading-relaxed max-w-xl mx-auto md:mx-0">
+                    Join live training cohorts supervised by global architects. Build real projects, unlock credentials, and connect directly to placement opportunities.
+                </p>
+                <div class="flex flex-wrap justify-center md:justify-start gap-4">
+                    <a href="#courses" class="btn-red py-3.5 px-8 rounded-xl text-sm">
+                        Explore Courses
+                    </a>
+                    <button onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'});" class="py-3.5 px-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm transition shadow-sm">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+            <div class="relative flex justify-center items-center">
+                <div class="w-full max-w-[420px] h-[340px] bg-white rounded-2xl border border-slate-200 shadow-xl p-6 flex items-center justify-center relative overflow-hidden animate-float">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" class="w-full h-full relative z-10">
+                        <defs>
+                            <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ef4444"/>
+                                <stop offset="100%" stop-color="#b91c1c"/>
+                            </linearGradient>
+                            <linearGradient id="grayGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#334155"/>
+                                <stop offset="100%" stop-color="#1e293b"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M250 80 L420 170 L250 260 L80 170 Z" fill="url(#redGrad)" filter="drop-shadow(0 6px 12px rgba(185,28,28,0.2))"/>
+                        <path d="M250 260 L250 380 C250 410 180 430 180 430 L180 320 Z" fill="url(#grayGrad)" opacity="0.85"/>
+                        <path d="M250 260 L250 380 C250 410 320 430 320 430 L320 320 Z" fill="url(#redGrad)" opacity="0.85"/>
+                        <path d="M420 170 L420 320 L400 350 L380 320 L380 170 Z" fill="#dc2626" opacity="0.7"/>
+                        <circle cx="100" cy="300" r="14" fill="#fca5a5"/>
+                        <circle cx="400" cy="120" r="18" fill="url(#redGrad)"/>
+                        <rect x="360" y="320" width="28" height="28" rx="6" fill="#dc2626" opacity="0.3" transform="rotate(15, 360, 320)"/>
+                        <path d="M80 120 L110 120 L95 95 Z" fill="#fca5a5" transform="rotate(-15, 95, 105)"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================== STATISTICS ===================== -->
+    <section class="border-y border-slate-200 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-2 md:grid-cols-3 gap-8 text-center">
+            <div class="space-y-1">
+                <p class="text-3xl sm:text-4xl font-extrabold text-red-600">12+ Live</p>
+                <p class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-500">Professional Courses</p>
+            </div>
+            <div class="space-y-1">
+                <p class="text-3xl sm:text-4xl font-extrabold text-red-600">4,800+</p>
+                <p class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-500">Graduated Learners</p>
+            </div>
+            <div class="space-y-1 col-span-2 md:col-span-1">
+                <p class="text-3xl sm:text-4xl font-extrabold text-red-600">94% Rate</p>
+                <p class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-500">Placement Support Link</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== WHY CHOOSE US ===================== -->
+    <section id="about" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-16 relative z-10">
+        <div class="text-center max-w-3xl mx-auto space-y-3">
+            <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">Why Learn With <span class="text-red-600">MentorGuru</span></h2>
+            <p class="text-slate-600">A training ecosystem engineered around high-touch live classes, professional certifications, and active corporate hiring pipelines.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <div class="w-12 h-12 rounded-xl bg-red-50 border border-red-100 text-red-600 flex items-center justify-center text-xl"><i class="fa-solid fa-chalkboard-user"></i></div>
+                <h3 class="text-lg font-bold text-slate-900">Live Mentorship</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Real-time interactive code reviews, live troubleshooting labs, and project standups.</p>
+            </div>
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 flex items-center justify-center text-xl"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h3 class="text-lg font-bold text-slate-900">Global Credentials</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Verify your credentials globally with professional curriculum benchmarks.</p>
+            </div>
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <div class="w-12 h-12 rounded-xl bg-red-50 border border-red-100 text-red-600 flex items-center justify-center text-xl"><i class="fa-solid fa-calendar-check"></i></div>
+                <h3 class="text-lg font-bold text-slate-900">Flexible Shifts</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Manage your career development around flexible morning and evening routines.</p>
+            </div>
+            <div class="glass-card rounded-2xl p-6 space-y-4">
+                <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 flex items-center justify-center text-xl"><i class="fa-solid fa-briefcase"></i></div>
+                <h3 class="text-lg font-bold text-slate-900">Placement Linkage</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Direct linkage pathways routing your verified profile logs straight to target recruiters.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== COURSES ===================== -->
+    <section id="courses" class="bg-slate-50 border-y border-slate-200 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-12">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div class="space-y-3">
+                    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">Our Popular <span class="text-red-600">Live Programs</span></h2>
+                    <p class="text-slate-600 max-w-xl">Search and enroll in active cohorts spanning both core technology branches and corporate management channels.</p>
+                </div>
+                <div class="inline-flex p-1 rounded-xl bg-white border border-slate-200 self-start md:self-auto shadow-sm">
+                    <button onclick="switchCategory('all')" id="tab-all" class="tab-btn active px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg border border-transparent transition">All</button>
+                    <button onclick="switchCategory('IT')" id="tab-IT" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg border border-transparent transition">IT Tracks</button>
+                    <button onclick="switchCategory('Non-IT')" id="tab-Non-IT" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg border border-transparent transition">Non-IT Tracks</button>
+                </div>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="publicCourseGrid"></div>
+        </div>
+    </section>
+
+    <!-- ===================== MENTORS ===================== -->
+    <section id="mentors" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-16 relative z-10">
+        <div class="text-center max-w-3xl mx-auto space-y-3">
+            <img id="supervisedImg" class="responsive-img" src="assets/placeholder.png" alt="Supervised by Global Architects" />
+            <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 animate-fade-in">Supervised by <span class="text-red-600">Global Architects</span></h2>
+            <p class="text-slate-600">Learn from seasoned technology developers, directors, and marketing managers holding years of field exposure.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="glass-card rounded-2xl p-6 text-center space-y-4">
+                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-red-100" alt="Mentor">
+                <div>
+                    <h4 class="text-lg font-bold text-slate-900">Anupam K.C.</h4>
+                    <p class="text-red-600 text-xs font-semibold mt-1">Lead Cloud Architect &amp; DevOps Lead</p>
+                </div>
+                <p class="text-slate-500 text-xs">Ex-Senior DevOps Engineer at Silicon Valley firms.</p>
+            </div>
+            <div class="glass-card rounded-2xl p-6 text-center space-y-4">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-slate-200" alt="Mentor">
+                <div>
+                    <h4 class="text-lg font-bold text-slate-900">Shreya Baskota</h4>
+                    <p class="text-slate-500 text-xs font-semibold mt-1">Senior Data Scientist</p>
+                </div>
+                <p class="text-slate-500 text-xs">Analytics Lead specializing in AI Models and Python.</p>
+            </div>
+            <div class="glass-card rounded-2xl p-6 text-center space-y-4">
+                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-red-100" alt="Mentor">
+                <div>
+                    <h4 class="text-lg font-bold text-slate-900">Sujan Shrestha</h4>
+                    <p class="text-red-600 text-xs font-semibold mt-1">SEO Director &amp; Digital Marketer</p>
+                </div>
+                <p class="text-slate-500 text-xs">Google Certified Web Strategist for corporate scaling.</p>
+            </div>
+            <div class="glass-card rounded-2xl p-6 text-center space-y-4">
+                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=150&auto=format&fit=crop" class="w-24 h-24 rounded-2xl object-cover mx-auto border-2 border-slate-200" alt="Mentor">
+                <div>
+                    <h4 class="text-lg font-bold text-slate-900">Pramila Devkota</h4>
+                    <p class="text-slate-550 text-slate-500 text-xs">Product Architect with extensive experience in system designs.</p>
+                </div>
+                <p class="text-slate-500 text-xs">Product Architect with extensive experience in system designs.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== TESTIMONIALS ===================== -->
+    <section class="bg-slate-50 border-y border-slate-200 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-16">
+            <div class="text-center max-w-3xl mx-auto space-y-3">
+                <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 font-outfit">Learners' <span class="text-red-600">Success Stories</span></h2>
+                <p class="text-slate-650 text-slate-600">Read verified career reviews logged by students who graduated from our live cohorts.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex text-red-500 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="text-slate-700 text-sm leading-relaxed">"The interactive doubt clearing sessions changed how I write code. The Flutter curriculum was completely aligned with real-world problems. Secured a full-time role immediately!"</p>
+                    </div>
+                    <div class="flex items-center gap-4 mt-6 pt-5 border-t border-slate-200">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-slate-200" alt="Student">
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900">Aparna Karki</h4>
+                            <p class="text-xs text-slate-500">Flutter Developer, Logpoint</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex text-red-500 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
+                        <p class="text-slate-700 text-sm leading-relaxed">"Advanced SEO course details are highly customized. The strategies I learned during the live lab allowed me to organically double web sessions for my current agency client."</p>
+                    </div>
+                    <div class="flex items-center gap-4 mt-6 pt-5 border-t border-slate-200">
+                        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-slate-200" alt="Student">
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900">Niranjan Adhikari</h4>
+                            <p class="text-xs text-slate-500">Marketing Lead, SEO Desk</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex text-red-500 gap-1 text-sm"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="text-slate-700 text-sm leading-relaxed">"MentorGuru's UI/UX program is exceptionally designed. Going through layout wireframes, interactive user testing, and building case studies was an elite process."</p>
+                    </div>
+                    <div class="flex items-center gap-4 mt-6 pt-5 border-t border-slate-200">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=80&auto=format&fit=crop" class="w-11 h-11 rounded-full object-cover border border-slate-200" alt="Student">
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900">Pooja Sharma</h4>
+                            <p class="text-xs text-slate-500">UI/UX Designer, Leapfrog</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== PARTNER MARQUEE ===================== -->
+    <section class="py-14 bg-white border-b border-slate-200 overflow-hidden relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 text-center">
+            <p class="text-xs font-bold uppercase tracking-wider text-red-655 text-red-600">Accelerated Students Hiring Partners</p>
+        </div>
+        <div class="marquee-wrapper animate-fade-in">
+            <div class="marquee-content gap-16 text-slate-400/80 text-2xl font-bold tracking-tight uppercase">
+                <span><i class="fa-brands fa-google text-red-500/20 mr-2"></i> Google</span>
+                <span><i class="fa-brands fa-microsoft text-red-500/20 mr-2"></i> Microsoft</span>
+                <span><i class="fa-brands fa-amazon text-red-500/20 mr-2"></i> Amazon Web Services</span>
+                <span><i class="fa-brands fa-meta text-red-500/20 mr-2"></i> Meta</span>
+                <span><i class="fa-brands fa-github text-red-500/20 mr-2"></i> GitHub Enterprise</span>
+                <span><i class="fa-brands fa-figma text-red-500/20 mr-2"></i> Figma System</span>
+                <!-- Duplicate for infinite effect -->
+                <span><i class="fa-brands fa-google text-red-500/20 mr-2"></i> Google</span>
+                <span><i class="fa-brands fa-microsoft text-red-500/20 mr-2"></i> Microsoft</span>
+                <span><i class="fa-brands fa-amazon text-red-500/20 mr-2"></i> Amazon Web Services</span>
+                <span><i class="fa-brands fa-meta text-red-500/20 mr-2"></i> Meta</span>
+                <span><i class="fa-brands fa-github text-red-500/20 mr-2"></i> GitHub Enterprise</span>
+                <span><i class="fa-brands fa-figma text-red-500/20 mr-2"></i> Figma System</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== CONTACT ===================== -->
+    <section id="contact" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div class="bg-white rounded-3xl overflow-hidden grid lg:grid-cols-5 border border-slate-200 shadow-2xl relative z-10">
+            <div class="lg:col-span-2 bg-gradient-to-br from-red-600 to-rose-600 p-8 sm:p-12 flex flex-col justify-between text-white">
+                <div class="space-y-5">
+                    <h3 class="text-2xl font-bold">Connect Desk</h3>
+                    <p class="text-red-100 text-sm leading-relaxed">Reach out to our counseling officers to map your schedules, fee structures, and placement opportunities.</p>
+                </div>
+                <div class="space-y-4 my-8 lg:my-0">
+                    <div class="flex items-center gap-4 text-sm">
+                        <span class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center"><i class="fa-solid fa-envelope"></i></span>
+                        <span>support@mentorguru.edu</span>
+                    </div>
+                    <div class="flex items-center gap-4 text-sm">
+                        <span class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center"><i class="fa-solid fa-phone"></i></span>
+                        <span>+977-1-44XXXXX</span>
+                    </div>
+                    <div class="flex items-center gap-4 text-sm">
+                        <span class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center"><i class="fa-solid fa-location-dot"></i></span>
+                        <span>New Baneshwor, Kathmandu</span>
+                    </div>
+                </div>
+                <p class="text-xs text-red-200">Admissions open 6 AM - 8 PM daily.</p>
+            </div>
+            <div class="lg:col-span-3 p-8 sm:p-12">
+                <form id="contactForm" class="space-y-5">
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">First Name</label>
+                            <input type="text" id="contactFirst" class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="John" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Last Name</label>
+                            <input type="text" id="contactLast" class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="Doe" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Email Address</label>
+                        <input type="email" id="contactEmail" class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="john@example.com" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">How can we help?</label>
+                        <textarea id="contactMessage" class="w-full px-4 py-3 rounded-xl glass-input text-sm h-32 resize-none" placeholder="Tell us about the career track you are exploring..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-red py-3 px-8 rounded-xl text-sm">
+                        <i class="fa-solid fa-paper-plane mr-2"></i> Submit Inquiry
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="mt-auto border-t border-slate-200 bg-white pt-16 pb-8 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-4 gap-12 pb-12 border-b border-slate-200">
+            <div class="space-y-4">
+                <a href="#" class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 to-red-500 text-white flex items-center justify-center text-sm shadow-sm">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <span class="text-xl font-extrabold text-slate-900 heading-font">Mentor<span class="text-red-600">Guru</span></span>
+                </a>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    An educational ecosystem optimized to bridge talent gaps by deploying live interactive industry masterclasses.
+                </p>
+                <div class="flex gap-3">
+                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-slate-500 transition shadow-sm"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-slate-500 transition shadow-sm"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center text-slate-500 transition shadow-sm"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <h4 class="text-sm font-semibold uppercase tracking-wider text-slate-800">Admissions Desk</h4>
+                <ul class="space-y-2.5 text-sm text-slate-600">
+                    <li><a href="#courses" class="hover:text-red-600 transition">Explore Cohorts</a></li>
+                    <li><a href="#about" class="hover:text-red-600 transition">System Benefits</a></li>
+                    <li><a href="#contact" class="hover:text-red-600 transition">Contact Counselors</a></li>
+                </ul>
+            </div>
+            <div class="space-y-4">
+                <h4 class="text-sm font-semibold uppercase tracking-wider text-slate-800">Admin Portal</h4>
+                <ul class="space-y-2.5 text-sm text-slate-600">
+                    <li><a href="admin_login.html" target="_blank" class="text-red-650 hover:text-red-500 font-semibold transition"><i class="fa-solid fa-user-shield mr-1"></i> Console Control Panel</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+            <span>&copy; 2026 MentorGuru Educational Ecosystem. All rights reserved.</span>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-red-500 transition">Terms of Service</a>
+                <a href="#" class="hover:text-red-500 transition">Privacy Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================== ENROLLMENT MODAL ===================== -->
+    <div id="enrollModalOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 sm:p-7 scale-[0.95] transition-all duration-300" id="enrollModalBox">
+            <div class="flex justify-between items-center pb-4 mb-5 border-b border-gray-100">
+                <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                    <i class="fa-solid fa-file-signature text-red-500"></i> Cohort Enrollment Form
+                </h3>
+                <button onclick="closeEnrollModal()" class="w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-500 flex items-center justify-center transition active:scale-95"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="enrollForm" class="space-y-4" novalidate>
+                <!-- Student Full Name -->
+                <div class="enroll-input-group flex flex-col">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5 transition-all duration-300">
+                        <i class="fa-solid fa-user text-red-400 mr-1.5 transition-all duration-300"></i> Student Full Name
+                    </label>
+                    <input type="text" id="studentName" class="enroll-input w-full px-4 py-3 text-sm placeholder-gray-400 transition" placeholder="John Doe" required>
+                </div>
+
+                <!-- Email Address -->
+                <div class="enroll-input-group flex flex-col">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5 transition-all duration-300">
+                        <i class="fa-solid fa-envelope text-red-400 mr-1.5 transition-all duration-300"></i> Email Address
+                    </label>
+                    <input type="email" id="studentEmail" class="enroll-input w-full px-4 py-3 text-sm placeholder-gray-400 transition" placeholder="john.doe@example.com" required>
+                </div>
+
+                <!-- Mobile Number -->
+                <div class="enroll-input-group flex flex-col relative" id="mobileFieldContainer">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5 transition-all duration-300">
+                        <i class="fa-solid fa-phone text-red-400 mr-1.5 transition-all duration-300"></i> Mobile Number
+                    </label>
+                    <div class="relative w-full">
+                        <input type="tel" id="studentPhone" class="enroll-input w-full pl-11 pr-10 py-3 text-sm placeholder-gray-400 transition" placeholder="+1 (555) 000-0000" required>
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400" id="phoneIconWrapper">
+                            <i class="fa-solid fa-phone text-sm text-red-400 transition-colors duration-300" id="phoneIcon"></i>
+                        </span>
+                        <span class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none" id="phoneValidationStatusIcon">
+                            <!-- Populated in JS: checked/times icon -->
+                        </span>
+                    </div>
+                    <p id="phoneErrorMsg" class="mt-1.5 text-xs text-red-500 font-semibold opacity-0 h-0 overflow-hidden transition-all duration-300 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-exclamation text-xs"></i> Enter a valid mobile number (min. 7 digits, e.g. +1 555-123-4567).
+                    </p>
+                </div>
+
+                <!-- Selected Course Program -->
+                <div class="enroll-input-group flex flex-col">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5 transition-all duration-300">
+                        <i class="fa-solid fa-graduation-cap text-red-400 mr-1.5 transition-all duration-300"></i> Selected Course Program
+                    </label>
+                    <input type="text" id="enrollCourseTitle" class="w-full px-4 py-3 rounded-xl border border-red-50 bg-red-50/40 text-red-700 font-bold text-sm cursor-not-allowed outline-none select-none" readonly>
+                </div>
+
+                <!-- Cohort Enrollment Fee Option -->
+                <div class="space-y-3 pt-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5 transition-all duration-300">
+                        <i class="fa-solid fa-wallet text-emerald-500 mr-1.5"></i> Cohort Enrollment Fee
+                    </label>
+
+                    <div class="flex items-center gap-3 bg-emerald-50/50 hover:bg-emerald-50/80 border border-emerald-100 p-4 rounded-xl transition duration-300">
+                        <input
+                            type="checkbox"
+                            id="payFee"
+                            class="w-5 h-5 accent-emerald-600 cursor-pointer rounded-md"
+                        />
+
+                        <label for="payFee" class="text-xs text-gray-700 font-medium cursor-pointer select-none">
+                            I would like to pay the enrollment fee of
+                            <span class="font-bold text-emerald-600"> NPR 500</span>
+                        </label>
+                    </div>
+
+                    <p class="text-[10px] text-gray-400 leading-normal">
+                        You can choose whether to pay the enrollment fee now or later.
+                    </p>
+                </div>
+
+                <!-- Bottom Action Buttons -->
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="closeEnrollModal()" class="w-1/2 py-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-sm transition active:scale-98">
+                        Cancel
+                    </button>
+                    <button type="submit" id="enrollSubmitBtn" class="btn-red w-1/2 py-3 rounded-xl text-sm font-bold shadow-md hover:shadow-lg active:scale-98 transition flex items-center justify-center gap-2">
+                        Confirm &amp; Enroll
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ===================== LEARN MORE MODAL ===================== -->
+    <div id="learnMoreModalOverlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 scale-[0.95] transition-transform duration-300" id="learnMoreModalBox">
+            <div class="flex justify-between items-center pb-4 mb-4 border-b border-gray-100">
+                <h3 class="text-xl font-bold text-red-600" id="infoCourseTitle">Course Details</h3>
+                <button onclick="closeLearnMoreModal()" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-4">
+                <p id="infoCourseDesc" class="text-gray-600 text-sm leading-relaxed">Description goes here...</p>
+                <div class="grid grid-cols-2 gap-4 text-xs bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div>
+                        <span class="block text-gray-400 font-semibold uppercase tracking-wider mb-1">Shift Selection</span>
+                        <span class="text-gray-800 font-medium" id="infoCourseSlots">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 font-semibold uppercase tracking-wider mb-1">Tuition Fee</span>
+                        <span class="text-red-600 font-bold" id="infoCoursePrice">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 font-semibold uppercase tracking-wider mb-1">Duration</span>
+                        <span class="text-gray-800 font-medium" id="infoCourseDuration">-</span>
+                    </div>
+                    <div>
+                        <span class="block text-gray-400 font-semibold uppercase tracking-wider mb-1">Mode</span>
+                        <span class="text-gray-800 font-medium" id="infoCourseMode">-</span>
+                    </div>
+                </div>
+                
+                <!-- Syllabus Curriculum Modules List -->
+                <div class="border-t border-gray-150 pt-4 space-y-2">
+                    <span class="block text-gray-400 text-xs font-bold uppercase tracking-wider">Syllabus Curriculum</span>
+                    <div id="infoCourseModules" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+            <div class="pt-5 flex justify-end">
+                <button onclick="closeLearnMoreModal()" class="btn-red py-2.5 px-6 rounded-xl text-sm">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== ESEWA PAYMENT MODAL ===================== -->
+    <div id="esewaModalOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[110] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="w-full max-w-md bg-white shadow-2xl rounded-3xl p-8 text-center scale-[0.95] transition-all duration-300 relative border border-gray-100" id="esewaModalBox">
+            
+            <!-- Close Button -->
+            <button onclick="closeEsewaModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-600 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- eSewa Logo -->
+            <img
+              src="https://esewa.com.np/common/images/esewa_logo.png"
+              alt="eSewa"
+              class="w-36 mx-auto mb-5"
+            />
+
+            <h1 class="text-2xl font-bold text-gray-800 mb-1.5">
+              Pay with eSewa
+            </h1>
+
+            <p class="text-xs text-gray-500 leading-normal max-w-xs mx-auto mb-6">
+              Please transfer the cohort enrollment fee of <strong class="text-green-600">NPR 500</strong> to the official eSewa ID below:
+            </p>
+
+            <!-- eSewa ID Display Card -->
+            <div class="bg-green-50/60 border border-green-100 rounded-2xl p-5 mb-6 flex flex-col items-center justify-center relative overflow-hidden">
+              <span class="absolute top-0 right-0 bg-green-500 text-white text-[9px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-bl-lg">Official ID</span>
+              <p class="text-[10px] font-bold text-green-700/60 uppercase tracking-widest mb-1.5">eSewa ID Number</p>
+              <h2 class="text-3xl font-extrabold text-green-600 tracking-tight flex items-center gap-2">
+                9843641509
+                <button onclick="copyEsewaId()" class="text-green-500 hover:text-green-700 text-sm p-1 hover:bg-green-100/50 rounded transition" title="Copy eSewa ID">
+                  <i class="fa-regular fa-copy"></i>
+                </button>
+              </h2>
+            </div>
+
+            <!-- Transaction Reference Input -->
+            <div class="text-left space-y-2 mb-6">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                    <i class="fa-solid fa-receipt text-green-500 mr-1"></i> Transaction Reference ID (Optional)
+                </label>
+                <input type="text" id="esewaTxnInput" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-xs focus:border-green-500 outline-none transition placeholder-gray-400 bg-gray-50/50" placeholder="e.g. 8X3Y7Z1A">
+                <p class="text-[9px] text-gray-400 leading-normal">
+                    Enter the reference code from your eSewa receipt to speed up approval.
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col gap-3">
+                <a
+                  href="https://esewa.com.np"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block w-full"
+                >
+                  <button class="w-full bg-green-500 hover:bg-green-600 text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl transition duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-up-right-from-square text-[10px]"></i> Open eSewa Web / App
+                  </button>
+                </a>
+                
+                <button onclick="confirmManualPayment(event)" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold text-xs uppercase tracking-wider py-3.5 rounded-xl transition duration-300 shadow-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-check text-green-400"></i> I Have Sent NPR 500
+                </button>
+            </div>
+
+            <p class="text-[10px] text-gray-400 mt-5">
+              Secure payments powered by eSewa Nepal
+            </p>
+        </div>
+    </div>
+
+    <!-- ===================== FLOATING CHATBOT WIDGET ===================== -->
+    <div class="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
+        
+        <!-- Chat Drawer Box Container -->
+        <div id="chatContainer" class="hidden w-[350px] sm:w-[380px] h-[480px] mb-4 bg-white rounded-2xl border border-gray-200 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform translate-y-4 opacity-0">
+            
+            <!-- Chat Header -->
+            <div class="bg-gradient-to-r from-red-600 to-red-500 text-white px-5 py-4 flex justify-between items-center shadow-sm flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-sm">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs">MentorGuru Assistant</h4>
+                        <span class="text-[9px] text-red-200 flex items-center gap-1.5" id="chatStatusText">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Offline Simulation
+                        </span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleChatSettings()" class="text-white/80 hover:text-white transition text-xs" title="Gemini API Key Setting">
+                        <i class="fa-solid fa-cog"></i>
+                    </button>
+                    <button onclick="toggleChatbot()" class="text-white/80 hover:text-white transition text-xs">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chat Settings API Panel Overlay -->
+            <div id="chatSettingsPanel" class="hidden bg-gray-50 border-b border-gray-200 p-4 space-y-2.5 text-[11px] flex-shrink-0">
+                <p class="font-bold text-gray-700">Google Gemini API Configuration</p>
+                <p class="text-gray-500 leading-normal">Enter your Gemini API key to activate live generative artificial intelligence. If left blank, I will respond locally.</p>
+                <div class="flex gap-2">
+                    <input type="password" id="geminiApiKeyInput" class="flex-grow px-3 py-1.5 rounded-lg border border-gray-200 outline-none text-xs" placeholder="AIzaSy...">
+                    <button onclick="saveGeminiApiKey()" class="px-3.5 py-1.5 bg-gray-900 text-white font-bold rounded-lg uppercase tracking-wider text-[9px] hover:bg-gray-800 transition">Save</button>
+                </div>
+            </div>
+
+            <!-- Messages Stream Area -->
+            <div id="chatMessages" class="flex-grow p-4 space-y-3 overflow-y-auto bg-gray-50 text-xs text-gray-700">
+                <!-- System Welcome -->
+                <div class="flex items-start gap-2.5 max-w-[85%]">
+                    <div class="w-6 h-6 rounded-full bg-red-50 border border-red-200 text-red-600 flex items-center justify-center text-[10px] flex-shrink-0">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="p-3 rounded-2xl rounded-tl-none bg-white border border-gray-150 shadow-sm leading-relaxed space-y-1.5">
+                        <p>नमस्ते / Hello! I am the **MentorGuru Assistant**.</p>
+                        <p>Feel free to ask me questions regarding our courses, fee structures, shift timings, or office locations. I natively support both **English** and **Nepali**!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Action Options -->
+            <div id="chatQuickActions" class="p-2.5 bg-white border-t border-gray-100 flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-none text-[9px] font-bold text-gray-600 flex-shrink-0">
+                <button onclick="sendQuickQuery('Show IT Course List')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">💻 IT Tracks</button>
+                <button onclick="sendQuickQuery('Show Non-IT Course List')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">📈 Non-IT Tracks</button>
+                <button onclick="sendQuickQuery('How much are the tuition fees?')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">💰 Fee Rates</button>
+                <button onclick="sendQuickQuery('What are the shift timings?')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">🕒 Timings</button>
+                <button onclick="sendQuickQuery('Where is your training center located?')" class="px-2.5 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 hover:text-red-600 border border-gray-200/50 hover:border-red-200 transition flex-shrink-0">📍 Location</button>
+            </div>
+
+            <!-- Typing Send Area -->
+            <form id="chatForm" class="p-2.5 bg-white border-t border-gray-100 flex gap-2 flex-shrink-0" novalidate>
+                <input type="text" id="chatInput" class="flex-grow px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs outline-none focus:border-red-500 focus:ring-1 focus:ring-red-100 transition" placeholder="Write in English or नेपाली...">
+                <button type="submit" class="w-10 h-10 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-red-200 active:scale-[0.95] transition hover:from-red-700 hover:to-red-600">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- Float Trigger Button Bubble -->
+        <button id="chatbotTrigger" onclick="toggleChatbot()" class="w-14 h-14 rounded-full bg-gradient-to-r from-red-600 to-red-500 text-white flex items-center justify-center shadow-lg shadow-red-200 hover:shadow-xl hover:from-red-700 hover:to-red-600 active:scale-[0.95] transition duration-200">
+            <i class="fa-solid fa-message text-lg" id="chatTriggerIcon"></i>
+        </button>
+    </div>
+
+    <!-- ===================== SCRIPTS ===================== -->
+    <script src="app.js"></script>
+
+    <script>
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileDrawer = document.getElementById('mobileDrawer');
+        mobileMenuBtn.addEventListener('click', () => { mobileDrawer.classList.toggle('hidden'); });
+        function toggleMobileMenu() { mobileDrawer.classList.add('hidden'); }
+
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const first = document.getElementById('contactFirst').value;
+            const email = document.getElementById('contactEmail').value;
+            alert(`Thank you, ${first}! Your inquiry has been registered. A counselor will reach out to ${email} shortly.`);
+            document.getElementById('contactForm').reset();
+        });
+    </script>
+</body>
+</html>

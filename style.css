@@ -1,0 +1,300 @@
+/* Import Inter Font for modern premium look */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+    --red-primary: #dc2626;
+    --red-dark: #b91c1c;
+    --red-light: #fee2e2;
+    --red-mid: #ef4444;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --bg-white: #ffffff;
+    --bg-soft: #f9fafb;
+    --bg-card: #ffffff;
+    --border: #e5e7eb;
+    --border-light: #f3f4f6;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+    --shadow-lg: 0 10px 40px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.05);
+    --shadow-red: 0 4px 20px rgba(220, 38, 38, 0.2);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-white);
+    color: var(--text-primary);
+}
+
+/* ===================== SCROLLBAR ===================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-soft); }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+/* ===================== CARDS ===================== */
+.glass-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    border-color: #fca5a5;
+    box-shadow: var(--shadow-md), 0 0 0 3px rgba(220, 38, 38, 0.05);
+    transform: translateY(-3px);
+}
+
+.glass-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+/* ===================== INPUTS ===================== */
+.glass-input {
+    background: var(--bg-white);
+    border: 1.5px solid var(--border);
+    color: var(--text-primary);
+    outline: none;
+    transition: all 0.2s;
+}
+
+.glass-input:focus {
+    border-color: var(--red-primary);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.glass-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ===================== ANIMATIONS ===================== */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+    animation: float 5s ease-in-out infinite;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* ===================== MARQUEE ===================== */
+.marquee-wrapper {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.marquee-content {
+    display: flex;
+    width: max-content;
+    animation: scrollMarquee 28s linear infinite;
+}
+
+.marquee-content:hover { animation-play-state: paused; }
+
+@keyframes scrollMarquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* ===================== TABS ===================== */
+.tab-btn {
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    background: var(--red-primary);
+    color: white;
+    border-color: transparent;
+    box-shadow: var(--shadow-red);
+}
+
+/* ===================== CHART ===================== */
+.chart-line {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: drawLine 3s ease-out forwards;
+}
+
+@keyframes drawLine {
+    to { stroke-dashoffset: 0; }
+}
+
+/* ===================== ADMIN SIDEBAR ===================== */
+.admin-sidebar-link {
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+
+.admin-sidebar-link:hover {
+    background: var(--red-light);
+    color: var(--red-primary);
+}
+
+.admin-sidebar-link.active {
+    background: var(--red-light);
+    border-left: 3px solid var(--red-primary);
+    color: var(--red-primary);
+    font-weight: 600;
+}
+
+/* ===================== SWITCH TOGGLE ===================== */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #d1d5db;
+    border-radius: 20px;
+    transition: .3s;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: .3s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+input:checked + .slider { background: var(--red-primary); }
+input:checked + .slider:before { transform: translateX(16px); }
+
+/* ===================== SECTION DIVIDERS ===================== */
+.section-label {
+    display: inline-block;
+    background: var(--red-light);
+    color: var(--red-primary);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 12px;
+    border-radius: 999px;
+}
+
+/* ===================== HERO GRADIENT ===================== */
+.hero-gradient {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 50%, #fff 100%);
+}
+
+/* ===================== RED BUTTON ===================== */
+.btn-red {
+    background: linear-gradient(135deg, var(--red-primary), var(--red-mid));
+    color: white;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-red);
+}
+
+.btn-red:hover {
+    background: linear-gradient(135deg, var(--red-dark), var(--red-primary));
+    box-shadow: 0 6px 24px rgba(220, 38, 38, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-red:active { transform: scale(0.98); }
+
+/* ===================== STAT CARDS ===================== */
+.stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s;
+}
+
+.stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+/* ===================== ENROLLMENT MODAL INPUTS ===================== */
+@keyframes phoneWiggle {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    15% { transform: rotate(-12deg) scale(1.1); }
+    30% { transform: rotate(12deg) scale(1.1); }
+    45% { transform: rotate(-8deg) scale(1.05); }
+    60% { transform: rotate(8deg) scale(1.05); }
+    75% { transform: rotate(-4deg) scale(1.02); }
+    90% { transform: rotate(4deg) scale(1.02); }
+}
+
+.animate-phone-wiggle {
+    animation: phoneWiggle 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.enroll-input {
+    background-color: #ffffff !important;
+    border: 1.5px solid #fee2e2 !important; /* Elegant light red border by default */
+    border-radius: 12px !important;
+    color: var(--text-primary) !important;
+    outline: none !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.enroll-input:focus {
+    border-color: var(--red-primary) !important;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12) !important;
+}
+
+/* Smooth focus animation for input label icons */
+.enroll-input-group:focus-within label i {
+    color: var(--red-primary) !important;
+    transform: scale(1.1);
+}
+
+/* Input validation helper classes */
+.enroll-input-valid {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12) !important;
+}
+
+.enroll-input-invalid {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12) !important;
+}
+
+/* ===================== CHATBOT WIDGET ===================== */
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#chatContainer.show {
+    display: flex !important;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+
