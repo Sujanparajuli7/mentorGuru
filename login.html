@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MentorGuru | Unified Authentication Portal</title>
-    <meta name="description" content="Secure student, mentor, and administrative login portal for MentorGuru.">
+    <title>MentorGuru | Login Portal</title>
+    <meta name="description" content="Secure student and mentor login portal for MentorGuru.">
     
     <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -42,12 +42,6 @@
         .glass-input::placeholder {
             color: #94a3b8;
         }
-        /* Custom tab styles */
-        .tab-active {
-            background: #ffffff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            color: #ef4444 !important;
-        }
         /* Keyframe animations for glow blobs */
         @keyframes float-slow {
             0%, 100% { transform: translateY(0px) scale(1); }
@@ -84,17 +78,17 @@
                 <i class="fa-solid fa-graduation-cap"></i>
             </div>
             <h1 class="text-2xl font-bold tracking-tight text-slate-900 heading-font">Mentor<span class="text-red-600">Guru</span></h1>
-            <p class="text-xs text-slate-500 mt-1">Navigate your professional learning highway</p>
+            <p id="portalSubtitle" class="text-xs text-slate-500 mt-1">Navigate your professional learning highway</p>
         </div>
 
-        <!-- Tab Controls -->
-        <div class="flex border-b border-slate-200 mb-6 rounded-xl overflow-hidden bg-slate-100 p-1">
-            <button id="tabSignIn" onclick="switchTab('signin')" class="w-1/2 py-2.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-800 transition duration-300">
-                <i class="fa-solid fa-right-to-bracket mr-2"></i>Sign In
-            </button>
-            <button id="tabSignUp" onclick="switchTab('signup')" class="w-1/2 py-2.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-800 transition duration-300">
-                <i class="fa-solid fa-user-plus mr-2"></i>Create Account
-            </button>
+        <!-- Portal Info Banner -->
+        <div id="portalInfo" class="mb-6 p-4 rounded-2xl bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-start gap-3">
+            <div class="mt-0.5">
+                <i class="fa-solid fa-info-circle text-blue-600 text-base"></i>
+            </div>
+            <div>
+                <p id="portalInfoText" class="font-medium">Your login credentials have been provided by the Admin.</p>
+            </div>
         </div>
 
         <!-- Notification Banner -->
@@ -111,17 +105,15 @@
         <!-- Sign In Form -->
         <form id="signInForm" class="space-y-5" onsubmit="handleSignIn(event)" novalidate>
             <div>
-                <label for="signInEmail" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Email Address or Login ID</label>
+                <label for="signInEmail" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Login ID or Email</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><i class="fa-solid fa-user"></i></span>
-                    <input type="text" id="signInEmail" class="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-sm" placeholder="you@example.com or STU001" required>
+                    <input type="text" id="signInEmail" class="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-sm" placeholder="STU001 or STU002" required autofocus>
                 </div>
             </div>
 
             <div>
-                <div class="flex justify-between items-center mb-2">
-                    <label for="signInPassword" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Password</label>
-                </div>
+                <label for="signInPassword" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Password</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><i class="fa-solid fa-lock"></i></span>
                     <input type="password" id="signInPassword" class="w-full pl-10 pr-11 py-3 rounded-xl glass-input text-sm" placeholder="••••••••" required>
@@ -131,123 +123,69 @@
                 </div>
             </div>
 
-            <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 text-sm mt-2">
-                <i class="fa-solid fa-right-to-bracket mr-2"></i>Sign In
+            <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition duration-300 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-right-to-bracket"></i>Sign In
             </button>
         </form>
 
-        <!-- Sign Up Form (Hidden by default) -->
-        <form id="signUpForm" class="space-y-5 hidden" onsubmit="handleSignUp(event)" novalidate>
-            <div>
-                <label for="signUpName" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Full Name</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><i class="fa-solid fa-user"></i></span>
-                    <input type="text" id="signUpName" class="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-sm" placeholder="John Doe" required>
-                </div>
+        <!-- Important Notice -->
+        <div class="mt-8 pt-6 border-t border-slate-200 space-y-4">
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-800 space-y-2">
+                <p class="font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-amber-600"></i> Account Creation Information
+                </p>
+                <p class="leading-relaxed">
+                    All Student and Mentor accounts are created and managed exclusively by the Admin. You cannot create accounts yourself. Please contact the administration desk to request account creation.
+                </p>
             </div>
-
-            <div>
-                <label for="signUpEmail" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Email Address</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><i class="fa-solid fa-envelope"></i></span>
-                    <input type="email" id="signUpEmail" class="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-sm" placeholder="john@example.com" required>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label for="signUpPassword" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Password</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><i class="fa-solid fa-lock"></i></span>
-                        <input type="password" id="signUpPassword" class="w-full pl-10 pr-11 py-3 rounded-xl glass-input text-sm" placeholder="••••••" required>
-                        <button type="button" onclick="togglePassword('signUpPassword', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-650 transition">
-                            <i class="fa-solid fa-eye text-xs"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="signUpRole" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Role</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><i class="fa-solid fa-users"></i></span>
-                        <select id="signUpRole" onchange="toggleRoleFields()" class="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-sm appearance-none cursor-pointer">
-                            <option value="Student" selected>Student</option>
-                            <option value="Mentor">Mentor</option>
-                        </select>
-                        <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 pointer-events-none">
-                            <i class="fa-solid fa-chevron-down text-xs"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dynamic Field Container -->
-            <div id="dynamicFieldWrapper">
-                <label id="dynamicFieldLabel" for="dynamicFieldInput" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Mobile Number</label>
-                <div class="relative">
-                    <span id="dynamicFieldIcon" class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400"><i class="fa-solid fa-phone"></i></span>
-                    <input type="text" id="dynamicFieldInput" class="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-sm" placeholder="e.g., 98XXXXXXXX" required>
-                </div>
-            </div>
-
-            <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg hover:shadow-red-500/10 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 text-sm mt-2">
-                <i class="fa-solid fa-user-plus mr-2"></i>Create Account
-            </button>
-        </form>
-
-        <!-- Footer Info -->
-        <div class="mt-8 pt-6 border-t border-slate-200 text-center">
-            <a href="index.html" class="text-xs text-slate-500 hover:text-red-550 hover:text-red-600 transition duration-300 inline-flex items-center gap-2">
+            <a href="index.html" class="block text-xs text-slate-500 hover:text-red-600 transition duration-300 text-center inline-flex items-center justify-center gap-2 w-full">
                 <i class="fa-solid fa-arrow-left text-[10px]"></i> Back to Main Website
             </a>
         </div>
     </div>
 
     <!-- Success Toast Notification -->
-    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 px-5 py-4 rounded-2xl bg-white border border-emerald-100 text-slate-800 text-sm shadow-2xl flex items-center gap-3 translate-y-24 opacity-0 transition-all duration-500">
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 px-5 py-4 rounded-2xl bg-white border border-emerald-100 text-slate-800 text-sm shadow-2xl flex items-center gap-3 translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
         <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
             <i class="fa-solid fa-circle-check text-base"></i>
         </div>
         <div>
-            <p class="font-bold text-slate-900">Registration Successful</p>
-            <p class="text-xs text-slate-500 mt-0.5" id="toastMessage">Your account has been created!</p>
+            <p class="font-bold text-slate-900">Login Successful</p>
+            <p class="text-xs text-slate-500 mt-0.5" id="toastMessage">Welcome back!</p>
         </div>
     </div>
 
     <script type="module">
         import { auth, db } from './firebase-config.js';
-        import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         // Expose functions to global scope for HTML inline handlers
-        window.switchTab = switchTab;
         window.togglePassword = togglePassword;
-        window.toggleRoleFields = toggleRoleFields;
         window.closeAlert = closeAlert;
-        window.handleSignUp = handleSignUp;
         window.handleSignIn = handleSignIn;
-        // Check localStorage on load - if already logged in as admin, route there
+
+        // Check localStorage on load
         if (localStorage.getItem('mentorGuruAdmin') === 'true') {
             window.location.href = 'admin.html';
         }
 
-        // Initialize state
-        let currentTab = 'signin';
-        
-        // Parse URL parameters
+        // Parse URL parameters and set portal context
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const tabParam = urlParams.get('tab');
-            const roleParam = urlParams.get('role');
             
-            if (tabParam === 'signup') {
-                switchTab('signup');
-                if (roleParam === 'Student' || roleParam === 'Mentor') {
-                    document.getElementById('signUpRole').value = roleParam;
-                    toggleRoleFields();
-                }
-            } else {
-                switchTab('signin');
+            const portalSubtitle = document.getElementById('portalSubtitle');
+            const portalInfoText = document.getElementById('portalInfoText');
+            
+            if (tabParam === 'student') {
+                portalSubtitle.textContent = 'Student Portal Login';
+                portalInfoText.textContent = 'Your login credentials have been provided by the Admin.';
+                document.title = 'MentorGuru | Student Login Portal';
+            } else if (tabParam === 'mentor') {
+                portalSubtitle.textContent = 'Mentor Portal Login';
+                portalInfoText.textContent = 'Your login credentials have been provided by the Admin.';
+                document.title = 'MentorGuru | Mentor Login Portal';
             }
         });
 
@@ -264,53 +202,6 @@
             }
         }
 
-        // Switch Tabs (Sign In / Sign Up)
-        function switchTab(tab) {
-            currentTab = tab;
-            const tabSignIn = document.getElementById('tabSignIn');
-            const tabSignUp = document.getElementById('tabSignUp');
-            const signInForm = document.getElementById('signInForm');
-            const signUpForm = document.getElementById('signUpForm');
-
-            // Reset forms and clear banners on tab change
-            signInForm.reset();
-            signUpForm.reset();
-            closeAlert();
-            toggleRoleFields(); // reset dynamic field
-
-            if (tab === 'signin') {
-                tabSignIn.className = 'w-1/2 py-2.5 text-sm font-semibold rounded-lg text-slate-800 tab-active transition duration-300';
-                tabSignUp.className = 'w-1/2 py-2.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-800 transition duration-300';
-                signInForm.classList.remove('hidden');
-                signUpForm.classList.add('hidden');
-            } else {
-                tabSignUp.className = 'w-1/2 py-2.5 text-sm font-semibold rounded-lg text-slate-800 tab-active transition duration-300';
-                tabSignIn.className = 'w-1/2 py-2.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-800 transition duration-300';
-                signUpForm.classList.remove('hidden');
-                signInForm.classList.add('hidden');
-            }
-        }
-
-        // Toggle fields based on role selection
-        function toggleRoleFields() {
-            const role = document.getElementById('signUpRole').value;
-            const label = document.getElementById('dynamicFieldLabel');
-            const input = document.getElementById('dynamicFieldInput');
-            const icon = document.getElementById('dynamicFieldIcon');
-
-            if (role === 'Student') {
-                label.textContent = 'Mobile Number';
-                input.placeholder = 'e.g., 98XXXXXXXX';
-                input.type = 'tel';
-                icon.innerHTML = '<i class="fa-solid fa-phone"></i>';
-            } else {
-                label.textContent = 'Specialty Track / Department';
-                input.placeholder = 'e.g., Full Stack Development';
-                input.type = 'text';
-                icon.innerHTML = '<i class="fa-solid fa-briefcase"></i>';
-            }
-        }
-
         // Banner notifications helper
         function showAlert(type, message) {
             const alert = document.getElementById('notificationAlert');
@@ -321,7 +212,7 @@
             text.textContent = message;
 
             if (type === 'error') {
-                alert.className = 'mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-start gap-3 transition-all duration-300 animate-pulse';
+                alert.className = 'mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-start gap-3 transition-all duration-300';
                 icon.innerHTML = '<i class="fa-solid fa-circle-exclamation text-red-600 text-base"></i>';
             } else if (type === 'warning') {
                 alert.className = 'mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-sm flex items-start gap-3 transition-all duration-300';
@@ -342,77 +233,13 @@
             const toastMsg = document.getElementById('toastMessage');
             toastMsg.textContent = message;
             
-            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
             toast.classList.add('translate-y-0', 'opacity-100');
 
             setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-24', 'opacity-0');
-            }, 4000);
-        }
-
-        // Handle Registration
-        async function handleSignUp(e) {
-            e.preventDefault();
-            closeAlert();
-
-            const name = document.getElementById('signUpName').value.trim();
-            const email = document.getElementById('signUpEmail').value.trim();
-            const password = document.getElementById('signUpPassword').value;
-            const role = document.getElementById('signUpRole').value;
-            const dynamicVal = document.getElementById('dynamicFieldInput').value.trim();
-
-            if (!name || !email || !password || !dynamicVal) {
-                showAlert('error', 'Please fill in all the required registration fields.');
-                return;
-            }
-
-            if (password.length < 6) {
-                showAlert('error', 'Password must be at least 6 characters long.');
-                return;
-            }
-
-            const localRecord = {
-                uid: Date.now().toString(),
-                name, email, password, role,
-                status: 'Pending',
-                registeredAt: new Date().toISOString()
-            };
-            if (role === 'Student') localRecord.phone = dynamicVal;
-            else localRecord.track = dynamicVal;
-
-            try {
-                // Try Firebase first
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                const firestoreData = { ...localRecord, uid: user.uid };
-                delete firestoreData.password; // never store plaintext in Firestore
-                await setDoc(doc(db, 'users', user.uid), firestoreData);
-
-                showToast('Registration successful! Waiting for Admin approval.');
-                switchTab('signin');
-                document.getElementById('signInEmail').value = email;
-                showAlert('warning', 'Your registration is pending administrator approval before you can sign in. 🔒');
-            } catch (firebaseError) {
-                // Firebase unavailable (mock config) — save directly to localStorage
-                // so the admin can see & approve the pending registration
-                const lsKey = role === 'Student' ? 'mentorGuru_students' : 'mentorGuru_mentors';
-                const existing = JSON.parse(localStorage.getItem(lsKey) || '[]');
-
-                if (existing.find(u => u.email === email)) {
-                    showAlert('error', 'An account with this email already exists. Please sign in.');
-                    return;
-                }
-
-                existing.push(localRecord);
-                localStorage.setItem(lsKey, JSON.stringify(existing));
-
-                showToast('Registration submitted! Waiting for Admin approval.');
-                switchTab('signin');
-                document.getElementById('signInEmail').value = email;
-                showAlert('warning', 'Your registration is pending administrator approval before you can sign in. 🔒');
-            }
+                toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+            }, 3000);
         }
 
         // Handle Login
@@ -424,11 +251,11 @@
             const password = document.getElementById('signInPassword').value;
 
             if (!email || !password) {
-                showAlert('error', 'Please enter both your email address and password.');
+                showAlert('error', 'Please enter both your Login ID and password.');
                 return;
             }
 
-            // Helper: authenticate against localStorage (admin-created / self-registered accounts)
+            // Helper: authenticate against localStorage (admin-created accounts)
             function tryLocalStorageAuth() {
                 const students = JSON.parse(localStorage.getItem('mentorGuru_students') || '[]');
                 const mentors  = JSON.parse(localStorage.getItem('mentorGuru_mentors')  || '[]');
@@ -446,7 +273,10 @@
                         return;
                     }
                     sessionStorage.setItem('mentorGuruStudent', JSON.stringify({ ...student, role: 'Student' }));
-                    window.location.href = 'student.html';
+                    showToast('Welcome back, ' + (student.name || 'Student') + '!');
+                    setTimeout(() => {
+                        window.location.href = 'student.html';
+                    }, 500);
                 } else if (mentor) {
                     if (mentor.status === 'Pending') {
                         showAlert('warning', 'Your account is awaiting Admin Approval! 🔒');
@@ -457,9 +287,12 @@
                         return;
                     }
                     sessionStorage.setItem('mentorGuruMentor', JSON.stringify({ ...mentor, role: 'Mentor' }));
-                    window.location.href = 'mentor.html';
+                    showToast('Welcome back, ' + (mentor.name || 'Mentor') + '!');
+                    setTimeout(() => {
+                        window.location.href = 'mentor.html';
+                    }, 500);
                 } else {
-                    showAlert('error', 'Invalid credentials. Please check your email and password, or contact admin.');
+                    showAlert('error', 'Invalid Login ID or password. Please contact the Admin for assistance.');
                 }
             }
 
@@ -484,12 +317,18 @@
 
                 if (userData.role === 'Student') {
                     sessionStorage.setItem('mentorGuruStudent', JSON.stringify(userData));
-                    window.location.href = 'student.html';
+                    showToast('Welcome back, ' + (userData.name || 'Student') + '!');
+                    setTimeout(() => {
+                        window.location.href = 'student.html';
+                    }, 500);
                 } else if (userData.role === 'Mentor') {
                     sessionStorage.setItem('mentorGuruMentor', JSON.stringify(userData));
-                    window.location.href = 'mentor.html';
+                    showToast('Welcome back, ' + (userData.name || 'Mentor') + '!');
+                    setTimeout(() => {
+                        window.location.href = 'mentor.html';
+                    }, 500);
                 } else {
-                    showAlert('error', 'Unrecognized user role.');
+                    showAlert('error', 'Unrecognized user role. Please contact the Admin.');
                 }
             } catch (firebaseError) {
                 // Firebase unavailable (mock config / network error) — fall back to localStorage
